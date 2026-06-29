@@ -12,7 +12,7 @@ Worked examples that pair with the technical posts on [speechify.ai/blog](https:
 
 ## Get an API key
 
-Every demo needs `SPEECHIFY_API_KEY`. Grab one at [console.speechify.ai/api-keys](https://console.speechify.ai/api-keys). Copy `.env.example` to `.env` inside the folder you want to run and paste the key in.
+Every demo needs `SPEECHIFY_API_KEY`. Grab one at [platform.speechify.ai/api-keys](https://platform.speechify.ai/api-keys). Copy `.env.example` to `.env` inside the folder you want to run and paste the key in.
 
 ## License
 
