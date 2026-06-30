@@ -34,11 +34,17 @@
       font-size: 0.875rem; color: #999;
     }
     .footer code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace; background: #f5f5f5; padding: 0.1em 0.4em; border-radius: 3px; }
+
+    .page-nav { margin: 0 0 2rem; font-size: 0.875rem; }
+    .page-nav a { color: #111; text-decoration: none; border-bottom: 1px solid #ccc; padding-bottom: 1px; }
+    .page-nav a:hover { border-bottom-color: #111; }
   </style>
 </head>
 <body>
   <h1>Karaoke captions, driven by speech marks</h1>
   <p class="subtitle">Press play. Each word lights up in sync with the audio, using the same WebVTT cues the browser renders below by default.</p>
+
+  <nav class="page-nav"><a href="/synth">← Synthesize the audio + captions</a></nav>
 
   <audio controls id="audio">
     <source src="/output/sample.mp3" type="audio/mpeg">

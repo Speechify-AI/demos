@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Synthesize · Speechify TTS speech marks demo</title>
+  <style>
+    :root {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      color: #111;
+      background: #fff;
+    }
+    body { max-width: 48rem; margin: 4rem auto; padding: 0 2rem; }
+    h1 { font-weight: 100; font-size: 2.5rem; letter-spacing: -0.02em; margin: 0 0 0.5rem; }
+    p.subtitle { color: #666; font-size: 1rem; margin: 0 0 2.5rem; }
+
+    .page-nav { margin: 0 0 2rem; font-size: 0.875rem; }
+    .page-nav a { color: #111; text-decoration: none; border-bottom: 1px solid #ccc; padding-bottom: 1px; }
+    .page-nav a:hover { border-bottom-color: #111; }
+
+    label { display: block; margin: 1.5rem 0 0.5rem; font-size: 0.875rem; color: #666; }
+    textarea {
+      width: 100%; box-sizing: border-box;
+      padding: 0.75rem 0.9rem;
+      border: 1px solid #ddd; border-radius: 4px;
+      font: inherit; font-size: 1rem;
+      resize: vertical; min-height: 5rem;
+    }
+    textarea:focus { outline: none; border-color: #111; }
+
+    button {
+      margin-top: 1.5rem;
+      padding: 0.7rem 1.5rem;
+      background: #111; color: #fff;
+      border: 0; border-radius: 4px;
+      font: inherit; font-weight: 500;
+      cursor: pointer;
+    }
+    button:hover:not(:disabled) { background: #000; }
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .status {
+      margin-top: 1rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+      font-size: 0.8rem; color: #666;
+      min-height: 1.2em;
+    }
+    .status.ok { color: #2f7d32; }
+    .status.err { color: #c0392b; }
+
+    audio { width: 100%; margin-top: 1rem; }
+
+    pre {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #f7f7f7;
+      border-radius: 4px;
+      overflow: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+      font-size: 0.78rem; line-height: 1.55;
+      max-height: 26rem;
+    }
+
+    .footer {
+      margin-top: 4rem; padding-top: 2rem;
+      border-top: 1px solid #e5e5e5;
+      font-size: 0.875rem; color: #999;
+    }
+    .footer code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+      background: #f5f5f5; padding: 0.1em 0.4em; border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Synthesize</h1>
+  <p class="subtitle">One <code style="font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,monospace;background:#f5f5f5;padding:0.1em 0.4em;border-radius:3px;">POST /v1/audio/speech</code> returns the MP3 and the word-by-word speech marks in the same response. Open DevTools, press the button, watch the call land in the Network tab.</p>
+
+  <nav class="page-nav"><a href="/karaoke">Karaoke playback demo →</a></nav>
+
+  <label for="input">Text</label>
+  <textarea id="input">The quick brown fox jumps over the lazy dog.</textarea>
+
+  <button id="go">Synthesize</button>
+
+  <div class="status" id="status"></div>
+
+  <audio id="player" controls hidden></audio>
+  <pre id="out" hidden></pre>
+
+  <div class="footer">
+    The browser posts to <code>/v1/audio/speech</code> on the local server. The server adds the <code>Authorization</code> header from <code>SPEECHIFY_API_KEY</code> and forwards the request to <code>api.speechify.ai</code>. Same path, same body, same response — the key just stays off the client. That is also how you would wire this in a real app.
+  </div>
+
+  <script>
+    const go = document.getElementById("go");
+    const statusEl = document.getElementById("status");
+    const out = document.getElementById("out");
+    const player = document.getElementById("player");
+    const input = document.getElementById("input");
+
+    function setStatus(text, cls) {
+      statusEl.textContent = text;
+      statusEl.className = "status" + (cls ? " " + cls : "");
+    }
+
+    go.addEventListener("click", async () => {
+      const text = input.value.trim();
+      if (!text) {
+        setStatus("Type some text first.", "err");
+        return;
+      }
+      go.disabled = true;
+      setStatus("POST /v1/audio/speech …");
+
+      let res;
+      try {
+        res = await fetch("/v1/audio/speech", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            input: text,
+            voice_id: "george",
+            audio_format: "mp3",
+            model: "simba-english",
+          }),
+        });
+      } catch (e) {
+        setStatus("Network error: " + e.message, "err");
+        go.disabled = false;
+        return;
+      }
+
+      const raw = await res.text();
+      let parsed;
+      try { parsed = JSON.parse(raw); } catch {}
+
+      setStatus(
+        res.status + " " + res.statusText + " · " + raw.length.toLocaleString() + " bytes",
+        res.ok ? "ok" : "err",
+      );
+
+      if (parsed && typeof parsed.audio_data === "string") {
+        const preview = { ...parsed };
+        const a = parsed.audio_data;
+        preview.audio_data = a.slice(0, 60) + "… (" + a.length.toLocaleString() + " chars, truncated)";
+        out.textContent = JSON.stringify(preview, null, 2);
+        out.hidden = false;
+        try {
+          const blob = new Blob(
+            [Uint8Array.from(atob(a), c => c.charCodeAt(0))],
+            { type: "audio/mpeg" },
+          );
+          player.src = URL.createObjectURL(blob);
+          player.hidden = false;
+        } catch {
+          player.hidden = true;
+        }
+      } else {
+        out.textContent = parsed ? JSON.stringify(parsed, null, 2) : raw.slice(0, 4000);
+        out.hidden = false;
+        player.hidden = true;
+      }
+
+      go.disabled = false;
+    });
+  </script>
+</body>
+</html>

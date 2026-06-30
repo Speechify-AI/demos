@@ -6,7 +6,7 @@
   "description": "Speechify TTS speech marks to WebVTT captions",
   "scripts": {
     "start": "tsx src/index.ts",
-    "demo": "node -e \"require('http').createServer((req,res)=>{const fs=require('fs');const p=require('path');let f=p.join('demo',req.url==='/'?'karaoke.html':req.url);if(req.url.startsWith('/output/'))f=req.url.slice(1);if(!fs.existsSync(f)){res.writeHead(404);res.end();return}const ext=p.extname(f).slice(1);const t={html:'text/html',mp3:'audio/mpeg',vtt:'text/vtt',json:'application/json'}[ext]||'text/plain';res.writeHead(200,{'content-type':t});fs.createReadStream(f).pipe(res)}).listen(8765,()=>console.log('http://localhost:8765/karaoke.html'))\""
+    "demo": "tsx src/server.ts"
   },
   "dependencies": {
     "dotenv": "^16.4.5"
