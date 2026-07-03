@@ -1,0 +1,26 @@
+{
+  "name": "livekit-voice-agent-node",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "LiveKit voice agent using the Speechify TTS plugin",
+  "scripts": {
+    "download-files": "tsx src/agent.ts download-files",
+    "console": "tsx src/agent.ts console",
+    "dev": "tsx src/agent.ts dev",
+    "start": "tsx src/agent.ts start"
+  },
+  "dependencies": {
+    "@livekit/agents": "^1.2.0",
+    "@livekit/agents-plugin-deepgram": "^1.2.0",
+    "@livekit/agents-plugin-openai": "^1.2.0",
+    "@livekit/rtc-node": "^0.13.11",
+    "@speechify/livekit-plugin": "^0.0.1",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}

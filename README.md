@@ -9,6 +9,8 @@ Worked examples that pair with the technical posts on [speechify.ai/blog](https:
 | [`captions-speech-marks/`](./captions-speech-marks) | TypeScript (native) | Synthesizes audio + builds a WebVTT caption file from the speech marks the API returns in the same response. Karaoke-highlight HTML demo included. |
 | [`voice-cloning-narration/`](./voice-cloning-narration) | TypeScript (native) | Clones a voice from a 10-30 sec WAV sample, synthesizes with the new voice, deletes the clone. End-to-end lifecycle. |
 | [`audiobook-pipeline/`](./audiobook-pipeline) | Python (SDK) | Chunks long-form text on sentence boundaries, synthesizes each chunk via the Speechify Python SDK, concatenates the MP3s with ffmpeg. |
+| [`livekit-voice-agent-python/`](./livekit-voice-agent-python) | Python (LiveKit) | Real-time voice assistant using the `speechify-livekit` plugin for TTS, with Deepgram STT and an OpenAI LLM in a LiveKit `AgentSession`. |
+| [`livekit-voice-agent-node/`](./livekit-voice-agent-node) | TypeScript (LiveKit) | Real-time voice assistant using the `@speechify/livekit-plugin` package for TTS, with Deepgram STT and an OpenAI LLM in a LiveKit `AgentSession`. |
 
 ## Get an API key
 
