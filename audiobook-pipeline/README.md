@@ -7,7 +7,6 @@ Splits long-form text on sentence boundaries, synthesizes each chunk via the [Sp
 - `main.py` — the full split-loop-stitch pipeline (chunker + synthesis loop with retries)
 - `concat.sh` — `ffmpeg -f concat` invocation to stitch chunk MP3s into one file
 - `samples/chapter-01.txt` — short demo chapter (~420 chars, one chunk under the cap)
-- `demo/chunker.html` — interactive chunker, paste text and watch chunks colour-code by length
 - `output/chapter-01/` — sample synthesized output (committed for reference)
 
 ## Run it
