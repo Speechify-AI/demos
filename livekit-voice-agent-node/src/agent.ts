@@ -2,7 +2,10 @@ import { type JobContext, WorkerOptions, cli, defineAgent, voice } from '@liveki
 import * as deepgram from '@livekit/agents-plugin-deepgram';
 import * as openai from '@livekit/agents-plugin-openai';
 import * as speechify from '@speechify/livekit-plugin';
+import { config } from 'dotenv';
 import { fileURLToPath } from 'node:url';
+
+config();
 
 export default defineAgent({
   entry: async (ctx: JobContext) => {
