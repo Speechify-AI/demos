@@ -35,7 +35,7 @@ python agent.py console
 ```python
 from livekit.plugins import speechify
 
-tts = speechify.TTS(voice_id="jack", model="simba-3.0")
+tts = speechify.TTS(voice_id="dominic_32", model="simba-3.2")
 ```
 
-`speechify.TTS` streams audio and emits word-level timestamps (`aligned_transcript`), so LiveKit can render synced captions as the agent speaks. `simba-3.0` is the streaming-native model with the lowest time-to-first-audio. Browse voices at [platform.speechify.ai](https://platform.speechify.ai).
+`speechify.TTS` streams audio and emits word-level timestamps (`aligned_transcript`), so LiveKit can render synced captions as the agent speaks. `simba-3.2` is the latest streaming-native model; the voice must support the chosen model (see the `/v1/voices` endpoint). Browse voices at [platform.speechify.ai](https://platform.speechify.ai).

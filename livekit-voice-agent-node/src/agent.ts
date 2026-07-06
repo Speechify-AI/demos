@@ -13,7 +13,7 @@ export default defineAgent({
     const session = new voice.AgentSession({
       stt: new deepgram.STT({ model: 'nova-3' }),
       llm: new openai.LLM({ model: 'gpt-4.1-mini' }),
-      tts: new speechify.TTS({ voiceId: 'jack', model: 'simba-3.0' }),
+      tts: new speechify.TTS({ voiceId: 'dominic_32', model: 'simba-3.2' }),
     });
 
     await session.start({

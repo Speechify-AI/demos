@@ -14,7 +14,7 @@ async def entrypoint(ctx: JobContext) -> None:
     session = AgentSession(
         stt=deepgram.STT(model="nova-3"),
         llm=openai.LLM(model="gpt-4.1-mini"),
-        tts=speechify.TTS(voice_id="jack", model="simba-3.0"),
+        tts=speechify.TTS(voice_id="dominic_32", model="simba-3.2"),
     )
 
     await session.start(
