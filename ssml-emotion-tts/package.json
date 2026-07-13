@@ -1,0 +1,19 @@
+{
+  "name": "ssml-emotion-tts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Speechify TTS SSML emotion and timing demo",
+  "scripts": {
+    "start": "NODE_EXTRA_CA_CERTS=/etc/ssl/cert.pem tsx src/index.ts"
+  },
+  "dependencies": {
+    "@speechify/api": "^3.0.1",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}

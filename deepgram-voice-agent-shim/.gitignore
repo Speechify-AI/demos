@@ -1,0 +1,7 @@
+.env
+.env.*
+!.env.example
+.shim/
+shim-smoke.mp3
+node_modules/
+agent-output-*.wav
