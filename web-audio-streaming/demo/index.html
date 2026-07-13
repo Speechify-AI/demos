@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Web Audio streaming · Speechify TTS demo</title>
+  <style>
+    :root {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      color: #111;
+      background: #f7f7f7;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 4rem 1.5rem; }
+    main {
+      max-width: 56rem;
+      margin: 0 auto;
+      padding: 3rem;
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 28px;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.08);
+    }
+    .eyebrow {
+      margin: 0 0 1rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #777;
+    }
+    h1 { font-weight: 100; font-size: clamp(2.5rem, 7vw, 5.6rem); line-height: 0.92; letter-spacing: -0.06em; margin: 0; }
+    p.subtitle { max-width: 44rem; color: #555; font-size: 1.08rem; line-height: 1.7; margin: 1.35rem 0 2.5rem; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace; background: #f2f2f2; padding: 0.12em 0.38em; border-radius: 5px; }
+    label { display: block; margin: 0 0 0.65rem; font-size: 0.86rem; color: #555; }
+    textarea {
+      width: 100%;
+      min-height: 9rem;
+      resize: vertical;
+      padding: 1rem 1.1rem;
+      border: 1px solid #d7d7d7;
+      border-radius: 16px;
+      font: inherit;
+      font-size: 1rem;
+      line-height: 1.55;
+      color: #111;
+      background: #fff;
+    }
+    textarea:focus { outline: none; border-color: #111; box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.06); }
+    .controls { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: 1.25rem; }
+    button {
+      padding: 0.85rem 1.35rem;
+      background: #111;
+      color: #fff;
+      border: 0;
+      border-radius: 999px;
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button:hover:not(:disabled) { background: #000; }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    .status {
+      min-height: 1.5em;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+      font-size: 0.82rem;
+      color: #666;
+    }
+    .status.ok { color: #2f7d32; }
+    .status.err { color: #c0392b; }
+    .meter {
+      display: grid;
+      grid-template-columns: repeat(36, 1fr);
+      align-items: end;
+      gap: 4px;
+      height: 7rem;
+      margin: 2rem 0 0;
+      padding: 1rem;
+      background: #fafafa;
+      border: 1px solid #ededed;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    .bar {
+      min-height: 8px;
+      border-radius: 999px;
+      background: #d9d9d9;
+      transform-origin: bottom;
+      transition: height 120ms ease, background 120ms ease;
+    }
+    .bar.active { background: #111; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .stat { padding: 1rem; border: 1px solid #ededed; border-radius: 16px; background: #fcfcfc; }
+    .stat span { display: block; color: #777; font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.08em; }
+    .stat strong { display: block; margin-top: 0.35rem; font-size: 1.3rem; font-weight: 300; }
+    .footer { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid #e5e5e5; color: #777; font-size: 0.9rem; line-height: 1.7; }
+    @media (max-width: 640px) {
+      body { padding: 1rem; }
+      main { padding: 1.5rem; border-radius: 20px; }
+      .stats { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="eyebrow">Speechify TTS stream plus Web Audio API</p>
+    <h1>Play PCM as it arrives</h1>
+    <p class="subtitle">The browser posts to a local <code>/v1/audio/stream</code> proxy. The server adds the API key, asks Speechify for <code>audio/pcm</code>, and this page queues each 16-bit chunk into an <code>AudioContext</code>.</p>
+
+    <label for="input">Text to stream</label>
+    <textarea id="input">Streaming into the browser with raw PCM keeps playback close to the first bytes arriving from the Speechify API. Each network chunk becomes a small AudioBuffer scheduled after the previous one.</textarea>
+
+    <div class="controls">
+      <button id="play">Play streaming TTS</button>
+      <div class="status" id="status">Ready. Audio starts from the click handler.</div>
+    </div>
+
+    <div class="meter" id="meter" aria-label="Chunk activity meter"></div>
+
+    <div class="stats">
+      <div class="stat"><span>chunks</span><strong id="chunks">0</strong></div>
+      <div class="stat"><span>bytes</span><strong id="bytes">0</strong></div>
+      <div class="stat"><span>queued audio</span><strong id="seconds">0.00s</strong></div>
+    </div>
+
+    <div class="footer">
+      This demo intentionally avoids <code>decodeAudioData</code>. That API expects a complete encoded file. Raw 24 kHz mono PCM can be converted directly from signed 16-bit samples to Float32 samples, then scheduled back to back with <code>source.start(playhead)</code>.
+    </div>
+  </main>
+
+  <script>
+    const SAMPLE_RATE = 24000;
+    const play = document.getElementById("play");
+    const input = document.getElementById("input");
+    const statusEl = document.getElementById("status");
+    const chunksEl = document.getElementById("chunks");
+    const bytesEl = document.getElementById("bytes");
+    const secondsEl = document.getElementById("seconds");
+    const meter = document.getElementById("meter");
+    const bars = Array.from({ length: 36 }, (_, i) => {
+      const bar = document.createElement("div");
+      bar.className = "bar";
+      bar.style.height = `${10 + (i % 6) * 8}px`;
+      meter.appendChild(bar);
+      return bar;
+    });
+
+    let audioContext;
+    let activeSources = [];
+
+    function setStatus(text, cls) {
+      statusEl.textContent = text;
+      statusEl.className = "status" + (cls ? " " + cls : "");
+    }
+
+    function resetStats() {
+      chunksEl.textContent = "0";
+      bytesEl.textContent = "0";
+      secondsEl.textContent = "0.00s";
+      bars.forEach((bar, i) => {
+        bar.className = "bar";
+        bar.style.height = `${10 + (i % 6) * 8}px`;
+      });
+    }
+
+    function stopActiveSources() {
+      for (const source of activeSources) {
+        try { source.stop(); } catch {}
+      }
+      activeSources = [];
+    }
+
+    function mergeCarry(carry, value) {
+      const merged = new Uint8Array(carry.length + value.length);
+      merged.set(carry);
+      merged.set(value, carry.length);
+      const usable = merged.length - (merged.length % 2);
+      return { bytes: merged.subarray(0, usable), carry: merged.subarray(usable) };
+    }
+
+    function schedulePcm(ctx, bytes, playhead) {
+      if (bytes.length < 2) return playhead;
+
+      const sampleCount = bytes.length / 2;
+      const buffer = ctx.createBuffer(1, sampleCount, SAMPLE_RATE);
+      const channel = buffer.getChannelData(0);
+      const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+
+      for (let i = 0; i < sampleCount; i++) {
+        channel[i] = view.getInt16(i * 2, true) / 32768;
+      }
+
+      const source = ctx.createBufferSource();
+      source.buffer = buffer;
+      source.connect(ctx.destination);
+      source.onended = () => {
+        activeSources = activeSources.filter((item) => item !== source);
+      };
+
+      const startAt = Math.max(playhead, ctx.currentTime + 0.03);
+      source.start(startAt);
+      activeSources.push(source);
+      return startAt + buffer.duration;
+    }
+
+    function updateMeter(index, byteLength) {
+      const bar = bars[index % bars.length];
+      bar.className = "bar active";
+      bar.style.height = `${Math.min(96, 12 + byteLength / 80)}px`;
+      window.setTimeout(() => bar.className = "bar", 360);
+    }
+
+    play.addEventListener("click", async () => {
+      const text = input.value.trim();
+      if (!text) {
+        setStatus("Type some text first.", "err");
+        return;
+      }
+
+      play.disabled = true;
+      stopActiveSources();
+      resetStats();
+      setStatus("Opening AudioContext from the click handler...");
+
+      audioContext = audioContext || new AudioContext({ sampleRate: SAMPLE_RATE });
+      if (audioContext.state === "suspended") await audioContext.resume();
+
+      let res;
+      try {
+        res = await fetch("/v1/audio/stream", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "audio/pcm",
+          },
+          body: JSON.stringify({
+            input: text,
+            voice_id: "george",
+            model: "simba-english",
+          }),
+        });
+      } catch (e) {
+        setStatus("Network error: " + e.message, "err");
+        play.disabled = false;
+        return;
+      }
+
+      if (!res.ok || !res.body) {
+        const message = await res.text();
+        setStatus(`Stream failed: ${res.status} ${message.slice(0, 160)}`, "err");
+        play.disabled = false;
+        return;
+      }
+
+      const reader = res.body.getReader();
+      let playhead = audioContext.currentTime + 0.05;
+      let carry = new Uint8Array(0);
+      let chunkCount = 0;
+      let byteCount = 0;
+      const startedAt = audioContext.currentTime;
+
+      setStatus("playing streamed PCM...");
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const merged = mergeCarry(carry, value);
+          carry = merged.carry;
+          if (merged.bytes.length === 0) continue;
+
+          chunkCount += 1;
+          byteCount += merged.bytes.length;
+          playhead = schedulePcm(audioContext, merged.bytes, playhead);
+
+          chunksEl.textContent = chunkCount.toLocaleString();
+          bytesEl.textContent = byteCount.toLocaleString();
+          secondsEl.textContent = Math.max(0, playhead - startedAt).toFixed(2) + "s";
+          updateMeter(chunkCount - 1, merged.bytes.length);
+          setStatus(`playing streamed PCM... ${chunkCount} chunks, ${byteCount.toLocaleString()} bytes`, "ok");
+        }
+
+        const msUntilDone = Math.max(0, (playhead - audioContext.currentTime) * 1000);
+        window.setTimeout(() => {
+          setStatus(`done: played ${chunkCount} chunks, ${byteCount.toLocaleString()} bytes`, "ok");
+          play.disabled = false;
+        }, msUntilDone + 120);
+      } catch (e) {
+        setStatus("Playback error: " + e.message, "err");
+        play.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

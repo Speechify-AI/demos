@@ -1,0 +1,13 @@
+{
+  "name": "deepgram-voice-agent-shim",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Deepgram Voice Agent speaking with Speechify via the tts-shims OpenAI-compatible proxy",
+  "scripts": {
+    "agent": "node agent.js"
+  },
+  "dependencies": {
+    "@deepgram/sdk": "^5.5.0",
+    "cross-fetch": "^4.0.0"
+  }
+}
