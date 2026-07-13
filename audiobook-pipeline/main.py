@@ -69,11 +69,11 @@ def synthesize_chunks(
 ) -> list[Path]:
     """Synthesize each chunk sequentially with exponential-backoff retries."""
     load_dotenv()
-    api_key = os.environ.get("SPEECHIFY_API_KEY")
-    if not api_key:
+    token = os.environ.get("SPEECHIFY_API_KEY")
+    if not token:
         raise SystemExit("Set SPEECHIFY_API_KEY (copy .env.example to .env).")
 
-    client = Speechify(api_key=api_key)
+    client = Speechify(token=token)
     out_dir.mkdir(parents=True, exist_ok=True)
 
     files: list[Path] = []
