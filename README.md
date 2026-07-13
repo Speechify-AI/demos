@@ -17,6 +17,7 @@ Worked examples that pair with the technical posts on [speechify.ai/blog](https:
 | [`web-audio-streaming/`](./web-audio-streaming) | TypeScript (browser) | Streams Speechify PCM into the browser Web Audio API for low-latency playback, behind a zero-dep proxy that keeps the key server-side. |
 | [`deepgram-voice-agent-shim/`](./deepgram-voice-agent-shim) | Go shim + Node | Points Deepgram Voice Agent at the `tts-shims` OpenAI-compatible proxy so it speaks with a Speechify voice, key held server-side. |
 | [`vapi-custom-voice/`](./vapi-custom-voice) | Go shim | Points Vapi custom voice at the `tts-shims` Vapi-compatible proxy so it speaks with Speechify raw PCM, key held server-side. |
+| [`pipecat-agent-speechify/`](./pipecat-agent-speechify) | Python (Pipecat) | Real-time voice pipeline using Pipecat with Deepgram STT, Anthropic Claude, and Speechify TTS through `SpeechifyTTSService`. |
 
 ## Get an API key
 
