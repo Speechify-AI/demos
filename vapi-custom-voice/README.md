@@ -7,7 +7,7 @@ Vapi's custom TTS integration is not OpenAI-shaped. It sends `POST` requests wit
 ## What you get
 
 - `run.sh` checks out a pinned `Speechify-AI/tts-shims` revision into an ignored `.shim/` directory, builds the `vapi` binary, starts it, checks `/healthz`, and runs a curl smoke test against `POST /synthesize` using Vapi's request shape.
-- `.env.example` lists the values used by this demo. `SPEECHIFY_API_KEY` is required for the shim smoke test. `VAPI_SECRET` is optional locally, but mirrors the `server.secret` Vapi sends as `X-VAPI-SECRET`.
+- `.env.example` lists the values used by this demo. `SPEECHIFY_API_KEY` is required for the shim smoke test. `VAPI_SECRET` mirrors the `server.secret` Vapi sends as `X-VAPI-SECRET`, and the shim rejects requests that do not match it.
 - The script proves the response is real PCM by wrapping the raw bytes to WAV with `ffmpeg`, then checking duration, sample count, nonzero samples, and peak amplitude.
 - This folder does not vendor the shim source. It links to the upstream repo and clones it at run time.
 
@@ -23,10 +23,10 @@ The verified run for this demo printed:
 
 ```text
 health 200
-synthesize 200 165600 bytes application/octet-stream
-duration=3.450000
-size=165678
-samples=82800 nonzero=81634 peak=21631
+synthesize 200 151680 bytes application/octet-stream
+duration=3.160000
+size=151758
+samples=75840 nonzero=72265 peak=19455
 ```
 
 That is a local proof of the webhook contract. You do not need a Vapi account for this smoke test because it sends the same JSON shape Vapi sends to the shim. A live Vapi phone call still requires a Vapi assistant, a public HTTPS URL for the shim, and the normal Vapi account setup.
@@ -53,7 +53,7 @@ curl -o shim-smoke.pcm \
   -d '{"message":{"type":"voice-request","text":"Vapi custom voice, now speaking with Speechify.","sampleRate":24000,"timestamp":1720000000000,"call":{},"assistant":{}}}'
 ```
 
-When `SPEECHIFY_API_KEY` is set in the shim process, Vapi's `X-VAPI-SECRET` stays a client-to-shim secret. It is not forwarded to Speechify. The shim calls `POST /v1/audio/stream` with `voice_id: "geffen_32"`, `model: "simba-3.2"`, and `output_format: "pcm_24000"`, then streams the raw PCM bytes back to Vapi.
+When `SPEECHIFY_API_KEY` is set in the shim process, Vapi's `X-VAPI-SECRET` stays a client-to-shim secret. The shim validates that header before synthesis and does not forward it to Speechify. The shim calls `POST /v1/audio/stream` with `voice_id: "geffen_32"`, `model: "simba-3.2"`, and `output_format: "pcm_24000"`, then streams the raw PCM bytes back to Vapi.
 
 ## Wiring it into Vapi
 

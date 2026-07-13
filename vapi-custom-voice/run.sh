@@ -6,7 +6,7 @@ ENV_FILE="$ROOT_DIR/.env"
 SHIM_DIR="$ROOT_DIR/.shim/tts-shims"
 OUT_PCM="$ROOT_DIR/shim-smoke.pcm"
 OUT_WAV="$ROOT_DIR/shim-smoke.wav"
-SHIM_REF="${SHIM_REF:-d84f0f04eabd08e281a1541f8914c5293691a54f}"
+SHIM_REF="${SHIM_REF:-000ed86c68a60d1609c7b3ab912fe57365247cb3}"
 
 if [[ -f "$ENV_FILE" ]]; then
   set -a
@@ -48,6 +48,7 @@ fi
 export SPEECHIFY_API_KEY
 export SHIM_ADDR="$PORT"
 export SHIM_DEFAULT_MODEL="${SHIM_DEFAULT_MODEL:-simba-3.2}"
+export VAPI_SECRET
 
 "$SHIM_DIR/bin/vapi" > "$ROOT_DIR/.shim/vapi.log" 2>&1 &
 SHIM_PID=$!
