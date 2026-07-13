@@ -11,6 +11,10 @@ Worked examples that pair with the technical posts on [speechify.ai/blog](https:
 | [`audiobook-pipeline/`](./audiobook-pipeline) | Python (SDK) | Chunks long-form text on sentence boundaries, synthesizes each chunk via the Speechify Python SDK, concatenates the MP3s with ffmpeg. |
 | [`livekit-voice-agent-python/`](./livekit-voice-agent-python) | Python (LiveKit) | Real-time voice assistant using the `speechify-livekit` plugin for TTS, with Deepgram STT and an OpenAI LLM in a LiveKit `AgentSession`. |
 | [`livekit-voice-agent-node/`](./livekit-voice-agent-node) | TypeScript (LiveKit) | Real-time voice assistant using the `@speechify/livekit-plugin` package for TTS, with Deepgram STT and an OpenAI LLM in a LiveKit `AgentSession`. |
+| [`ssml-emotion-tts/`](./ssml-emotion-tts) | TypeScript (SDK) | Drives emotion, pauses, prosody, emphasis, and pronunciation with SSML in a single `POST /v1/audio/speech` request. |
+| [`next-voice-cloning-app/`](./next-voice-cloning-app) | Next.js | Voice cloning web app: upload a sample, clone, synthesize with the clone. The API key stays server-side in route handlers. |
+| [`web-audio-streaming/`](./web-audio-streaming) | TypeScript (browser) | Streams Speechify PCM into the browser Web Audio API for low-latency playback, behind a zero-dep proxy that keeps the key server-side. |
+| [`deepgram-voice-agent-shim/`](./deepgram-voice-agent-shim) | Go shim + Node | Points Deepgram Voice Agent at the `tts-shims` OpenAI-compatible proxy so it speaks with a Speechify voice, key held server-side. |
 
 ## Get an API key
 
