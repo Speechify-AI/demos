@@ -15,6 +15,7 @@ Worked examples that pair with the technical posts on [speechify.ai/blog](https:
 | [`next-voice-cloning-app/`](./next-voice-cloning-app) | Next.js | Voice cloning web app: upload a sample, clone, synthesize with the clone. The API key stays server-side in route handlers. |
 | [`web-audio-streaming/`](./web-audio-streaming) | TypeScript (browser) | Streams Speechify PCM into the browser Web Audio API for low-latency playback, behind a zero-dep proxy that keeps the key server-side. |
 | [`deepgram-voice-agent-shim/`](./deepgram-voice-agent-shim) | Go shim + Node | Points Deepgram Voice Agent at the `tts-shims` OpenAI-compatible proxy so it speaks with a Speechify voice, key held server-side. |
+| [`vapi-custom-voice/`](./vapi-custom-voice) | Go shim | Points Vapi custom voice at the `tts-shims` Vapi-compatible proxy so it speaks with Speechify raw PCM, key held server-side. |
 
 ## Get an API key
 
