@@ -15,8 +15,8 @@ DEFAULT_BASE_URL = "https://api.speechify.ai/v1"
 def main() -> None:
     load_dotenv()
 
-    api_key = os.environ.get("SPEECHIFY_API_KEY")
-    if not api_key:
+    token = os.environ.get("SPEECHIFY_API_KEY")
+    if not token:
         raise SystemExit("Set SPEECHIFY_API_KEY, or copy .env.example to .env and fill it in.")
 
     base_url = os.environ.get("SPEECHIFY_BASE_URL", DEFAULT_BASE_URL).rstrip("/")
@@ -36,7 +36,7 @@ def main() -> None:
         data=payload,
         method="POST",
         headers={
-            "Authorization": f"Bearer {api_key}",
+            "Authorization": f"Bearer {token}",
             "Content-Type": "application/json",
             "Accept": "audio/pcm",
         },

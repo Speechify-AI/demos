@@ -50,7 +50,7 @@ from livekit.plugins import speechify
 tts = speechify.TTS(voice_id="dominic_32", model="simba-3.2")
 ```
 
-`livekit-plugins-speechify` reads `SPEECHIFY_API_KEY` from the environment unless you pass `api_key=` directly. The demo keeps the key in `.env` and loads it with `python-dotenv`.
+`livekit-plugins-speechify` reads `SPEECHIFY_API_KEY` from the environment unless you pass `token=` directly. The demo keeps the key in `.env` and loads it with `python-dotenv`.
 
 This demo passes `dominic_32` and `simba-3.2` explicitly so the voice and model pairing is visible in the code. If you pick another voice, use one whose model list includes `simba-3.2`.
 
