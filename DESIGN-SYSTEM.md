@@ -100,6 +100,32 @@ what we shipped.
 - **CTAs**: tagged with `utm_source=demos.speechify.ai` (+ medium/campaign/
   content) so demos-driven signups attribute in the same PostHog funnel.
 
+## Audit against speechify.ai/brand
+
+Checked against the canonical brand page ([speechify.ai/brand](https://speechify.ai/brand),
+machine-readable spec at `/brand/llms-full.txt`). Aligned on all the core rules:
+monochrome palette (exact hexes), one family (ABC Diatype), thin (100) display,
+no weight 600, ink primary button, uppercase wide-tracked eyebrow, sentence-case
+numbers-over-adjectives voice.
+
+Corrections the brand page surfaced:
+
+- **Signup attribution is `sfy_*`, not `utm_*`.** The live brand page tags
+  signup links `?sfy_source=…&sfy_page=…&sfy_placement=…` (the `apps/site` code
+  we first copied still used `utm_*`; the site has since moved on). We switched
+  the demos CTAs to `sfy_source=demos.speechify.ai&sfy_page=home&sfy_placement=header-*`.
+  Feedback: the attribution convention isn't in the design tokens or the
+  `apps/site` snippet we referenced — the `sfy_*` scheme lives only on the live
+  site, so a copied surface silently uses the stale `utm_*`. Publish the CTA
+  attribution convention alongside the tokens.
+
+- **Two logo assets exist.** The brand page designates
+  `/brand/logo/SpeechifyAI-wordmark-black.svg` as the official downloadable
+  wordmark, but the site header ships a *different* file at
+  `/speechify-ai-logo.svg` (different SVG, same wordmark). We use the header
+  version (to match the header we're aligning to). Feedback: the "official" brand
+  asset and the shipped header asset diverge — worth reconciling to one file.
+
 ## Known remaining coupling / debt
 
 - **Cross-origin font dependency**: the hero relies on `speechify.ai/fonts/*`
