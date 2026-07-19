@@ -2,11 +2,9 @@
 
 Worked examples that pair with the technical posts on [speechify.ai/blog](https://speechify.ai/blog). Each folder is self-contained: copy the folder, follow its README, run it.
 
-The web-hostable demos are also composed into a single Vercel project and served at [demos.speechify.ai](https://demos.speechify.ai)/`<demo-name>`. The **Live** column links a demo only when it is one of the hosted apps; terminal scripts, Python pipelines, and agent workers run locally only and have no link.
-
 ## Demos
 
-The table below is generated from [`demos.json`](./demos.json) by `pnpm generate` — edit the manifest, not the table.
+Demos with a **Live** link run in your browser at [demos.speechify.ai](https://demos.speechify.ai); the rest are clone-and-run.
 
 <!-- DEMOS:START -->
 | Folder | Stack | Live | What it does |
@@ -24,16 +22,6 @@ The table below is generated from [`demos.json`](./demos.json) by `pnpm generate
 | [`vapi-custom-voice/`](./vapi-custom-voice) | Go shim |  | Points Vapi custom voice at the tts-shims Vapi-compatible proxy so it speaks with Speechify raw PCM, key held server-side. |
 | [`pipecat-agent-speechify/`](./pipecat-agent-speechify) | Python (Pipecat) |  | Real-time voice pipeline using Pipecat with Deepgram STT, Anthropic Claude, and Speechify TTS through SpeechifyTTSService. |
 <!-- DEMOS:END -->
-
-## Hosting (demos.speechify.ai)
-
-The whole repo deploys as **one** Vercel project using [Vercel Services](https://vercel.com/docs/services): each hostable demo is a service in [`vercel.json`](./vercel.json), built independently, keeping its own serverless endpoints, and routed under its own path prefix. One project means no per-project microfrontends fee.
-
-Only web demos are registered as services. To add one:
-
-1. Add the folder to [`pnpm-workspace.yaml`](./pnpm-workspace.yaml).
-2. Add a `services` entry and a `rewrites` rule in [`vercel.json`](./vercel.json).
-3. Mount the app under its `/<demo-name>` prefix (e.g. Next.js `basePath`), and fill in this table's **Live** column.
 
 ## Get an API key
 
