@@ -32,6 +32,18 @@ A demo's `hosted: true` flag is what gives it a live link in the README table an
 on the landing page. Keep it in sync with whether the demo is actually registered
 as a service below.
 
+## Design system
+
+The landing page follows the canonical Speechify brand and design system:
+**[speechify.ai/brand](https://speechify.ai/brand)** (machine-readable spec:
+[`/brand/llms-full.txt`](https://speechify.ai/brand/llms-full.txt)). Match it for
+any change to type, color, logo, buttons, or copy — one font (ABC Diatype),
+monochrome palette, thin display type, ink primary buttons, sentence-case voice.
+
+ABC Diatype is licensed and is **not** committed to this public repo; it is
+loaded cross-origin from `speechify.ai/fonts/`. Signup CTAs carry
+`sfy_source=demos.speechify.ai` for attribution.
+
 ## Adding a hostable demo
 
 Demos live under `demos/<slug>/`, but are served at `/<slug>` (not
