@@ -3,6 +3,8 @@
   "services": {
     "site": {
       "root": "site/",
+      "framework": null,
+      "buildCommand": "pnpm run build",
       "outputDirectory": "public"
     },
     "next-voice-cloning-app": {
@@ -14,6 +16,10 @@
     {
       "source": "/next-voice-cloning-app/:path*",
       "destination": { "service": "next-voice-cloning-app" }
+    },
+    {
+      "source": "/",
+      "destination": { "service": "site", "path": "/index.html" }
     },
     {
       "source": "/:path*",
