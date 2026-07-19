@@ -93,9 +93,9 @@
       }
       .btn-outline { border: 1px solid var(--foreground); color: var(--foreground); background: transparent; }
       .btn-outline:hover { background: var(--foreground); color: var(--primary-foreground); }
-      /* No border on the filled button (matches speechify.ai); a border here
-         made the primary pill 2px taller than the outline one. */
-      .btn-primary { background: var(--foreground); color: var(--primary-foreground); border: none; }
+      /* Transparent 1px border so the filled button reserves the same box height
+         as the outline button (which has a real 1px border). */
+      .btn-primary { background: var(--foreground); color: var(--primary-foreground); border: 1px solid transparent; }
       .btn-primary:hover { background: rgba(10, 10, 10, 0.9); color: var(--primary-foreground); }
       @media (max-width: 640px) {
         nav.top { gap: 16px; }
