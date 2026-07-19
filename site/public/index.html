@@ -176,6 +176,22 @@
         transition: border-color 0.15s ease, box-shadow 0.15s ease;
       }
       .card:hover { border-color: var(--border-strong); box-shadow: 0 4px 14px rgba(12, 12, 12, 0.07); }
+      /* Hosted cards stand out within the monochrome system (ink is the only
+         sanctioned accent per speechify.ai/brand): ink border + persistent
+         elevation, no color. */
+      .card--hosted {
+        border-color: var(--foreground);
+        box-shadow: 0 4px 14px rgba(12, 12, 12, 0.07);
+      }
+      .card--hosted:hover { box-shadow: 0 8px 24px rgba(12, 12, 12, 0.12); }
+      .card--hosted .title { font-weight: 500; }
+      /* Stronger LIVE badge: ink-bordered pill, keeps the one brand-sanctioned green dot. */
+      .card--hosted .live {
+        color: var(--foreground);
+        border: 1px solid var(--foreground);
+        border-radius: 999px;
+        padding: 3px 9px;
+      }
       .card .meta { display: flex; align-items: center; gap: 10px; }
       .card .idx { font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary); }
       .card .stack {
@@ -397,7 +413,7 @@
             ? '<span class="live"><span class="dot"></span>LIVE</span>'
             : '<span class="source">SOURCE</span>';
           return (
-            '<a class="card" href="' + esc(v.href) + '" target="_blank" rel="noopener">' +
+            '<a class="card' + (v.hosted ? " card--hosted" : "") + '" href="' + esc(v.href) + '" target="_blank" rel="noopener">' +
             '<div class="meta">' +
             '<span class="idx">' + v.index + "</span>" +
             '<span class="stack">' + esc(v.stack) + "</span>" +
