@@ -151,7 +151,10 @@ function buildJsonLd() {
 function writeSiteData() {
   let html = readFileSync(INDEX_PATH, "utf8");
   html = replaceMarker(html, DATA_START, DATA_END, `      window.__DEMOS__ = ${JSON.stringify(demos.map(payloadFor))};`);
-  html = replaceMarker(html, "/* JSONLD:START */", "/* JSONLD:END */", buildJsonLd());
+  // The JSON-LD markers are HTML comments *outside* the <script>, so the whole
+  // script tag is regenerated with pure JSON inside (a JS-comment marker inside
+  // the script would make the ld+json invalid and unparseable by crawlers).
+  html = replaceMarker(html, "<!-- JSONLD:START -->", "<!-- JSONLD:END -->", `    <script type="application/ld+json">${buildJsonLd()}</script>`);
   writeFileSync(INDEX_PATH, html);
 }
 
