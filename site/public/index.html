@@ -103,7 +103,14 @@
       }
 
       .hero { padding: 132px 24px 40px; }
-      .eyebrow { font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.04em; color: var(--text-tertiary); }
+      /* Breadcrumb eyebrow — matches the speechify.ai overline token
+         (text-overline: 0.6875rem / 0.08em, font-medium, uppercase, muted). */
+      .breadcrumb { font-size: 0.6875rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; line-height: 1.3; color: var(--muted-foreground); }
+      .breadcrumb ol { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+      .breadcrumb a { color: var(--muted-foreground); text-decoration: none; transition: color 0.2s ease; }
+      .breadcrumb a:hover { color: var(--foreground); }
+      .breadcrumb .sep { color: var(--muted-foreground); }
+      .breadcrumb [aria-current="page"] { color: var(--foreground); }
       h1 {
         font-family: var(--font-display); font-weight: 100;
         font-size: clamp(36px, 5.5vw, 60px); line-height: 1.02; letter-spacing: -0.02em;
@@ -181,8 +188,53 @@
         * { transition: none !important; }
       }
     </style>
+
+    <!-- Google Tag Manager -->
+    <script>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != "dataLayer" ? "&l=" + l : "";
+        j.async = true;
+        j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, "script", "dataLayer", "GTM-KG9HDN45");
+    </script>
+    <!-- End Google Tag Manager -->
+
+    <!-- PostHog — same project/proxy/config as speechify.ai so demos traffic
+         stitches into the shared acquisition funnel. cross_subdomain_cookie
+         carries the anon distinct_id across the .speechify.ai subdomains.
+         Dev-gated: skips localhost / 127.0.0.1 / *.local. -->
+    <script>
+      (function () {
+        var host = location.hostname;
+        if (host === "localhost" || host === "127.0.0.1" || /\.local$/.test(host)) return;
+        if (window.__phLoaded) return;
+        window.__phLoaded = true;
+        !(function (t, e) { var o, n, p, r; e.__SV || ((window.posthog = e), (e._i = []), (e.init = function (i, s, a) { function g(t, e) { var o = e.split("."); 2 == o.length && ((t = t[o[0]]), (e = o[1])), (t[e] = function () { t.push([e].concat(Array.prototype.slice.call(arguments, 0))); }); } ((p = t.createElement("script")).type = "text/javascript"), (p.crossOrigin = "anonymous"), (p.async = !0), (p.src = s.api_host + "/static/array.js"), (r = t.getElementsByTagName("script")[0]).parentNode.insertBefore(p, r); var u = e; for (void 0 !== a ? (u = e[a] = []) : (a = "posthog"), u.people = u.people || [], u.toString = function (t) { var e = "posthog"; return "posthog" !== a && (e += "." + a), t || (e += " (stub)"), e; }, u.people.toString = function () { return u.toString(1) + ".people (stub)"; }, o = "init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug getPageViewId captureTraceFeedback captureTraceMetric".split(" "), n = 0; n < o.length; n++) g(u, o[n]); e._i.push([i, s, a]); }), (e.__SV = 1)); })(document, window.posthog || []);
+        posthog.init("phc_AT7dQFLQUiaiNR7SxhKtQJDxwQpLGG6XtTqfNWyjpGLF", {
+          api_host: "https://edge.speechify.ai",
+          ui_host: "https://us.posthog.com",
+          defaults: "2026-05-30",
+          person_profiles: "identified_only",
+          cross_subdomain_cookie: true,
+          capture_exceptions: false,
+          disable_session_recording: true,
+          capture_pageview: false,
+        });
+        posthog.register({ environment: /(^|\.)speechify\.ai$/.test(host) ? "production" : "preview" });
+        posthog.capture("$pageview");
+      })();
+    </script>
+    <!-- End PostHog -->
   </head>
   <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KG9HDN45" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <div class="page">
       <header id="site-header">
         <div class="header-inner">
@@ -202,7 +254,13 @@
       </header>
 
       <section class="wrap hero">
-        <div class="eyebrow">DEMOS.SPEECHIFY.AI</div>
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <ol>
+            <li><a href="https://speechify.ai">SpeechifyAI</a></li>
+            <li class="sep" aria-hidden="true">·</li>
+            <li aria-current="page">Demos</li>
+          </ol>
+        </nav>
         <h1>See the API in action.</h1>
         <p class="subhead">
           Open-source demos built on the Speechify API — text-to-speech, voice cloning, and real-time
