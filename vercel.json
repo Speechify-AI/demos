@@ -2,7 +2,8 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "services": {
     "site": {
-      "root": "site/"
+      "root": "site/",
+      "outputDirectory": "public"
     },
     "next-voice-cloning-app": {
       "root": "next-voice-cloning-app/",
