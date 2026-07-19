@@ -1,89 +1,110 @@
-# Design system alignment
+# Design system: alignment & feedback
 
 The demos landing page ([`site/`](./site)) follows the canonical Speechify
-marketing design system (`speechify.ai`, the Astro app at `apps/site` in the
-`speechify-api` repo). This file records how they line up and the one deliberate
-constraint (the brand font can't ship in this public repo).
+design system (`speechify.ai` — the Astro app at `apps/site` in the
+`speechify-api` repo).
 
-## Summary
+It started from a **generated design handoff** that used Google-Fonts stand-ins
+and its own token set. Bringing it in line with the real system surfaced a
+consistent set of places where the *generated* design diverged from the
+*canonical* one. Those are captured below as **feedback for the design /
+handoff-generation process** — every item is a correction we had to make.
 
-| Area | Canonical (speechify.ai) | Demos landing (here) | Status |
+## Where the generated handoff diverged from the design system
+
+Each row: what the handoff specified → what the canonical system actually uses →
+what we shipped.
+
+| Element | Handoff (generated) | Canonical (speechify.ai) | Shipped |
 | --- | --- | --- | --- |
-| Font family | **ABCDiatype**, one family for everything | **ABCDiatype**, loaded cross-origin | ✅ aligned |
-| Hero H1 weight | 100 (thin) | 100 (thin) | ✅ aligned |
-| Color palette | `#0a0a0a` / `#525252` / `#e5e5e5` … | same canonical hex | ✅ aligned |
-| Logo | `speechify-ai-logo.svg` | same file (byte-identical) | ✅ aligned |
-| Header buttons | ink pill + outline pill | same shape/padding/palette | ✅ aligned |
-| Scroll-blur header | yes | ported | ✅ aligned |
+| **Type system** | 3 fonts: Space Grotesk + IBM Plex Sans + IBM Plex Mono | **1 font: ABCDiatype** for everything | ABCDiatype only |
+| **Hero H1 weight** | Space Grotesk **700 (bold)** | ABCDiatype **100 (thin)** | 100 (thin) |
+| **H1 letter-spacing** | -0.03em | -0.02em | -0.02em |
+| **Ink color** | `#0C0C0C` | `#0A0A0A` | `#0A0A0A` |
+| **Secondary text** | `#52525B` | `#525252` | `#525252` |
+| **Tertiary/muted text** | `#A1A1A6` | `#666666` | `#666666` |
+| **Border** | `#E4E4E6` / `#D1D1D4` | `#E5E5E5` | `#E5E5E5` |
+| **Page ground** | `#FCFCFC` | `#FFFFFF` | `#FFFFFF` |
+| **Container width** | max-width **1120px** | **max-w-7xl (1280px)** | 1280px |
+| **Horizontal gutter** | **28px** | **px-6 (24px)** | 24px |
+| **Logo** | "typeset wordmark, no image file exists" | there **is** a logo asset (`speechify-ai-logo.svg`) | real logo |
+| **Header eyebrow** | a `DEMOS` mono pill next to the wordmark | no such pill in the system | removed |
+| **Hero eyebrow** | `DEMOS.SPEECHIFY.AI` (mono text) | a **breadcrumb** (`Home · Section`, overline token) | breadcrumb `SpeechifyAI · Demos` |
+| **Primary CTA label** | "Sign Up Free" | "Get API Key — Free" | "Get API Key — Free" |
+| **Primary button** | radius 8px, ~36px, own hover | design-system pill: `rounded-full`, `px-4 py-1.5`, no border | pill, border-equalized |
+| **Favicon** | not specified | `favicon.svg` + `apple-touch-icon.png` (brand mark) | added |
+| **Analytics** | not included | GTM + PostHog (shared funnel) | ported |
+| **Mono usage** | mono for eyebrows/badges/stats/link-lines | system has **no mono** | folded into the single sans |
 
-## The font: one family, loaded cross-origin
+## Root-cause themes (the actionable feedback)
 
-The design system is strict: **ABCDiatype for everything**, weight-mapped
-(100/300/400/500/700), never `font-semibold` (600 — no file exists). We match
-that: one `--font-sans`, with `--font-display` and `--font-mono` aliased to it.
+1. **The generated design invented its own token set instead of the real one.**
+   Every color was a near-miss (`#0C0C0C` vs `#0A0A0A`, `#A1A1A6` vs `#666666`,
+   `#E4E4E6` vs `#E5E5E5`), the container was narrower (1120 vs 1280) with wider
+   gutters (28 vs 24). The generator should consume the **published design
+   tokens**, not approximate them. (There is currently no consumable token
+   artifact — see #4 — which is likely *why* it approximated.)
 
-**ABCDiatype is a licensed commercial font (ABC Dinamo) and must NOT be
-redistributed in this public, MIT-licensed repo.** So we do not commit the
-`.woff2` files here. Instead the landing page's `@font-face` rules load them
-cross-origin from the marketing origin, which already hosts them and serves
-`/fonts/*.woff2` with `Access-Control-Allow-Origin: *`:
+2. **The generated design used substitute fonts as if they were the brand
+   font — and picked the wrong weight.** The system is one thin font
+   (ABCDiatype 100 for display); the handoff shipped three bold Google fonts.
+   Substitutes in a handoff must be flagged as non-final AND weight/role-mapped
+   to the real type ramp, or they ship looking off-brand.
 
-```
-https://speechify.ai/fonts/ABCDiatype-{Thin,Light,Regular,Medium,Bold}.woff2
-```
+3. **The generated design asserted things about the brand that are false.** It
+   claimed "no logo image file exists" and invented a `DEMOS` pill and a
+   `DEMOS.SPEECHIFY.AI` eyebrow. The real system has a logo asset and uses a
+   **breadcrumb** as the hero eyebrow. Generation shouldn't fabricate brand
+   facts; it should reference the actual component library.
 
-Tradeoff: the landing page depends on `speechify.ai` serving those font files
-with open CORS. If that origin changes the path, removes the files, or tightens
-CORS, the demos hero silently falls back to the system sans stack. Acceptable
-for a demos index; revisit if it needs to be fully self-contained (which would
-require a licensed, committable font or a licensed CDN).
+4. **No consumable design-token artifact.** To match the system we hard-copied
+   hex values, `@font-face` blocks, container classes, button styles, the
+   breadcrumb/overline treatment, and the analytics snippets out of
+   `apps/site`. There is no shared token package/CSS to import, so every
+   satellite site reimplements and drifts. **Publishing tokens (a CSS file or
+   small package) is the single highest-leverage fix** — it would have prevented
+   almost every row in the table above.
 
-## Type roles
+5. **No portable/licensable font path for public/OSS properties.** ABCDiatype is
+   licensed and can't ship in this public MIT repo, so we load it cross-origin
+   from `speechify.ai/fonts/` (open CORS). The system needs a sanctioned way to
+   use brand type on public properties (licensed CDN, a supported cross-origin
+   font contract, or an approved fallback face).
 
-- **Hero H1** — `font-weight: 100` (thin), `clamp(36px,5.5vw,60px)`,
-  line-height 1.02, letter-spacing -0.02em. Matches the canonical `text-display`
-  thin treatment.
-- **Card titles** — `font-weight: 400` (normal), matching the canonical
-  `text-title` weight.
-- **Eyebrow / labels / stats / link-lines** — ABCDiatype at 400/500. (Design
-  note below: the handoff wanted a monospaced treatment here, which the
-  single-font system has no glyph set for.)
+6. **No monospace in the system.** Developer/API-facing surfaces (demos, docs,
+   code) want a mono for eyebrows, metrics, code, and URLs — the handoff assumed
+   one existed. The system has none; consider adding a sanctioned mono for
+   developer surfaces.
 
-## Color tokens
+7. **Analytics isn't part of the handoff/design baseline.** A brand web surface
+   needs the shared GTM + PostHog wiring to fold into the acquisition funnel;
+   the generated design omitted it entirely. A "new Speechify web surface"
+   checklist should include the analytics stack.
 
-Aligned to the canonical hex: `--foreground #0a0a0a`, `--foreground-secondary
-#525252`, `--muted #f5f5f5`, `--muted-foreground #666666`, `--border #e5e5e5`,
-`--primary-foreground #fafafa`, `--background #ffffff`. The landing page's local
-aliases (`--text-primary`, `--surface-*`, etc.) now map onto these exact values
-rather than the near-miss set the handoff shipped with.
+## What we ended up shipping (now matches the system)
 
-## Feedback for the design system
+- **Font**: ABCDiatype, one family, loaded cross-origin from `speechify.ai`
+  (licensed — not committed here).
+- **Hero**: thin H1 (weight 100), breadcrumb eyebrow (`SpeechifyAI · Demos`) in
+  the overline token (11px / 0.08em / uppercase / medium / `#666666`).
+- **Color / layout**: canonical hex tokens, `max-w-7xl` (1280px) + `px-6`
+  (24px).
+- **Header**: real logo, `Docs` / `GitHub` nav, `Talk to Sales` (outline pill) +
+  `Get API Key — Free` (filled pill, equal height), scroll-blur.
+- **Favicon**: brand logomark `favicon.svg` + `apple-touch-icon.png`.
+- **Analytics**: GTM (`GTM-KG9HDN45`) + PostHog (project `phc_AT7dQ…`, proxy
+  `edge.speechify.ai`, `cross_subdomain_cookie`, `person_profiles:
+  identified_only`, `capture_pageview` off + manual `$pageview`, dev-gated),
+  matching `speechify.ai` so demos folds into the shared funnel. Verified live:
+  `edge.speechify.ai/i/v0/e/` returns 200.
+- **CTAs**: tagged with `utm_source=demos.speechify.ai` (+ medium/campaign/
+  content) so demos-driven signups attribute in the same PostHog funnel.
 
-Captured while aligning this page — gaps the demos surface exposed:
+## Known remaining coupling / debt
 
-1. **No portable / licensable font path for satellite sites.** The brand font is
-   self-hosted in the private-ish marketing repo, but a public OSS repo (demos)
-   can't legally ship it. Today the only options are cross-origin loading from
-   `speechify.ai` (fragile coupling) or a substitute font (off-brand). The design
-   system should define a sanctioned way to use the brand type on public/OSS
-   properties — e.g. a licensed webfont CDN, a documented cross-origin font
-   endpoint that's a supported contract (stable path + CORS), or an approved
-   fallback face.
-
-2. **No monospace in the system.** The demos design (and API/code-oriented
-   surfaces generally) wants a mono treatment for eyebrows, metrics, code, and
-   URL/link labels. ABCDiatype has no mono; the system currently has no answer,
-   so this page falls back to the single sans. Consider adding a sanctioned mono
-   (or an approved pairing) for developer-facing properties.
-
-3. **Design tokens aren't published as a consumable artifact.** To match the
-   system, this repo had to hard-copy hex values and `@font-face` blocks out of
-   `apps/site/src/styles/global.css`. There's no shared token package/CSS these
-   values can be imported from, so every satellite reimplements and drifts.
-   Publishing the tokens (a CSS file or small package) would let other Speechify
-   web surfaces consume them instead of copying.
-
-4. **Handoff substitutes leaked toward "real".** The demos handoff specified
-   Google-Fonts substitutes (Space Grotesk / IBM Plex) as stand-ins, but without
-   a clear "swap to brand before ship" step they nearly became the shipped
-   design. Handoffs should flag substitute assets explicitly as non-final.
+- **Cross-origin font dependency**: the hero relies on `speechify.ai/fonts/*`
+  staying at that path with open CORS. If it changes, the type falls back to the
+  system sans stack.
+- **Analytics is duplicated snippet, not shared**: GTM + PostHog config is
+  copied from `apps/site`. If the marketing config changes (key, proxy, flags),
+  this copy must be updated by hand. Another argument for a shared package.
