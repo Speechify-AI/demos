@@ -1,0 +1,6 @@
+{
+  "order": 100,
+  "title": "Deepgram voice agent shim",
+  "stack": "Go shim + Node",
+  "blurb": "Points Deepgram Voice Agent at the tts-shims OpenAI-compatible proxy so it speaks with a Speechify voice, key held server-side."
+}

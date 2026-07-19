@@ -1,0 +1,6 @@
+{
+  "order": 60,
+  "title": "LiveKit voice agent",
+  "stack": "Python (LiveKit)",
+  "blurb": "Legacy Speechify-owned LiveKit TTS demo, with Deepgram STT and an OpenAI LLM in a LiveKit AgentSession. Prefer the official LiveKit plugin demo for new work."
+}

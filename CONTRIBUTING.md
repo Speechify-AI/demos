@@ -43,34 +43,29 @@ optional and covered in [Hosting a demo](#hosting-a-demo) below.
 
 ## Get it listed in the demos table
 
-The root README's demos table is **generated** — do not edit it by hand. It comes
-from [`demos.json`](./demos.json), the single source of truth. Add an entry:
+The root README's demos table (and the landing page) are **generated** — don't
+edit them by hand. Add a `demo.json` inside your demo's folder:
 
 ```json
 {
-  "slug": "your-demo-folder",
+  "order": 130,
   "title": "Human-readable name",
   "stack": "Python (SDK)",
-  "hosted": false,
   "blurb": "One sentence describing what it does."
 }
 ```
 
-Then run:
+- The folder name is the slug — no `slug` field needed.
+- `order` sets display position (lower = earlier); ties break alphabetically by
+  slug. Use gaps (10, 20, 30…) so you can insert later without renumbering.
+- There's no `hosted` field — hosting is derived from `vercel.json` (see below).
 
-```bash
-pnpm generate
-```
-
-That rewrites the demos table in the README (between the `DEMOS:START` /
-`DEMOS:END` markers) and the landing-page manifest. Commit the regenerated
-README. Leave `hosted: false` unless you're also doing the hosting steps below.
+Then run `pnpm generate` and commit the regenerated README.
 
 ## Hosting a demo
 
 Hosting is optional. Only web demos can be hosted — terminal scripts, Python
-pipelines, and long-running agent workers stay clone-and-run and keep
-`hosted: false`.
+pipelines, and long-running agent workers stay clone-and-run.
 
 If your demo is a web app (or has a browser surface backed by serverless
 endpoints) and you want it live at `demos.speechify.ai/<slug>`, follow the steps
@@ -78,12 +73,11 @@ in [HOSTING.md](./HOSTING.md). In short: add the folder to
 [`pnpm-workspace.yaml`](./pnpm-workspace.yaml) (as `demos/<slug>`), register it
 as a service (root `demos/<slug>/`) with a rewrite in
 [`vercel.json`](./vercel.json), mount it under its `/<slug>` prefix
-(e.g. Next.js `basePath`), set `hosted: true` in `demos.json`, and run
-`pnpm generate`.
+(e.g. Next.js `basePath`), and run `pnpm generate`.
 
-Setting `hosted: true` and re-running `pnpm generate` is what adds the **Live**
-link to the README table and the landing page — so the demo goes live on the site
-and gets its link in the same change.
+The `vercel.json` rewrite **is** the hosted signal — once it's there and you
+regenerate, the demo goes live and its card gets the **Live** link automatically.
+No flag to set.
 
 Verify it builds before opening the PR:
 
@@ -104,7 +98,7 @@ pnpm build
   `feat: add drive-thru voice agent demo`, `fix(captions): handle empty speech marks`,
   `docs: clarify prerequisites`.
 - Keep a PR to one demo (or one focused change) where possible.
-- If your change touches `demos.json` or hosting config, include the regenerated
+- If your change touches a `demo.json` or hosting config, include the regenerated
   README in the same PR so the table stays in sync.
 
 ## Get an API key

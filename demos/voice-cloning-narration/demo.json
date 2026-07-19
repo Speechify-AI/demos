@@ -1,0 +1,6 @@
+{
+  "order": 30,
+  "title": "Voice cloning narration",
+  "stack": "TypeScript (native)",
+  "blurb": "Clones a voice from a 10-30 sec WAV sample, synthesizes with the new voice, deletes the clone. End-to-end lifecycle."
+}

@@ -3,7 +3,7 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", "../demos.json", "../scripts/generate.mjs"],
+      "inputs": ["$TURBO_DEFAULT$", "../demos/*/demo.json", "../vercel.json", "../scripts/generate.mjs"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**", "out/**", "public/index.html"]
     },
     "dev": {

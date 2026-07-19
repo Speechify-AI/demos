@@ -1,0 +1,6 @@
+{
+  "order": 120,
+  "title": "Pipecat agent",
+  "stack": "Python (Pipecat)",
+  "blurb": "Real-time voice pipeline using Pipecat with Deepgram STT, Anthropic Claude, and Speechify TTS through SpeechifyTTSService."
+}

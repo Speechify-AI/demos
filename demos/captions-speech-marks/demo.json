@@ -1,0 +1,6 @@
+{
+  "order": 20,
+  "title": "Captions from speech marks",
+  "stack": "TypeScript (native)",
+  "blurb": "Synthesizes audio and builds a WebVTT caption file from the speech marks the API returns in the same response. Karaoke-highlight HTML demo included."
+}

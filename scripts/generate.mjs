@@ -1,10 +1,63 @@
 #!/usr/bin/env node
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const { demos } = JSON.parse(readFileSync(join(root, "demos.json"), "utf8"));
+
+// Two sources of truth, each owning what it's authoritative for:
+//   demos/<slug>/demo.json  -> the full demo catalog + card metadata
+//   vercel.json services+rewrites -> which demos are hosted (a demo is hosted
+//     iff a rewrite routes /<slug> to a service). This avoids a `hosted` flag
+//     that could drift from the actual routing, and avoids generating
+//     vercel.json (which Vercel reads BEFORE this build runs).
+function hostedSlugs() {
+  const vercel = JSON.parse(readFileSync(join(root, "vercel.json"), "utf8"));
+  const serviceNames = new Set(Object.keys(vercel.services || {}));
+  const slugs = new Set();
+  for (const rw of vercel.rewrites || []) {
+    const svc = rw.destination && rw.destination.service;
+    // Only per-demo rewrites (source /<slug>/:path*) that target a demo service;
+    // the "site" service and the catch-all rewrites are not demos.
+    if (!svc || svc === "site" || !serviceNames.has(svc)) continue;
+    const m = /^\/([^/]+)\//.exec(rw.source || "");
+    if (m) slugs.add(m[1]);
+  }
+  return slugs;
+}
+
+function loadDemos() {
+  const hosted = hostedSlugs();
+  const dir = join(root, "demos");
+  const slugs = readdirSync(dir, { withFileTypes: true })
+    .filter((e) => e.isDirectory())
+    .map((e) => e.name)
+    .filter((slug) => {
+      try {
+        readFileSync(join(dir, slug, "demo.json"));
+        return true;
+      } catch {
+        return false;
+      }
+    });
+  const demos = slugs.map((slug) => {
+    const meta = JSON.parse(readFileSync(join(dir, slug, "demo.json"), "utf8"));
+    return {
+      slug,
+      order: typeof meta.order === "number" ? meta.order : Number.MAX_SAFE_INTEGER,
+      title: meta.title,
+      stack: meta.stack,
+      blurb: meta.blurb,
+      hosted: hosted.has(slug),
+    };
+  });
+  // Deterministic: by explicit order, then alphabetical by slug as tiebreak
+  // (Vercel builds are a shallow git clone, so git-date ordering is unreliable).
+  demos.sort((a, b) => a.order - b.order || a.slug.localeCompare(b.slug));
+  return demos;
+}
+
+const demos = loadDemos();
 
 // The README is a static artifact, so it needs a canonical origin baked in.
 // Prefer Vercel's VERCEL_PROJECT_PRODUCTION_URL (always set at build, resolves

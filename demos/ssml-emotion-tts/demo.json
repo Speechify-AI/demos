@@ -1,0 +1,6 @@
+{
+  "order": 80,
+  "title": "SSML emotion TTS",
+  "stack": "TypeScript (SDK)",
+  "blurb": "Drives emotion, pauses, prosody, emphasis, and pronunciation with SSML in a single POST /v1/audio/speech request."
+}

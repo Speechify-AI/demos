@@ -1,0 +1,6 @@
+{
+  "order": 50,
+  "title": "LiveKit agent (official plugin)",
+  "stack": "Python (LiveKit)",
+  "blurb": "Real-time voice assistant using LiveKit's official livekit-plugins-speechify package for TTS, with Deepgram STT and an OpenAI LLM in a LiveKit AgentSession."
+}

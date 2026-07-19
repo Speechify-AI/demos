@@ -1,0 +1,6 @@
+{
+  "order": 90,
+  "title": "Web audio streaming",
+  "stack": "TypeScript (browser)",
+  "blurb": "Streams Speechify PCM into the browser Web Audio API for low-latency playback, behind a zero-dep proxy that keeps the key server-side."
+}

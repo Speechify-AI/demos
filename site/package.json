@@ -4,7 +4,7 @@
   "private": true,
   "description": "Landing index for demos.speechify.ai. Static; lists the demos and links the hosted ones.",
   "scripts": {
-    "build": "node ../scripts/git-probe.mjs; node ../scripts/generate.mjs",
+    "build": "node ../scripts/generate.mjs",
     "dev": "node ../scripts/generate.mjs"
   }
 }

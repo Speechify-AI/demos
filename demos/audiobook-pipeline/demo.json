@@ -1,0 +1,6 @@
+{
+  "order": 40,
+  "title": "Audiobook pipeline",
+  "stack": "Python (SDK)",
+  "blurb": "Chunks long-form text on sentence boundaries, synthesizes each chunk via the Speechify Python SDK, concatenates the MP3s with ffmpeg."
+}

@@ -1,0 +1,6 @@
+{
+  "order": 110,
+  "title": "Vapi custom voice",
+  "stack": "Go shim",
+  "blurb": "Points Vapi custom voice at the tts-shims Vapi-compatible proxy so it speaks with Speechify raw PCM, key held server-side."
+}

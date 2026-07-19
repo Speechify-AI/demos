@@ -1,0 +1,6 @@
+{
+  "order": 70,
+  "title": "LiveKit voice agent",
+  "stack": "TypeScript (LiveKit)",
+  "blurb": "Legacy Speechify-owned LiveKit TTS demo, with Deepgram STT and an OpenAI LLM in a LiveKit AgentSession."
+}

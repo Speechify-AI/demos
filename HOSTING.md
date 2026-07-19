@@ -19,18 +19,26 @@ out of `vercel.json` — they stay clone-and-run.
 
 ## Landing page and the demos manifest
 
-[`demos.json`](./demos.json) is the single source of truth for the demo list.
-`pnpm generate` (also run as part of the build) reads it and writes:
+The demo list is assembled from two sources, each authoritative for what it owns:
+
+- **`demos/<slug>/demo.json`** (one per demo folder) — the demo's card metadata:
+  `order` (display order; tiebroken alphabetically by slug), `title`, `stack`,
+  `blurb`. The folder name is the slug.
+- **[`vercel.json`](./vercel.json)** — which demos are *hosted*. A demo is hosted
+  iff a rewrite routes `/<slug>` to its service. There is no `hosted` flag to keep
+  in sync — the routing config *is* the truth.
+
+`pnpm generate` (also run as part of the build) globs every `demos/*/demo.json`,
+cross-references `vercel.json` for hosted status, and writes:
 
 - the demos table in [`README.md`](./README.md), between the `DEMOS:START` /
-  `DEMOS:END` markers, and
-- the manifest the landing page renders from.
+  `DEMOS:END` markers,
+- the manifest inlined into the landing page,
+- the JSON-LD, `sitemap.xml`, and `llms.txt` / `llms-full.txt`.
 
-Edit `demos.json`, not the generated table.
-
-A demo's `hosted: true` flag is what gives it a live link in the README table and
-on the landing page. Keep it in sync with whether the demo is actually registered
-as a service below.
+Edit the per-folder `demo.json`, not the generated outputs. The generator can't
+*write* `vercel.json` (Vercel reads it before the build runs), so hosting is
+configured directly in `vercel.json`.
 
 ## Design system
 
@@ -53,5 +61,5 @@ Demos live under `demos/<slug>/`, but are served at `/<slug>` (not
 2. In [`vercel.json`](./vercel.json), add a `services` entry with
    `"root": "demos/<slug>/"` and a `rewrites` rule whose `source` is `/<slug>/:path*`.
 3. Mount the app under its `/<slug>` prefix (e.g. Next.js `basePath`).
-4. Set `hosted: true` for the demo in [`demos.json`](./demos.json) and run
-   `pnpm generate`.
+4. Run `pnpm generate`. The demo is now hosted (its `vercel.json` rewrite is the
+   hosted signal) and its card gets a live link automatically — no flag to set.
