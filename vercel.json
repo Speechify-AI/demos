@@ -3,7 +3,6 @@
   "services": {
     "site": {
       "root": "site/",
-      "framework": null,
       "buildCommand": "pnpm run build",
       "outputDirectory": "public"
     },
