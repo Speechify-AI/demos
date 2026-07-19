@@ -59,7 +59,8 @@
       }
       a { color: var(--text-primary); }
       .page { min-height: 100vh; display: flex; flex-direction: column; }
-      .wrap { max-width: 1120px; width: 100%; box-sizing: border-box; margin: 0 auto; padding: 0 28px; }
+      /* max-w-7xl (80rem) + px-6 (24px), matching the speechify.ai container. */
+      .wrap { max-width: 80rem; width: 100%; box-sizing: border-box; margin: 0 auto; padding: 0 24px; }
 
       header {
         position: fixed; top: 0; left: 0; right: 0; z-index: 50;
@@ -99,7 +100,7 @@
         nav.top .navlink { display: none; }
       }
 
-      .hero { padding: 132px 28px 40px; }
+      .hero { padding: 132px 24px 40px; }
       .eyebrow { font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.04em; color: var(--text-tertiary); }
       h1 {
         font-family: var(--font-display); font-weight: 100;
@@ -123,7 +124,7 @@
       }
       .search input:focus { border-color: var(--border-strong); box-shadow: 0 0 0 3px var(--focus-ring); }
 
-      .grid-section { padding: 0 28px 80px; flex: 1; }
+      .grid-section { padding: 0 24px 80px; flex: 1; }
       .list-header {
         display: flex; align-items: baseline; justify-content: space-between;
         border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px; margin-bottom: 28px;
@@ -166,7 +167,7 @@
       .empty p { color: var(--text-secondary); font-size: 15px; margin: 10px auto 0; max-width: 44ch; }
 
       footer { border-top: 1px solid var(--border-subtle); }
-      .footer-inner { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; padding: 24px 28px; }
+      .footer-inner { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; padding: 24px 24px; }
       .footer-inner .copy { font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary); }
       .footer-inner a {
         font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary);
