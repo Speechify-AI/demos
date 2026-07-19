@@ -4,7 +4,7 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", "../demos.json", "../scripts/generate.mjs"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**", "out/**", "public/demos.generated.js"]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**", "out/**", "public/index.html"]
     },
     "dev": {
       "cache": false,

@@ -52,8 +52,16 @@ function writeReadme() {
   writeFileSync(path, readme.replace(re, block));
 }
 
+// Inline the manifest directly into index.html rather than a separate
+// demos.generated.js. A standalone JS file is cached at the edge (max-age 14400)
+// independently of the HTML, so a deploy can serve stale demo data for hours.
+// Inlining ties the data to the (revalidated) HTML: always fresh, one fewer request.
+const DATA_START = "/* DEMOS_DATA:START */";
+const DATA_END = "/* DEMOS_DATA:END */";
+
 function writeSiteData() {
-  const path = join(root, "site", "public", "demos.generated.js");
+  const path = join(root, "site", "public", "index.html");
+  const html = readFileSync(path, "utf8");
   const payload = demos.map((d) => ({
     slug: d.slug,
     repoPath: repoPath(d),
@@ -62,8 +70,12 @@ function writeSiteData() {
     hosted: Boolean(d.hosted),
     blurb: d.blurb,
   }));
-  const body = `window.__DEMOS__ = ${JSON.stringify(payload, null, 2)};\n`;
-  writeFileSync(path, body);
+  const block = `${DATA_START}\n      window.__DEMOS__ = ${JSON.stringify(payload)};\n      ${DATA_END}`;
+  const re = new RegExp(`${DATA_START.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&")}[\\s\\S]*${DATA_END.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&")}`);
+  if (!re.test(html)) {
+    throw new Error(`index.html is missing the ${DATA_START} / ${DATA_END} markers`);
+  }
+  writeFileSync(path, html.replace(re, block));
 }
 
 writeReadme();
