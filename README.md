@@ -27,6 +27,10 @@ Demos with a **Live** link run in your browser at [demos.speechify.ai](https://d
 
 Every demo needs `SPEECHIFY_API_KEY`. Grab one at [platform.speechify.ai/api-keys](https://platform.speechify.ai/api-keys). Copy `.env.example` to `.env` inside the folder you want to run and paste the key in.
 
+## Contributing
+
+Want to add a demo? See [CONTRIBUTING.md](./CONTRIBUTING.md).
+
 ## License
 
 [MIT](./LICENSE)
