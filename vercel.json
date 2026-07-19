@@ -1,0 +1,22 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "site": {
+      "root": "site/"
+    },
+    "next-voice-cloning-app": {
+      "root": "next-voice-cloning-app/",
+      "framework": "nextjs"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/next-voice-cloning-app/:path*",
+      "destination": { "service": "next-voice-cloning-app" }
+    },
+    {
+      "source": "/:path*",
+      "destination": { "service": "site" }
+    }
+  ]
+}

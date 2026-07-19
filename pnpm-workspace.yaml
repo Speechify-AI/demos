@@ -1,0 +1,10 @@
+# Only the web-hostable demos participate in the Turborepo/pnpm workspace and the
+# Vercel Services build. The other folders (Python pipelines, LiveKit/Pipecat
+# agent workers, Go shims, TS CLIs) stay as standalone clone-and-run demos and are
+# intentionally NOT listed here — they are not deployed to Vercel.
+#
+# To add a new hostable demo to the site: add its folder here AND add a matching
+# service + rewrite in vercel.json.
+packages:
+  - "site"
+  - "next-voice-cloning-app"

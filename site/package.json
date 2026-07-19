@@ -1,0 +1,10 @@
+{
+  "name": "site",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Landing index for demos.speechify.ai. Static; lists the demos and links the hosted ones.",
+  "scripts": {
+    "build": "node ../scripts/generate.mjs",
+    "dev": "node ../scripts/generate.mjs"
+  }
+}

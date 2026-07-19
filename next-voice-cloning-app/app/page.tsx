@@ -2,6 +2,10 @@
 
 import { useState } from "react";
 
+// Raw fetch() is not rewritten by Next's basePath, so API calls must include it
+// explicitly. Keep in sync with `basePath` in next.config.ts.
+const API_BASE = "/next-voice-cloning-app";
+
 export default function Home() {
   const [file, setFile] = useState<File | null>(null);
   const [fullName, setFullName] = useState("");
@@ -30,7 +34,7 @@ export default function Home() {
     body.append("fullName", fullName);
     body.append("email", email);
 
-    const res = await fetch("/api/clone", { method: "POST", body });
+    const res = await fetch(`${API_BASE}/api/clone`, { method: "POST", body });
     setBusy(false);
     if (!res.ok) {
       const { error } = await res.json().catch(() => ({ error: res.statusText }));
@@ -46,7 +50,7 @@ export default function Home() {
     if (!voiceId) return;
     setBusy(true);
     say("Synthesizing…");
-    const res = await fetch("/api/speak", {
+    const res = await fetch(`${API_BASE}/api/speak`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text, voiceId }),
