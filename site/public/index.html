@@ -93,7 +93,9 @@
       }
       .btn-outline { border: 1px solid var(--foreground); color: var(--foreground); background: transparent; }
       .btn-outline:hover { background: var(--foreground); color: var(--primary-foreground); }
-      .btn-primary { background: var(--foreground); color: var(--primary-foreground); border: 1px solid var(--foreground); }
+      /* No border on the filled button (matches speechify.ai); a border here
+         made the primary pill 2px taller than the outline one. */
+      .btn-primary { background: var(--foreground); color: var(--primary-foreground); border: none; }
       .btn-primary:hover { background: rgba(10, 10, 10, 0.9); color: var(--primary-foreground); }
       @media (max-width: 640px) {
         nav.top { gap: 16px; }
@@ -192,8 +194,8 @@
             <a class="navlink" href="https://docs.speechify.ai">Docs</a>
             <a class="navlink" id="nav-github" href="#">GitHub</a>
             <div class="btn-row">
-              <a class="btn-pill btn-outline" href="https://speechify.ai/talk-to-sales">Talk to Sales</a>
-              <a class="btn-pill btn-primary" href="https://platform.speechify.ai/signup" target="_blank" rel="noopener">Get API Key — Free</a>
+              <a class="btn-pill btn-outline" href="https://speechify.ai/talk-to-sales?utm_source=demos.speechify.ai&utm_medium=referral&utm_campaign=home&utm_content=header-sales">Talk to Sales</a>
+              <a class="btn-pill btn-primary" href="https://platform.speechify.ai/signup?utm_source=demos.speechify.ai&utm_medium=referral&utm_campaign=home&utm_content=header-primary" target="_blank" rel="noopener">Get API Key — Free</a>
             </div>
           </nav>
         </div>
