@@ -6,7 +6,18 @@ import { dirname, join } from "node:path";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const { demos } = JSON.parse(readFileSync(join(root, "demos.json"), "utf8"));
 
-const HOSTED_ORIGIN = "https://demos.speechify.ai";
+// The README is a static artifact, so it needs a canonical origin baked in.
+// Prefer Vercel's VERCEL_PROJECT_PRODUCTION_URL (always set at build, resolves
+// to the shortest production custom domain — or the .vercel.app fallback until a
+// custom domain is attached), so we never assume a domain that isn't live yet.
+// DEMOS_HOSTED_ORIGIN overrides everything; the literal is only a last resort
+// for local runs with no Vercel env.
+function resolveHostedOrigin() {
+  if (process.env.DEMOS_HOSTED_ORIGIN) return process.env.DEMOS_HOSTED_ORIGIN;
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  return "https://demos.speechify.ai";
+}
+const HOSTED_ORIGIN = resolveHostedOrigin().replace(/\/+$/, "");
 const liveUrl = (d) => `${HOSTED_ORIGIN}/${d.slug}`;
 
 function renderReadmeTable() {

@@ -258,8 +258,8 @@
             stack: d.stack,
             blurb: d.blurb,
             hosted: d.hosted,
-            href: d.hosted ? "https://demos.speechify.ai/" + d.slug : REPO_URL + "/tree/main/" + d.slug,
-            linkLabel: d.hosted ? "demos.speechify.ai/" + d.slug : repoLabel + "/" + d.slug,
+            href: d.hosted ? window.location.origin + "/" + d.slug : REPO_URL + "/tree/main/" + d.slug,
+            linkLabel: d.hosted ? window.location.host + "/" + d.slug : repoLabel + "/" + d.slug,
           };
         }
 
