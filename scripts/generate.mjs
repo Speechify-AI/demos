@@ -59,25 +59,128 @@ function writeReadme() {
 const DATA_START = "/* DEMOS_DATA:START */";
 const DATA_END = "/* DEMOS_DATA:END */";
 
-function writeSiteData() {
-  const path = join(root, "site", "public", "index.html");
-  const html = readFileSync(path, "utf8");
-  const payload = demos.map((d) => ({
+const INDEX_PATH = join(root, "site", "public", "index.html");
+const REPO_URL = "https://github.com/Speechify-AI/demos";
+
+function esc(str) {
+  return String(str).replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
+}
+
+function replaceMarker(html, start, end, inner) {
+  const re = new RegExp(`${esc(start)}[\\s\\S]*${esc(end)}`);
+  if (!re.test(html)) throw new Error(`index.html is missing the ${start} / ${end} markers`);
+  return html.replace(re, `${start}\n${inner}\n${end}`);
+}
+
+function payloadFor(d) {
+  return {
     slug: d.slug,
     repoPath: repoPath(d),
     title: d.title,
     stack: d.stack,
     hosted: Boolean(d.hosted),
     blurb: d.blurb,
-  }));
-  const block = `${DATA_START}\n      window.__DEMOS__ = ${JSON.stringify(payload)};\n      ${DATA_END}`;
-  const re = new RegExp(`${DATA_START.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&")}[\\s\\S]*${DATA_END.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&")}`);
-  if (!re.test(html)) {
-    throw new Error(`index.html is missing the ${DATA_START} / ${DATA_END} markers`);
-  }
-  writeFileSync(path, html.replace(re, block));
+  };
+}
+
+// The FAQ questions are mirrored from the visible <section class="faq"> so the
+// FAQPage schema reflects on-page content (a Google requirement for eligibility).
+const FAQ = [
+  ["What are the Speechify demos?", "Open-source, self-contained example apps for the Speechify API — text-to-speech, voice cloning, SSML, and real-time voice agents. Each demo lives in its own folder, runs on its own, and links to its source. Hosted demos run live in the browser."],
+  ["Are the demos free and open source?", "Yes. Every demo is MIT-licensed and published at github.com/Speechify-AI/demos. Clone a folder, add your Speechify API key, and run it."],
+  ["What do I need to run a demo?", "A Speechify API key from platform.speechify.ai/api-keys, plus the runtime the demo uses (Node, Python, or Go). Each demo's README lists its exact prerequisites."],
+  ["Which demos can I try without installing anything?", "Demos marked LIVE run hosted at demos.speechify.ai/<demo-name>. The rest are clone-and-run from the repo."],
+];
+
+function buildJsonLd() {
+  const graph = [
+    {
+      "@type": "Organization",
+      "@id": `${HOSTED_ORIGIN}/#org`,
+      name: "Speechify AI",
+      url: "https://speechify.ai",
+      logo: `${HOSTED_ORIGIN}/apple-touch-icon.png`,
+      sameAs: ["https://github.com/SpeechifyInc", "https://x.com/SpeechifyAI", "https://www.linkedin.com/company/speechifyinc/"],
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${HOSTED_ORIGIN}/#website`,
+      url: `${HOSTED_ORIGIN}/`,
+      name: "Speechify Demos",
+      description: "Open-source demos built on the Speechify API — text-to-speech, voice cloning, and real-time voice agents.",
+      publisher: { "@id": `${HOSTED_ORIGIN}/#org` },
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "SpeechifyAI", item: "https://speechify.ai" },
+        { "@type": "ListItem", position: 2, name: "Demos", item: `${HOSTED_ORIGIN}/` },
+      ],
+    },
+    {
+      "@type": "ItemList",
+      name: "Speechify API demos",
+      numberOfItems: demos.length,
+      itemListElement: demos.map((d, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        item: {
+          "@type": "SoftwareApplication",
+          name: d.title,
+          description: d.blurb,
+          applicationCategory: "DeveloperApplication",
+          operatingSystem: "Any",
+          url: d.hosted ? liveUrl(d) : `${REPO_URL}/tree/main/${repoPath(d)}`,
+          isAccessibleForFree: true,
+          offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+        },
+      })),
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: FAQ.map(([q, a]) => ({
+        "@type": "Question",
+        name: q,
+        acceptedAnswer: { "@type": "Answer", text: a },
+      })),
+    },
+  ];
+  return JSON.stringify({ "@context": "https://schema.org", "@graph": graph });
+}
+
+function writeSiteData() {
+  let html = readFileSync(INDEX_PATH, "utf8");
+  html = replaceMarker(html, DATA_START, DATA_END, `      window.__DEMOS__ = ${JSON.stringify(demos.map(payloadFor))};`);
+  html = replaceMarker(html, "/* JSONLD:START */", "/* JSONLD:END */", buildJsonLd());
+  writeFileSync(INDEX_PATH, html);
+}
+
+function writeSitemap() {
+  const today = new Date().toISOString().slice(0, 10);
+  const urls = [`${HOSTED_ORIGIN}/`, ...demos.filter((d) => d.hosted).map((d) => liveUrl(d))];
+  const body = urls
+    .map((u) => `  <url><loc>${u}</loc><lastmod>${today}</lastmod></url>`)
+    .join("\n");
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>\n`;
+  writeFileSync(join(root, "site", "public", "sitemap.xml"), xml);
+}
+
+function writeLlms() {
+  const hosted = demos.filter((d) => d.hosted);
+  const summary = `# Speechify Demos\n\n> Open-source demos for the Speechify API (text-to-speech, voice cloning, SSML, real-time voice agents). ${demos.length} demos, ${hosted.length} hosted live at ${HOSTED_ORIGIN}. Source: ${REPO_URL} (MIT).`;
+  const lines = demos.map((d) => {
+    const url = d.hosted ? liveUrl(d) : `${REPO_URL}/tree/main/${repoPath(d)}`;
+    return `- ${d.title} (${d.stack})${d.hosted ? " [hosted]" : ""}: ${d.blurb} — ${url}`;
+  });
+  const short = `${summary}\n\n## Demos\n\n${lines.join("\n")}\n`;
+  const faq = FAQ.map(([q, a]) => `### ${q}\n${a}`).join("\n\n");
+  const full = `${short}\n## FAQ\n\n${faq}\n\nGet an API key: https://platform.speechify.ai/api-keys\n`;
+  writeFileSync(join(root, "site", "public", "llms.txt"), short);
+  writeFileSync(join(root, "site", "public", "llms-full.txt"), full);
 }
 
 writeReadme();
 writeSiteData();
-console.log(`generated README table + site data for ${demos.length} demos`);
+writeSitemap();
+writeLlms();
+console.log(`generated README table + site data + JSON-LD + sitemap + llms.txt for ${demos.length} demos`);
