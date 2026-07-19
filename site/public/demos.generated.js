@@ -1,6 +1,7 @@
 window.__DEMOS__ = [
   {
     "slug": "next-voice-cloning-app",
+    "repoPath": "demos/next-voice-cloning-app",
     "title": "Voice cloning web app",
     "stack": "Next.js",
     "hosted": true,
@@ -8,6 +9,7 @@ window.__DEMOS__ = [
   },
   {
     "slug": "captions-speech-marks",
+    "repoPath": "demos/captions-speech-marks",
     "title": "Captions from speech marks",
     "stack": "TypeScript (native)",
     "hosted": false,
@@ -15,6 +17,7 @@ window.__DEMOS__ = [
   },
   {
     "slug": "voice-cloning-narration",
+    "repoPath": "demos/voice-cloning-narration",
     "title": "Voice cloning narration",
     "stack": "TypeScript (native)",
     "hosted": false,
@@ -22,6 +25,7 @@ window.__DEMOS__ = [
   },
   {
     "slug": "audiobook-pipeline",
+    "repoPath": "demos/audiobook-pipeline",
     "title": "Audiobook pipeline",
     "stack": "Python (SDK)",
     "hosted": false,
@@ -29,6 +33,7 @@ window.__DEMOS__ = [
   },
   {
     "slug": "livekit-agent-speechify-python",
+    "repoPath": "demos/livekit-agent-speechify-python",
     "title": "LiveKit agent (official plugin)",
     "stack": "Python (LiveKit)",
     "hosted": false,
@@ -36,6 +41,7 @@ window.__DEMOS__ = [
   },
   {
     "slug": "livekit-voice-agent-python",
+    "repoPath": "demos/livekit-voice-agent-python",
     "title": "LiveKit voice agent",
     "stack": "Python (LiveKit)",
     "hosted": false,
@@ -43,6 +49,7 @@ window.__DEMOS__ = [
   },
   {
     "slug": "livekit-voice-agent-node",
+    "repoPath": "demos/livekit-voice-agent-node",
     "title": "LiveKit voice agent",
     "stack": "TypeScript (LiveKit)",
     "hosted": false,
@@ -50,6 +57,7 @@ window.__DEMOS__ = [
   },
   {
     "slug": "ssml-emotion-tts",
+    "repoPath": "demos/ssml-emotion-tts",
     "title": "SSML emotion TTS",
     "stack": "TypeScript (SDK)",
     "hosted": false,
@@ -57,6 +65,7 @@ window.__DEMOS__ = [
   },
   {
     "slug": "web-audio-streaming",
+    "repoPath": "demos/web-audio-streaming",
     "title": "Web audio streaming",
     "stack": "TypeScript (browser)",
     "hosted": false,
@@ -64,6 +73,7 @@ window.__DEMOS__ = [
   },
   {
     "slug": "deepgram-voice-agent-shim",
+    "repoPath": "demos/deepgram-voice-agent-shim",
     "title": "Deepgram voice agent shim",
     "stack": "Go shim + Node",
     "hosted": false,
@@ -71,6 +81,7 @@ window.__DEMOS__ = [
   },
   {
     "slug": "vapi-custom-voice",
+    "repoPath": "demos/vapi-custom-voice",
     "title": "Vapi custom voice",
     "stack": "Go shim",
     "hosted": false,
@@ -78,6 +89,7 @@ window.__DEMOS__ = [
   },
   {
     "slug": "pipecat-agent-speechify",
+    "repoPath": "demos/pipecat-agent-speechify",
     "title": "Pipecat agent",
     "stack": "Python (Pipecat)",
     "hosted": false,

@@ -7,4 +7,4 @@
 # service + rewrite in vercel.json.
 packages:
   - "site"
-  - "next-voice-cloning-app"
+  - "demos/next-voice-cloning-app"

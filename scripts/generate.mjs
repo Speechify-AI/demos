@@ -20,9 +20,13 @@ function resolveHostedOrigin() {
 const HOSTED_ORIGIN = resolveHostedOrigin().replace(/\/+$/, "");
 const liveUrl = (d) => `${HOSTED_ORIGIN}/${d.slug}`;
 
+// Demo folders live under demos/<slug>; the public URL is still /<slug>. Keep
+// the repo path (folder/source links) separate from the slug (URL path).
+const repoPath = (d) => `demos/${d.slug}`;
+
 function renderReadmeTable() {
   const rows = demos.map((d) => {
-    const folder = `[\`${d.slug}/\`](./${d.slug})`;
+    const folder = `[\`${repoPath(d)}/\`](./${repoPath(d)})`;
     const live = d.hosted ? `[Open](${liveUrl(d)})` : "";
     return `| ${folder} | ${d.stack} | ${live} | ${d.blurb} |`;
   });
@@ -52,6 +56,7 @@ function writeSiteData() {
   const path = join(root, "site", "public", "demos.generated.js");
   const payload = demos.map((d) => ({
     slug: d.slug,
+    repoPath: repoPath(d),
     title: d.title,
     stack: d.stack,
     hosted: Boolean(d.hosted),

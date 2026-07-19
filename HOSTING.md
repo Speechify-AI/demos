@@ -34,8 +34,12 @@ as a service below.
 
 ## Adding a hostable demo
 
-1. Add the folder to [`pnpm-workspace.yaml`](./pnpm-workspace.yaml).
-2. Add a `services` entry and a `rewrites` rule in [`vercel.json`](./vercel.json).
-3. Mount the app under its `/<demo-name>` prefix (e.g. Next.js `basePath`).
+Demos live under `demos/<slug>/`, but are served at `/<slug>` (not
+`/demos/<slug>`) — the folder path and the public URL are deliberately separate.
+
+1. Add `demos/<slug>` to [`pnpm-workspace.yaml`](./pnpm-workspace.yaml).
+2. In [`vercel.json`](./vercel.json), add a `services` entry with
+   `"root": "demos/<slug>/"` and a `rewrites` rule whose `source` is `/<slug>/:path*`.
+3. Mount the app under its `/<slug>` prefix (e.g. Next.js `basePath`).
 4. Set `hosted: true` for the demo in [`demos.json`](./demos.json) and run
    `pnpm generate`.

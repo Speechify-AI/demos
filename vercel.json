@@ -7,7 +7,7 @@
       "outputDirectory": "public"
     },
     "next-voice-cloning-app": {
-      "root": "next-voice-cloning-app/",
+      "root": "demos/next-voice-cloning-app/",
       "framework": "nextjs"
     }
   },

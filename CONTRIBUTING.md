@@ -1,9 +1,9 @@
 # Contributing
 
 Thanks for adding a demo. This repo is a collection of small, self-contained
-examples for the Speechify API. Each demo lives in its own top-level folder and
-must run on its own — someone can copy that one folder, follow its README, and
-run it without the rest of the repo.
+examples for the Speechify API. Each demo lives in its own folder under
+[`demos/`](./demos) and must run on its own — someone can copy that one folder,
+follow its README, and run it without the rest of the repo.
 
 A subset of demos (the web ones) are also deployed together at
 [demos.speechify.ai](https://demos.speechify.ai). Getting a demo hosted is
@@ -11,9 +11,9 @@ optional and covered in [Hosting a demo](#hosting-a-demo) below.
 
 ## Make a demo
 
-1. Create a top-level folder named after your demo, in `kebab-case`. The folder
-   name is the demo's `slug` everywhere else (manifest, and its hosted path if
-   hosted).
+1. Create a folder under `demos/` named after your demo, in `kebab-case`. The
+   folder name is the demo's `slug` everywhere else (manifest, and its hosted
+   path if hosted — served at `/<slug>`, not `/demos/<slug>`).
 2. Make it self-contained. Everything the demo needs lives in its folder.
 3. Include an `.env.example`. Every demo needs `SPEECHIFY_API_KEY`; contributors
    copy `.env.example` to `.env`. Never commit a real `.env` — the root
@@ -75,8 +75,9 @@ pipelines, and long-running agent workers stay clone-and-run and keep
 If your demo is a web app (or has a browser surface backed by serverless
 endpoints) and you want it live at `demos.speechify.ai/<slug>`, follow the steps
 in [HOSTING.md](./HOSTING.md). In short: add the folder to
-[`pnpm-workspace.yaml`](./pnpm-workspace.yaml), register it as a service with a
-rewrite in [`vercel.json`](./vercel.json), mount it under its `/<slug>` prefix
+[`pnpm-workspace.yaml`](./pnpm-workspace.yaml) (as `demos/<slug>`), register it
+as a service (root `demos/<slug>/`) with a rewrite in
+[`vercel.json`](./vercel.json), mount it under its `/<slug>` prefix
 (e.g. Next.js `basePath`), set `hosted: true` in `demos.json`, and run
 `pnpm generate`.
 
