@@ -21,6 +21,7 @@ Demos with a **Live** link run in your browser at [demos.speechify.ai](https://d
 | [`demos/deepgram-voice-agent-shim/`](./demos/deepgram-voice-agent-shim) | Go shim + Node |  | Points Deepgram Voice Agent at the tts-shims OpenAI-compatible proxy so it speaks with a Speechify voice, key held server-side. |
 | [`demos/vapi-custom-voice/`](./demos/vapi-custom-voice) | Go shim |  | Points Vapi custom voice at the tts-shims Vapi-compatible proxy so it speaks with Speechify raw PCM, key held server-side. |
 | [`demos/pipecat-agent-speechify/`](./demos/pipecat-agent-speechify) | Python (Pipecat) |  | Real-time voice pipeline using Pipecat with Deepgram STT, Anthropic Claude, and Speechify TTS through SpeechifyTTSService. |
+| [`demos/mastra-agent-speechify/`](./demos/mastra-agent-speechify) | TypeScript (Mastra) |  | Text-in, speech-out Mastra Agent using an OpenAI LLM for replies and Speechify's simba-3.2 model for TTS via `@mastra/voice-speechify`. |
 <!-- DEMOS:END -->
 
 ## Get an API key

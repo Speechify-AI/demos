@@ -1,0 +1,6 @@
+{
+  "order": 130,
+  "title": "Mastra voice agent",
+  "stack": "TypeScript (Mastra)",
+  "blurb": "Text-in, speech-out Mastra Agent using an OpenAI LLM for replies and Speechify's simba-3.2 model for TTS via `@mastra/voice-speechify`."
+}
