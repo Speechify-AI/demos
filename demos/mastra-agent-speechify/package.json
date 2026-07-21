@@ -1,0 +1,22 @@
+{
+  "name": "mastra-agent-speechify",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Mastra Agent that speaks with Speechify Simba 3.2 text-to-speech",
+  "scripts": {
+    "chat": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "^2.0.0",
+    "@mastra/core": "1.51.0-alpha.10",
+    "@mastra/voice-speechify": "0.14.0-alpha.0",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}
