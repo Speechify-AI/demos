@@ -60,22 +60,14 @@ function loadDemos() {
 const demos = loadDemos();
 
 // The README is a static artifact, so it needs a canonical origin baked in.
-// Prefer Vercel's VERCEL_PROJECT_PRODUCTION_URL (always set at build, resolves
-// to the shortest production custom domain — or the .vercel.app fallback until a
-// custom domain is attached), so we never assume a domain that isn't live yet.
-// DEMOS_HOSTED_ORIGIN overrides everything; the literal is only a last resort
-// for local runs with no Vercel env.
+// This project's VERCEL_PROJECT_PRODUCTION_URL resolves to an internal
+// *.preview.speechify.dev alias, not the customer-facing demos.speechify.ai
+// CNAME (Vercel doesn't expose the CNAME target as a system env var — verified
+// via a full VERCEL_* env dump). So we hardcode the canonical origin and only
+// respect DEMOS_HOSTED_ORIGIN when someone explicitly overrides it (fork
+// deploys, local previews, or a future rename).
 function resolveHostedOrigin() {
-  // TEMPORARY: probe which VERCEL_* env vars actually surface in this project's
-  // build container, so we can pick the right one for the sitemap origin.
-  // Remove after diagnosis. Leaks nothing sensitive — VERCEL_* are all URLs/flags.
-  console.log("--- VERCEL ENV PROBE (temporary) ---");
-  for (const key of Object.keys(process.env).sort()) {
-    if (key.startsWith("VERCEL")) console.log(`${key}=${process.env[key]}`);
-  }
-  console.log("--- END PROBE ---");
   if (process.env.DEMOS_HOSTED_ORIGIN) return process.env.DEMOS_HOSTED_ORIGIN;
-  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
   return "https://demos.speechify.ai";
 }
 const HOSTED_ORIGIN = resolveHostedOrigin().replace(/\/+$/, "");
