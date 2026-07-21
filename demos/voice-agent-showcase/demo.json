@@ -1,0 +1,6 @@
+{
+  "order": 130,
+  "title": "Voice agent capability showcase",
+  "stack": "Cloudflare Workers",
+  "blurb": "One page, ten live Voice Agents API demos: calendar booking, policy-bound support, a page copilot, form intake, US outbound calls with a 5-minute cap, a voice gallery, mid-call language handoff, cross-call memory, a grounded knowledge base, and dual-control troubleshooting."
+}
