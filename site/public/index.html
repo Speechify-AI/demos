@@ -158,9 +158,10 @@
       .grid-section { padding: 0 24px 80px; flex: 1; }
       .faq { padding: 0 24px 80px; }
       .faq h2 { font-family: var(--font-display); font-weight: 300; font-size: 2rem; letter-spacing: -0.02em; margin: 0 0 24px; }
-      .faq dl { margin: 0; display: grid; gap: 24px; max-width: 68ch; }
+      .faq dl { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 28px 48px; }
       .faq dt { font-weight: 500; font-size: 1.0625rem; margin-bottom: 6px; }
       .faq dd { margin: 0; color: var(--foreground-secondary); font-size: 1rem; line-height: 1.6; }
+      @media (max-width: 640px) { .faq dl { grid-template-columns: 1fr; gap: 24px; } }
       .list-header {
         display: flex; align-items: baseline; justify-content: space-between;
         border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px; margin-bottom: 28px;
