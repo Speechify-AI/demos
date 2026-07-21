@@ -66,6 +66,14 @@ const demos = loadDemos();
 // DEMOS_HOSTED_ORIGIN overrides everything; the literal is only a last resort
 // for local runs with no Vercel env.
 function resolveHostedOrigin() {
+  // TEMPORARY: probe which VERCEL_* env vars actually surface in this project's
+  // build container, so we can pick the right one for the sitemap origin.
+  // Remove after diagnosis. Leaks nothing sensitive — VERCEL_* are all URLs/flags.
+  console.log("--- VERCEL ENV PROBE (temporary) ---");
+  for (const key of Object.keys(process.env).sort()) {
+    if (key.startsWith("VERCEL")) console.log(`${key}=${process.env[key]}`);
+  }
+  console.log("--- END PROBE ---");
   if (process.env.DEMOS_HOSTED_ORIGIN) return process.env.DEMOS_HOSTED_ORIGIN;
   if (process.env.VERCEL_PROJECT_PRODUCTION_URL) return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
   return "https://demos.speechify.ai";
