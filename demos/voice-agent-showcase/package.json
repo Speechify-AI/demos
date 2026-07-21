@@ -1,0 +1,14 @@
+{
+  "name": "voice-agent-showcase",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "create-agents": "node scripts/create-agents.mjs",
+    "patch-origins": "node scripts/patch-origins.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

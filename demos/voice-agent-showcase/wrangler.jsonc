@@ -1,0 +1,24 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "voice-agent-showcase",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-06-01",
+  "assets": {
+    "directory": "public",
+    "binding": "ASSETS"
+  },
+  "triggers": {
+    // Backstop for the 5-minute outbound-call cap: sweep every minute and
+    // force-end any showcase outbound conversation older than 5 minutes
+    // (the page's own countdown normally ends it first).
+    "crons": ["* * * * *"]
+  },
+  "vars": {
+    "API_BASE": "https://api.speechify.ai",
+    "OUTBOUND_AGENT_ID": "<paste the outbound id printed by create-agents>",
+    "MEMORY_AGENT_ID": "<paste the memory id printed by create-agents>",
+    "CALLER_ID_NUMBER": "<an outbound-capable US number on your workspace>",
+    "MAX_CALL_SECONDS": "300"
+  }
+  // Secret (set once): npx wrangler secret put SPEECHIFY_API_KEY
+}

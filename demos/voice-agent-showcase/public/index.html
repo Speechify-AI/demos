@@ -1,0 +1,897 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<title>Speechify AI voice agents — capability showcase.</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #0a0a0a;
+    --surface: #fafafa;
+    --muted: #f5f5f5;
+    --muted-fg: #666666;
+    --border: #e5e5e5;
+    --accent: #0a0a0a;
+    --accent-contrast: #fafafa;
+    --good: #147a3d;
+    --bad: #b3261e;
+    --ghost: #f0f0f0;
+  }
+  [data-theme="dark"] {
+    --bg: #0a0a0a;
+    --fg: #fafafa;
+    --surface: #121212;
+    --muted: #1a1a1a;
+    --muted-fg: #a3a3a3;
+    --border: #262626;
+    --accent: #fafafa;
+    --accent-contrast: #0a0a0a;
+    --good: #4ade80;
+    --bad: #f87171;
+    --ghost: #161616;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 16px/1.55 ui-sans-serif, system-ui, sans-serif;
+    transition: background 0.25s ease, color 0.25s ease;
+    overflow-x: hidden;
+  }
+  .mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ---------- header ---------- */
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .header-inner {
+    max-width: 1160px; margin: 0 auto; padding: 0.65rem 1.25rem;
+    display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  }
+  .wordmark { display: flex; align-items: baseline; gap: 0.5rem; margin-right: auto; text-decoration: none; color: inherit; }
+  .wordmark strong { font-size: 0.95rem; letter-spacing: -0.01em; font-weight: 500; }
+  .wordmark .ai, .footer-mark .ai { opacity: 0.5; }
+  nav { display: flex; gap: 0.35rem; flex-wrap: wrap; }
+  nav a {
+    text-decoration: none; color: var(--muted-fg);
+    border: 1px solid var(--border); border-radius: 999px;
+    padding: 0.28rem 0.7rem;
+  }
+  nav a:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* ---------- hero: the switchboard ---------- */
+  .hero {
+    max-width: 1160px; margin: 0 auto; padding: 4.5rem 1.25rem 3.5rem;
+    display: grid; grid-template-columns: minmax(300px, 7fr) 5fr; gap: 3rem; align-items: start;
+  }
+  @media (max-width: 900px) { .hero { grid-template-columns: 1fr; } }
+  .standby {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    border: 1px solid var(--border); border-radius: 999px; padding: 0.3rem 0.8rem;
+    color: var(--muted-fg);
+  }
+  .standby .blink { width: 7px; height: 7px; border-radius: 50%; background: var(--good); animation: pulse 1.6s infinite; }
+  .hero h1 { font-weight: 100; font-size: clamp(2.2rem, 5.5vw, 3.6rem); line-height: 1.05; letter-spacing: -0.03em; margin: 1rem 0 0.75rem; max-width: 16ch; }
+  .hero .sub { color: var(--muted-fg); max-width: 46ch; margin: 0 0 1.75rem; }
+
+  /* ambient waveform — the page is listening */
+  .wave { display: flex; align-items: flex-end; gap: 4px; height: 54px; margin-top: 1.5rem; }
+  .wave i {
+    flex: 1; max-width: 3px; background: var(--accent); border-radius: 2px; opacity: 0.85;
+    transition: background 0.3s ease;
+    height: 12%;
+    animation: hum 2.6s ease-in-out infinite;
+    animation-play-state: paused;
+  }
+  body.call-live .wave i { animation-play-state: running; }
+  @keyframes hum {
+    0%, 100% { height: 12%; opacity: 0.35; }
+    50% { height: var(--peak, 70%); opacity: 0.9; }
+  }
+
+  /* the line directory — five agents as switchboard lines */
+  .switchboard { border: 1px solid var(--border); border-radius: 1rem; background: var(--surface); overflow: hidden; }
+  .switchboard .board-head {
+    padding: 0.7rem 1.1rem; color: var(--muted-fg); border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .line-row {
+    display: grid; grid-template-columns: auto 1fr auto; align-items: baseline;
+    gap: 0.15rem 0.9rem;
+    padding: 0.95rem 1.1rem; text-decoration: none; color: inherit;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s ease;
+  }
+  .line-row:last-child { border-bottom: none; }
+  .line-row .line-no { grid-column: 1; grid-row: 1; color: var(--muted-fg); }
+  .line-row strong { grid-column: 2; grid-row: 1; justify-self: start; font-size: 1.02rem; letter-spacing: -0.01em; }
+  .line-row .line-desc { grid-column: 1 / 3; grid-row: 2; color: var(--muted-fg); font-size: 0.86rem; }
+  .line-row .line-arrow { grid-column: 3; grid-row: 1 / span 2; align-self: center; color: var(--muted-fg); transition: transform 0.18s ease, color 0.18s ease; }
+  .line-row:hover { background: var(--muted); }
+  .line-row:hover .line-arrow { transform: translateX(4px); color: var(--accent); }
+
+  /* ---------- capability ticker ---------- */
+  .ticker-strip { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow: hidden; }
+  .ticker { display: flex; width: max-content; animation: ticker 36s linear infinite; }
+  .ticker-strip:hover .ticker { animation-play-state: paused; }
+  .ticker span { padding: 0.65rem 1.6rem; white-space: nowrap; color: var(--muted-fg); }
+  .ticker span b { color: var(--accent); font-weight: 500; transition: color 0.3s ease; }
+  @keyframes ticker { to { transform: translateX(-50%); } }
+
+  /* ---------- sections ---------- */
+  section { position: relative; overflow: hidden; border-top: 1px solid var(--border); scroll-margin-top: 4.5rem; }
+  section:first-of-type { border-top: none; }
+  section.flash { animation: flash 1.6s ease; }
+  @keyframes flash { 0%, 60% { background: color-mix(in srgb, var(--accent) 7%, var(--bg)); } 100% { background: transparent; } }
+  .sec-num {
+    position: absolute; top: 0.5rem; right: -0.5rem; z-index: 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: clamp(8rem, 22vw, 19rem); line-height: 1; font-weight: 700;
+    color: color-mix(in srgb, var(--accent) 9%, var(--bg));
+    user-select: none; pointer-events: none; transition: color 0.3s ease;
+  }
+  section:nth-of-type(even) .sec-num { right: auto; left: -0.5rem; }
+  .section-inner {
+    position: relative; z-index: 1;
+    max-width: 1160px; margin: 0 auto; padding: 4.5rem 1.25rem;
+    display: grid; grid-template-columns: minmax(280px, 5fr) 7fr; gap: 3rem;
+  }
+  /* zig-zag: even sections flip sides so the scroll has rhythm */
+  section:nth-of-type(even) .section-copy { order: 2; }
+  section:nth-of-type(even) .stage { order: 1; }
+  @media (max-width: 860px) {
+    .section-inner { grid-template-columns: 1fr; }
+    section:nth-of-type(even) .section-copy { order: 0; }
+    section:nth-of-type(even) .stage { order: 1; }
+  }
+  .section-copy .kicker { color: var(--muted-fg); display: flex; align-items: center; gap: 0.6rem; }
+  .section-copy .kicker::before { content: ""; width: 2rem; height: 1px; background: var(--accent); display: inline-block; transition: background 0.3s ease; }
+  .section-copy h2 { font-weight: 300; font-size: clamp(1.7rem, 3vw, 2.2rem); letter-spacing: -0.025em; line-height: 1.12; margin: 0.7rem 0 0.85rem; }
+  .section-copy p  { color: var(--muted-fg); margin: 0 0 1.25rem; }
+  .copy-link {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 1.5rem; height: 1.5rem; margin-left: 0.4rem; padding: 0;
+    vertical-align: middle; border: none; background: transparent; color: var(--muted-fg);
+    opacity: 0; transition: opacity 0.15s ease; cursor: pointer;
+  }
+  .copy-link:hover { color: var(--fg); opacity: 1 !important; background: transparent; }
+  .section-copy h2:hover .copy-link, .copy-link:focus-visible { opacity: 1; }
+  .copy-link svg { width: 1rem; height: 1rem; }
+  .say { display: flex; flex-direction: column; gap: 0.45rem; margin-bottom: 1.5rem; }
+  .say span {
+    align-self: flex-start; background: var(--muted); border: 1px solid var(--border);
+    border-radius: 0.6rem; padding: 0.35rem 0.7rem; font-size: 0.86rem;
+  }
+  .say span::before { content: "“"; color: var(--muted-fg); }
+  .say span::after  { content: "”"; color: var(--muted-fg); }
+
+  /* scroll reveal */
+  .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.55s ease, transform 0.55s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* ---------- call panel ---------- */
+  .stage { display: flex; flex-direction: column; gap: 1rem; min-width: 0; }
+  .call-panel {
+    display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;
+    border: 1px solid var(--border); border-radius: 0.9rem;
+    background: var(--surface); padding: 0.75rem 1rem;
+  }
+  /* mini equalizer: flat when idle, dancing when the agent is live */
+  .eq { display: flex; align-items: flex-end; gap: 2px; height: 16px; flex: none; }
+  .eq i { width: 3px; height: 3px; border-radius: 1px; background: var(--muted-fg); }
+  .eq.live i { background: var(--good); animation: eq 0.9s ease-in-out infinite; }
+  .eq.live i:nth-child(2) { animation-delay: 0.15s; }
+  .eq.live i:nth-child(3) { animation-delay: 0.3s; }
+  .eq.live i:nth-child(4) { animation-delay: 0.45s; }
+  @keyframes eq { 0%, 100% { height: 4px; } 50% { height: 15px; } }
+  @keyframes pulse { 50% { opacity: 0.35; } }
+  .call-status { color: var(--muted-fg); margin-right: auto; }
+  button {
+    font: inherit; cursor: pointer; border-radius: 999px;
+    border: 1px solid var(--accent); background: var(--accent); color: var(--accent-contrast);
+    padding: 0.45rem 1.1rem;
+    transition: opacity 0.15s ease, background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  }
+  button:hover { opacity: 0.82; }
+  button.ghost { background: transparent; color: var(--fg); border-color: var(--border); }
+  button.ghost:hover { border-color: var(--fg); opacity: 1; }
+  button:disabled { opacity: 0.45; cursor: not-allowed; }
+  .transcript {
+    border: 1px solid var(--border); border-radius: 0.9rem; background: var(--surface);
+    padding: 0.85rem 1rem; max-height: 11rem; overflow-y: auto;
+    display: none; flex-direction: column; gap: 0.5rem; font-size: 0.9rem;
+  }
+  .transcript.open { display: flex; }
+  .transcript .line span { display: block; color: var(--muted-fg); font-size: 0.68rem; }
+  .transcript .line.user { text-align: right; }
+
+  /* ---------- demo cards ---------- */
+  .demo-card {
+    border: 1px solid var(--border); border-radius: 0.9rem; background: var(--surface); padding: 1.1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .demo-card:hover { transform: translateY(-2px); box-shadow: 0 10px 30px -18px color-mix(in srgb, var(--accent) 55%, transparent); }
+  .demo-card h3 { margin: 0 0 0.75rem; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+  .demo-card h3 .mono { color: var(--muted-fg); }
+
+  /* calendar */
+  .cal { display: grid; grid-template-columns: 4.4rem repeat(5, 1fr); gap: 4px; font-size: 0.78rem; }
+  .cal .head { text-align: center; color: var(--muted-fg); padding: 0.3rem 0; }
+  .cal .time { color: var(--muted-fg); display: flex; align-items: center; justify-content: flex-end; padding-right: 0.5rem; }
+  .slot {
+    border: 1px solid var(--border); border-radius: 0.45rem; min-height: 2.5rem;
+    padding: 0.25rem 0.4rem; background: var(--bg); overflow: hidden;
+  }
+  .slot.busy { background: var(--muted); }
+  .slot .who { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .slot .why { color: var(--muted-fg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.7rem; }
+  .slot.pop { animation: pop 1.2s ease; }
+  @keyframes pop {
+    0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent); }
+    100% { box-shadow: 0 0 0 12px transparent; }
+  }
+
+  /* house policy card — rules light up as the agent applies them */
+  .policy-list { display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.88rem; }
+  .policy-row {
+    display: grid; grid-template-columns: 1.4rem 1fr auto; gap: 0.6rem; align-items: baseline;
+    border: 1px solid var(--border); border-radius: 0.55rem; padding: 0.45rem 0.7rem;
+    transition: border-color 0.25s ease, background 0.25s ease;
+  }
+  .policy-row .p-no { color: var(--muted-fg); }
+  .policy-row .p-flag { font-size: 0.78rem; color: var(--muted-fg); text-align: right; }
+  .policy-row.hit.allowed { border-color: var(--good); }
+  .policy-row.hit.allowed .p-flag { color: var(--good); font-weight: 500; }
+  .policy-row.hit.blocked { border-color: var(--bad); }
+  .policy-row.hit.blocked .p-flag { color: var(--bad); font-weight: 500; }
+  .policy-row.hit { animation: fadein 0.4s ease; }
+
+  /* key-value forms (case file / intake) */
+  .kv { display: grid; grid-template-columns: minmax(7rem, auto) 1fr; gap: 0.5rem 1rem; font-size: 0.9rem; }
+  .kv dt { color: var(--muted-fg); }
+  .kv dd { margin: 0; min-height: 1.3em; border-bottom: 1px dashed var(--border); }
+  .kv dd.set { border-bottom-color: transparent; font-weight: 500; }
+  .kv dd.pop { animation: fadein 0.5s ease; }
+  @keyframes fadein { from { opacity: 0; transform: translateY(3px); } }
+  .stamp {
+    display: none; margin-top: 1rem; border: 1px solid var(--good); color: var(--good);
+    border-radius: 0.6rem; padding: 0.6rem 0.9rem; font-size: 0.9rem;
+  }
+  .stamp.show { display: block; animation: fadein 0.5s ease; }
+
+  /* copilot deck */
+  .deck-state { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1rem; font-size: 0.9rem; }
+  .deck-state .chip { display: inline-flex; align-items: center; gap: 0.45rem; }
+  .swatch { width: 14px; height: 14px; border-radius: 4px; background: var(--accent); border: 1px solid var(--border); }
+  .action-log { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.82rem; max-height: 8rem; overflow-y: auto; }
+  .action-log div { color: var(--muted-fg); }
+  .action-log div b { color: var(--fg); font-weight: 500; }
+
+  /* outbound */
+  .phone-row { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+  input[type="tel"] {
+    font: inherit; flex: 1; min-width: 12rem;
+    background: var(--bg); color: var(--fg);
+    border: 1px solid var(--border); border-radius: 999px; padding: 0.45rem 1rem;
+  }
+  input[type="tel"]:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .countdown { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 2.6rem; letter-spacing: 0.04em; color: var(--accent); transition: color 0.3s ease; }
+  .out-note { color: var(--muted-fg); font-size: 0.82rem; }
+  .out-error { color: var(--bad); font-size: 0.9rem; display: none; }
+
+  /* copilot section guide */
+  .guide-card {
+    grid-column: 1 / -1;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 0.9rem;
+    background: var(--surface);
+    padding: 1rem 1.1rem;
+    display: flex; flex-direction: column; gap: 0.6rem;
+    animation: fadein 0.4s ease;
+    order: -1;
+  }
+  .guide-card .guide-head { display: flex; align-items: baseline; gap: 0.75rem; }
+  .guide-card .guide-head .mono { color: var(--muted-fg); }
+  .guide-card .guide-head strong { font-size: 1rem; }
+  .guide-card .guide-head button.close {
+    margin-left: auto; background: transparent; border: none; color: var(--muted-fg);
+    font-size: 1rem; padding: 0 0.25rem; line-height: 1;
+  }
+  .guide-card p { margin: 0; color: var(--muted-fg); font-size: 0.92rem; }
+  .guide-row { display: flex; gap: 0.45rem; flex-wrap: wrap; align-items: center; }
+  .guide-row .phrase {
+    background: var(--muted); border: 1px solid var(--border); border-radius: 0.6rem;
+    padding: 0.3rem 0.65rem; font-size: 0.84rem;
+  }
+  .guide-row .phrase::before { content: "“"; color: var(--muted-fg); }
+  .guide-row .phrase::after  { content: "”"; color: var(--muted-fg); }
+
+  .voice-chip { color: var(--muted-fg); border: 1px solid var(--border); border-radius: 999px; padding: 0.2rem 0.6rem; }
+
+  /* voice gallery */
+  .voice-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: 0.6rem; }
+  .voice-card {
+    display: flex; align-items: center; gap: 0.7rem;
+    border: 1px solid var(--border); border-radius: 0.7rem; background: var(--bg); padding: 0.6rem 0.75rem;
+  }
+  .voice-card .play {
+    flex: none; width: 2.1rem; height: 2.1rem; border-radius: 50%; padding: 0;
+    display: inline-flex; align-items: center; justify-content: center; font-size: 0.72rem;
+  }
+  .voice-card .v-meta { min-width: 0; }
+  .voice-card .v-name { font-weight: 500; font-size: 0.92rem; display: flex; gap: 0.45rem; align-items: baseline; flex-wrap: wrap; }
+  .voice-card .v-name .used { color: var(--muted-fg); font-size: 0.66rem; }
+  .voice-card .v-sub { color: var(--muted-fg); font-size: 0.76rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .voice-card.playing { border-color: var(--fg); }
+
+  /* language handoff map */
+  .lang-map { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; }
+  @media (max-width: 560px) { .lang-map { grid-template-columns: 1fr; } }
+  .lang-card {
+    border: 1px solid var(--border); border-radius: 0.7rem; background: var(--bg);
+    padding: 0.8rem 0.9rem; text-align: center; transition: all 0.25s ease;
+  }
+  .lang-card .l-name { font-weight: 500; }
+  .lang-card .l-voice { color: var(--muted-fg); font-size: 0.78rem; }
+  .lang-card.active { background: var(--accent); border-color: var(--accent); }
+  .lang-card.active .l-name, .lang-card.active .l-voice { color: var(--accent-contrast); }
+
+  /* memory bank */
+  .mem-list { display: flex; flex-direction: column; gap: 0.45rem; font-size: 0.9rem; min-height: 3rem; }
+  .mem-list .fact { border: 1px dashed var(--border); border-radius: 0.55rem; padding: 0.45rem 0.7rem; animation: fadein 0.4s ease; }
+  .mem-list .empty { color: var(--muted-fg); }
+  .mem-actions { display: flex; gap: 0.5rem; margin-top: 0.8rem; flex-wrap: wrap; }
+  .mem-actions button { font-size: 0.85rem; padding: 0.35rem 0.9rem; }
+
+  /* knowledge library */
+  .kb-list { display: flex; flex-direction: column; gap: 0.45rem; font-size: 0.9rem; }
+  .kb-doc { display: flex; align-items: center; gap: 0.6rem; border: 1px solid var(--border); border-radius: 0.55rem; padding: 0.5rem 0.75rem; background: var(--bg); }
+  .kb-doc::before { content: "▤"; color: var(--muted-fg); }
+
+  /* accent change wash */
+  #accent-splash {
+    position: fixed; inset: 0; z-index: 90; pointer-events: none; opacity: 0;
+    background: radial-gradient(circle at 50% 45%, var(--accent) 0%, transparent 65%);
+  }
+  #accent-splash.go { animation: splash 0.8s ease; }
+  @keyframes splash { 0% { opacity: 0; } 25% { opacity: 0.22; } 100% { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { #accent-splash.go { animation: none; } }
+
+  /* dual control: the visitor's phone + the agent's CRM */
+  .phone-mock {
+    max-width: 15rem; margin: 0 auto; border: 2px solid var(--fg); border-radius: 1.4rem;
+    background: var(--bg); padding: 0.9rem 0.9rem 1.1rem;
+  }
+  .phone-signal {
+    text-align: center; font-weight: 700; font-size: 1.15rem; padding: 0.7rem 0;
+    border-bottom: 1px solid var(--border); margin-bottom: 0.7rem;
+  }
+  .phone-signal.ok { color: var(--good); }
+  .phone-signal.bad { color: var(--bad); }
+  .phone-row { display: flex; align-items: center; justify-content: space-between; padding: 0.45rem 0; font-size: 0.9rem; }
+  .switch {
+    width: 2.6rem; height: 1.45rem; border-radius: 999px; border: 1px solid var(--border);
+    background: var(--muted); position: relative; cursor: pointer; padding: 0; transition: background 0.2s ease;
+  }
+  .switch::after {
+    content: ""; position: absolute; top: 2px; left: 2px; width: 1.15rem; height: 1.15rem;
+    border-radius: 50%; background: var(--bg); border: 1px solid var(--border); transition: transform 0.2s ease;
+  }
+  .switch[aria-checked="true"] { background: var(--good); border-color: var(--good); }
+  .switch[aria-checked="true"]::after { transform: translateX(1.15rem); }
+  .phone-hint { text-align: center; color: var(--muted-fg); font-size: 0.74rem; margin-top: 0.6rem; }
+  .world-state { display: flex; flex-direction: column; gap: 0.3rem; margin-top: 0.9rem; }
+  .world-state .cond { color: var(--muted-fg); }
+  .world-state .cond.met { color: var(--good); }
+
+  /* toast */
+  #toasts { position: fixed; bottom: 1.25rem; left: 50%; transform: translateX(-50%); z-index: 100; display: flex; flex-direction: column; gap: 0.5rem; align-items: center; }
+  .toast {
+    background: var(--fg); color: var(--bg); border-radius: 999px;
+    padding: 0.5rem 1.2rem; font-size: 0.9rem; animation: fadein 0.3s ease;
+    max-width: min(90vw, 34rem);
+  }
+
+  /* ---------- footer ---------- */
+  footer { border-top: 1px solid var(--border); overflow: hidden; }
+  .footer-inner { max-width: 1160px; margin: 0 auto; padding: 2rem 1.25rem 0; color: var(--muted-fg); font-size: 0.85rem; }
+  .footer-mark {
+    max-width: 1160px; margin: 0 auto; padding: 0 1.25rem;
+    font-size: clamp(4rem, 13vw, 11rem); font-weight: 700; letter-spacing: -0.04em; line-height: 0.78;
+    color: color-mix(in srgb, var(--accent) 9%, var(--bg));
+    user-select: none; transform: translateY(0.18em); transition: color 0.3s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .wave i, .ticker, .eq.live i, .standby .blink { animation: none !important; }
+    .reveal { opacity: 1; transform: none; transition: none; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="wordmark" href="#top"><strong>Speechify<span class="ai">AI</span></strong> <span class="mono">Voice Agents</span></a>
+    <nav class="mono">
+      <a href="#scheduling">01 Scheduling</a>
+      <a href="#support">02 Support</a>
+      <a href="#copilot">03 Copilot</a>
+      <a href="#intake">04 Intake</a>
+      <a href="#outbound">05 Outbound</a>
+      <a href="#voices">06 Voices</a>
+      <a href="#languages">07 Languages</a>
+      <a href="#memory">08 Memory</a>
+      <a href="#knowledge">09 Knowledge</a>
+      <a href="#dualcontrol">10 Dual control</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <div class="hero">
+    <div>
+      <span class="standby mono"><span class="blink"></span> 11 agents standing by</span>
+      <h1>Talk to it. Watch the page do the work.</h1>
+      <p class="sub">Eleven live agents across ten lines — booking, policy-bound support, page control, intake, real phone calls, language handoffs, memory, a grounded knowledge library, and a fix that takes both your hands and the agent's. Pick a line, press start, allow the mic, and speak naturally.</p>
+      <div class="wave" id="hero-wave" aria-hidden="true"></div>
+    </div>
+    <div class="switchboard" role="navigation" aria-label="Agent directory">
+      <div class="board-head mono"><span>Line directory</span><span>live</span></div>
+      <a class="line-row" href="#scheduling">
+        <span class="line-no mono">Line 01</span><strong>Scheduling</strong>
+        <span class="line-desc">books, moves, and cancels on a live calendar</span>
+        <span class="line-arrow">→</span>
+      </a>
+      <a class="line-row" href="#support">
+        <span class="line-no mono">Line 02</span><strong>Support &amp; refunds</strong>
+        <span class="line-desc">files a case while you explain the problem</span>
+        <span class="line-arrow">→</span>
+      </a>
+      <a class="line-row" href="#copilot">
+        <span class="line-no mono">Line 03</span><strong>Page copilot</strong>
+        <span class="line-desc">redecorates and drives this very page</span>
+        <span class="line-arrow">→</span>
+      </a>
+      <a class="line-row" href="#intake">
+        <span class="line-no mono">Line 04</span><strong>Lead intake</strong>
+        <span class="line-desc">turns a conversation into a filled form</span>
+        <span class="line-arrow">→</span>
+      </a>
+      <a class="line-row" href="#outbound">
+        <span class="line-no mono">Line 05</span><strong>Outbound</strong>
+        <span class="line-desc">rings your actual phone (US only) — capped at 5:00</span>
+        <span class="line-arrow">→</span>
+      </a>
+      <a class="line-row" href="#voices">
+        <span class="line-no mono">Line 06</span><strong>Voice gallery</strong>
+        <span class="line-desc">every line speaks differently — hear the catalog</span>
+        <span class="line-arrow">→</span>
+      </a>
+      <a class="line-row" href="#languages">
+        <span class="line-no mono">Line 07</span><strong>Languages</strong>
+        <span class="line-desc">switch mid-call — a whole new agent and voice takes over</span>
+        <span class="line-arrow">→</span>
+      </a>
+      <a class="line-row" href="#memory">
+        <span class="line-no mono">Line 08</span><strong>Memory</strong>
+        <span class="line-desc">hang up, call back — she remembers you</span>
+        <span class="line-arrow">→</span>
+      </a>
+      <a class="line-row" href="#knowledge">
+        <span class="line-no mono">Line 09</span><strong>Knowledge</strong>
+        <span class="line-desc">answers only from its product library</span>
+        <span class="line-arrow">→</span>
+      </a>
+      <a class="line-row" href="#dualcontrol">
+        <span class="line-no mono">Line 10</span><strong>Dual control</strong>
+        <span class="line-desc">fixes your No Service — its hands on the CRM, yours on the phone</span>
+        <span class="line-arrow">→</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="ticker-strip mono" aria-hidden="true">
+    <div class="ticker" id="ticker">
+      <span><b>Books</b> appointments</span><span>·</span>
+      <span><b>Files</b> refund cases</span><span>·</span>
+      <span><b>Drives</b> the UI</span><span>·</span>
+      <span><b>Captures</b> leads</span><span>·</span>
+      <span><b>Dials</b> real phones</span><span>·</span>
+      <span><b>Hangs up</b> at 5:00 sharp</span><span>·</span>
+      <span><b>Switches</b> language and voice mid-call</span><span>·</span>
+      <span><b>Remembers</b> returning callers</span><span>·</span>
+      <span><b>Cites</b> its knowledge library</span><span>·</span>
+      <span><b>Guides</b> your hands when it can't reach</span><span>·</span>
+    </div>
+  </div>
+
+  <!-- LINE 01 · SCHEDULING -->
+  <section id="scheduling">
+    <div class="sec-num" aria-hidden="true">01</div>
+    <div class="section-inner">
+      <div class="section-copy reveal">
+        <div class="kicker mono">Line 01 · Appointment scheduling</div>
+        <h2>The calendar fills while you talk</h2>
+        <p>Maya runs the front desk of a demo dental clinic. Ask for a slot — she checks the live week calendar, offers openings, books, moves, or cancels. Every change lands on the calendar the moment she does it. Clinics, salons, studios — anywhere that books slots — run this as a front desk that answers every single call.</p>
+        <div class="say">
+          <span>Can I get a cleaning on Wednesday afternoon?</span>
+          <span>Move Ana's appointment to Friday morning</span>
+          <span>Cancel the booking for Jonah</span>
+        </div>
+        <div class="call-panel">
+          <div class="eq" data-dot="scheduling"><i></i><i></i><i></i><i></i></div>
+          <div class="call-status mono" data-status="scheduling">idle</div>
+          <span class="voice-chip mono" data-voice="scheduling"></span>
+          <button data-start="scheduling">Start demo</button>
+          <button class="ghost" data-stop="scheduling" hidden>End</button>
+        </div>
+      </div>
+      <div class="stage reveal">
+        <div class="demo-card">
+          <h3>Sunrise Dental — this week <span class="mono" id="cal-open-count"></span></h3>
+          <div class="cal" id="calendar"></div>
+        </div>
+        <div class="transcript" data-transcript="scheduling"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LINE 02 · SUPPORT -->
+  <section id="support">
+    <div class="sec-num" aria-hidden="true">02</div>
+    <div class="section-inner">
+      <div class="section-copy reveal">
+        <div class="kicker mono">Line 02 · Support &amp; refunds</div>
+        <h2>It knows the rules — and finds the allowed path</h2>
+        <p>Ask for something the house policy forbids and watch the agent reason: the rule that blocks you lights up red, the rule that saves you lights up green, and the agent offers the allowed path instead of a bare no. Try AA-7391 (final sale), AA-8102 (out of the refund window), AA-9257 (still in transit), or AA-1042 (clean refund).</p>
+        <div class="say">
+          <span>I want a refund for order AA-7391</span>
+          <span>My headphones from AA-8102 died after two months</span>
+          <span>Cancel AA-9257 — it hasn't even arrived yet</span>
+        </div>
+        <div class="call-panel">
+          <div class="eq" data-dot="support"><i></i><i></i><i></i><i></i></div>
+          <div class="call-status mono" data-status="support">idle</div>
+          <span class="voice-chip mono" data-voice="support"></span>
+          <button data-start="support">Start demo</button>
+          <button class="ghost" data-stop="support" hidden>End</button>
+        </div>
+      </div>
+      <div class="stage reveal">
+        <div class="demo-card" id="policy-card">
+          <h3>House policy <span class="mono" id="policy-state">watching</span></h3>
+          <div class="policy-list">
+            <div class="policy-row" data-rule="1"><span class="p-no mono">1</span><span>Refunds within 30 days of delivery.</span><span class="p-flag"></span></div>
+            <div class="policy-row" data-rule="2"><span class="p-no mono">2</span><span>Final sale: no refund — store-credit exchange within 14 days.</span><span class="p-flag"></span></div>
+            <div class="policy-row" data-rule="3"><span class="p-no mono">3</span><span>Out of window, defective: 24-month warranty replacement after troubleshooting.</span><span class="p-flag"></span></div>
+            <div class="policy-row" data-rule="4"><span class="p-no mono">4</span><span>Still in transit: no refund yet — shipment can be recalled.</span><span class="p-flag"></span></div>
+          </div>
+        </div>
+        <div class="demo-card" id="order-card" style="display:none">
+          <h3>Order <span class="mono" id="order-number"></span></h3>
+          <dl class="kv" id="order-kv"></dl>
+        </div>
+        <div class="demo-card">
+          <h3>Case file <span class="mono" id="case-state">draft</span></h3>
+          <dl class="kv">
+            <dt>Order number</dt><dd data-case="order_number"></dd>
+            <dt>Email</dt><dd data-case="email"></dd>
+            <dt>Phone</dt><dd data-case="phone"></dd>
+            <dt>Issue</dt><dd data-case="issue"></dd>
+            <dt>Resolution</dt><dd data-case="resolution"></dd>
+          </dl>
+          <div class="stamp" id="case-stamp"></div>
+        </div>
+        <div class="transcript" data-transcript="support"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LINE 03 · COPILOT -->
+  <section id="copilot">
+    <div class="sec-num" aria-hidden="true">03</div>
+    <div class="section-inner">
+      <div class="section-copy reveal">
+        <div class="kicker mono">Line 03 · Page copilot</div>
+        <h2>An agent that drives the screen</h2>
+        <p>Edmund controls the page you're looking at: flip the theme, recolor the accents, jump between sections, pop messages. It's the same mechanism an agent uses to drive any web app — picture an e-commerce store ('find me running shoes under $100') or a ten-step enterprise console, driven by voice.</p>
+        <div class="say">
+          <span>Switch to dark mode</span>
+          <span>Make the accent teal</span>
+          <span>Take me to the outbound section</span>
+        </div>
+        <div class="call-panel">
+          <div class="eq" data-dot="copilot"><i></i><i></i><i></i><i></i></div>
+          <div class="call-status mono" data-status="copilot">idle</div>
+          <span class="voice-chip mono" data-voice="copilot"></span>
+          <button data-start="copilot">Start demo</button>
+          <button class="ghost" data-stop="copilot" hidden>End</button>
+        </div>
+      </div>
+      <div class="stage reveal">
+        <div class="demo-card">
+          <h3>Control deck <span class="mono">live page state</span></h3>
+          <div class="deck-state">
+            <span class="chip">Theme <b id="deck-theme">light</b></span>
+            <span class="chip">Accent <span class="swatch"></span> <b id="deck-accent">default</b></span>
+          </div>
+          <div class="mono" style="color:var(--muted-fg); margin-bottom:0.4rem">Action log</div>
+          <div class="action-log" id="copilot-log"><div>No actions yet — start the demo and ask for a change.</div></div>
+        </div>
+        <div class="transcript" data-transcript="copilot"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LINE 04 · INTAKE -->
+  <section id="intake">
+    <div class="sec-num" aria-hidden="true">04</div>
+    <div class="section-inner">
+      <div class="section-copy reveal">
+        <div class="kicker mono">Line 04 · Lead intake</div>
+        <h2>Voice in, structured data out</h2>
+        <p>Sabrina interviews you about a project and fills the intake form field by field — the same pattern works for insurance claims, patient intake, loan applications — any form your team keys in by hand becomes a conversation.</p>
+        <div class="say">
+          <span>I'm Dana from Northwind Logistics</span>
+          <span>We want agents to handle our delivery reschedule calls</span>
+          <span>We'd launch this quarter</span>
+        </div>
+        <div class="call-panel">
+          <div class="eq" data-dot="intake"><i></i><i></i><i></i><i></i></div>
+          <div class="call-status mono" data-status="intake">idle</div>
+          <span class="voice-chip mono" data-voice="intake"></span>
+          <button data-start="intake">Start demo</button>
+          <button class="ghost" data-stop="intake" hidden>End</button>
+        </div>
+      </div>
+      <div class="stage reveal">
+        <div class="demo-card">
+          <h3>New-project intake <span class="mono" id="lead-state">draft</span></h3>
+          <dl class="kv">
+            <dt>Name</dt><dd data-lead="name"></dd>
+            <dt>Company</dt><dd data-lead="company"></dd>
+            <dt>Email</dt><dd data-lead="email"></dd>
+            <dt>Use case</dt><dd data-lead="use_case"></dd>
+            <dt>Team size</dt><dd data-lead="team_size"></dd>
+            <dt>Timeline</dt><dd data-lead="timeline"></dd>
+          </dl>
+          <div class="stamp" id="lead-stamp"></div>
+        </div>
+        <div class="transcript" data-transcript="intake"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LINE 05 · OUTBOUND -->
+  <section id="outbound">
+    <div class="sec-num" aria-hidden="true">05</div>
+    <div class="section-inner">
+      <div class="section-copy reveal">
+        <div class="kicker mono">Line 05 · Outbound calling</div>
+        <h2>It calls your real phone</h2>
+        <p>Type your US number and the concierge agent dials you within seconds — a real phone call, not a browser session. US numbers only for now. Demo calls hard-stop at five minutes; the agent wraps up politely before the line drops. Reminder calls, lead callbacks, delivery confirmations — this is how they run at scale.</p>
+        <div class="say">
+          <span>What can Speechify agents actually do?</span>
+          <span>How would this handle our reminder calls?</span>
+          <span>Okay, I'm done — bye!</span>
+        </div>
+      </div>
+      <div class="stage reveal">
+        <div class="demo-card">
+          <h3>Call me <span class="mono" id="out-state">ready</span></h3>
+          <div class="phone-row">
+            <input type="tel" id="phone" placeholder="+1 415 555 0123" autocomplete="tel" />
+            <button id="call-me">Call me</button>
+            <button class="ghost" id="end-call" hidden>End call</button>
+          </div>
+          <p class="out-error" id="out-error"></p>
+          <div style="display:flex; align-items:baseline; gap:1rem; margin-top:1rem">
+            <div class="countdown" id="countdown">5:00</div>
+            <div class="out-note">hard cap — the call auto-disconnects at zero</div>
+          </div>
+          <p class="out-note">US numbers only (+1). One demo call at a time; a few calls per hour per visitor.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LINE 06 · VOICES -->
+  <section id="voices">
+    <div class="sec-num" aria-hidden="true">06</div>
+    <div class="section-inner">
+      <div class="section-copy reveal">
+        <div class="kicker mono">Line 06 · Voice gallery</div>
+        <h2>Pick a voice, any voice</h2>
+        <p>Every line on this page speaks with a different voice from the catalog — press play to hear them. Agents can use any of these, and cloned voices are available on paid plans.</p>
+        <p class="out-note">Voices marked with a line number are live on this page right now.</p>
+      </div>
+      <div class="stage reveal">
+        <div class="demo-card">
+          <h3>Voice catalog <span class="mono" id="voice-count"></span></h3>
+          <div class="voice-grid" id="voice-grid"><span class="out-note">Loading voices…</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LINE 07 · LANGUAGES -->
+  <section id="languages">
+    <div class="sec-num" aria-hidden="true">07</div>
+    <div class="section-inner">
+      <div class="section-copy reveal">
+        <div class="kicker mono">Line 07 · Languages</div>
+        <h2>Ask for Spanish — a Spanish agent takes over</h2>
+        <p>Start in English with Harper. Ask for Spanish or Hindi and the call is handed live to a different agent with a native-fit voice and its own speech recognition — same call, no reconnect. That's real agent-to-agent transfer, the same mechanism that routes callers from sales to support — one support line, every customer's language.</p>
+        <div class="say">
+          <span>Español, por favor</span>
+          <span>हिंदी में बात करें</span>
+          <span>Back to English, please</span>
+        </div>
+        <div class="call-panel">
+          <div class="eq" data-dot="languages"><i></i><i></i><i></i><i></i></div>
+          <div class="call-status mono" data-status="languages">idle</div>
+          <span class="voice-chip mono" data-voice="languages"></span>
+          <button data-start="languages">Start demo</button>
+          <button class="ghost" data-stop="languages" hidden>End</button>
+        </div>
+      </div>
+      <div class="stage reveal">
+        <div class="demo-card">
+          <h3>Live handoff <span class="mono" id="lang-state">waiting</span></h3>
+          <div class="lang-map">
+            <div class="lang-card" data-stage="english"><div class="l-name">English</div><div class="l-voice">Harper</div></div>
+            <div class="lang-card" data-stage="spanish"><div class="l-name">Español</div><div class="l-voice">Nuria</div></div>
+            <div class="lang-card" data-stage="hindi"><div class="l-name">हिन्दी</div><div class="l-voice">Aaliyah</div></div>
+          </div>
+          <p class="out-note" style="margin-top:0.8rem">Each card is a separate agent. The active one lights up as the call is transferred — voice, language, and speech recognition all switch together.</p>
+        </div>
+        <div class="transcript" data-transcript="languages"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LINE 08 · MEMORY -->
+  <section id="memory">
+    <div class="sec-num" aria-hidden="true">08</div>
+    <div class="section-inner">
+      <div class="section-copy reveal">
+        <div class="kicker mono">Line 08 · Memory</div>
+        <h2>Hang up. Call back. She remembers.</h2>
+        <p>Tell Imogen your name and what you're working on, end the call, then call again — she'll pick up where you left off. Memory turns repeat callers into known customers: account managers, patient lines, VIP desks. Give it ~30 seconds after hanging up; memories are tied to you (this browser) and show up in the bank below.</p>
+        <div class="say">
+          <span>I'm Sam — I run a two-person bakery</span>
+          <span>Remember that I prefer morning deliveries</span>
+          <span>Do you remember what I told you last time?</span>
+        </div>
+        <div class="call-panel">
+          <div class="eq" data-dot="memory"><i></i><i></i><i></i><i></i></div>
+          <div class="call-status mono" data-status="memory">idle</div>
+          <span class="voice-chip mono" data-voice="memory"></span>
+          <button data-start="memory">Start demo</button>
+          <button class="ghost" data-stop="memory" hidden>End</button>
+        </div>
+      </div>
+      <div class="stage reveal">
+        <div class="demo-card">
+          <h3>Memory bank <span class="mono" id="mem-state">this browser</span></h3>
+          <div class="mem-list" id="mem-list"><span class="empty">Nothing yet — memories show up here a little after your first call ends.</span></div>
+          <div class="mem-actions">
+            <button class="ghost" id="mem-refresh">Refresh</button>
+            <button class="ghost" id="mem-forget">Forget me</button>
+          </div>
+        </div>
+        <div class="transcript" data-transcript="memory"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LINE 09 · KNOWLEDGE -->
+  <section id="knowledge">
+    <div class="sec-num" aria-hidden="true">09</div>
+    <div class="section-inner">
+      <div class="section-copy reveal">
+        <div class="kicker mono">Line 09 · Knowledge space</div>
+        <h2>Answers from its library, nothing else</h2>
+        <p>Rhys is grounded in a five-document product library — specs, warranty, troubleshooting. Ask anything covered there and he quotes the documented numbers; ask beyond it and he says so instead of making things up. Point an agent at your own manuals and policies and this becomes support deflection with answers you can trace to a document.</p>
+        <div class="say">
+          <span>How long is the warranty on the Aurora Pro?</span>
+          <span>My left earbud won't charge — what do I do?</span>
+          <span>Can the Beam speaker take phone calls?</span>
+        </div>
+        <div class="call-panel">
+          <div class="eq" data-dot="knowledge"><i></i><i></i><i></i><i></i></div>
+          <div class="call-status mono" data-status="knowledge">idle</div>
+          <span class="voice-chip mono" data-voice="knowledge"></span>
+          <button data-start="knowledge">Start demo</button>
+          <button class="ghost" data-stop="knowledge" hidden>End</button>
+        </div>
+      </div>
+      <div class="stage reveal">
+        <div class="demo-card">
+          <h3>Knowledge space <span class="mono">5 documents</span></h3>
+          <div class="kb-list" id="kb-list"></div>
+          <p class="out-note" style="margin-top:0.8rem">The agent searches these documents live during the call and answers only from what they say.</p>
+        </div>
+        <div class="transcript" data-transcript="knowledge"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LINE 10 · DUAL CONTROL -->
+  <section id="dualcontrol">
+    <div class="sec-num" aria-hidden="true">10</div>
+    <div class="section-inner">
+      <div class="section-copy reveal">
+        <div class="kicker mono">Line 10 · Dual control</div>
+        <h2>Some fixes take both hands</h2>
+        <p>You just landed abroad and the phone says No Service. Hugh can write to the carrier's systems live — watch roaming flip on the line record — but your phone only YOU can touch. He has to ask what you see, guide you switch by switch, and confirm. Telco, banking, IoT — this is how real support works.</p>
+        <div class="say">
+          <span>I just landed in Seoul and my phone says No Service</span>
+          <span>There's a little airplane icon up top</span>
+          <span>Done — still no signal though</span>
+        </div>
+        <div class="call-panel">
+          <div class="eq" data-dot="dualcontrol"><i></i><i></i><i></i><i></i></div>
+          <div class="call-status mono" data-status="dualcontrol">idle</div>
+          <span class="voice-chip mono" data-voice="dualcontrol"></span>
+          <button data-start="dualcontrol">Start demo</button>
+          <button class="ghost" data-stop="dualcontrol" hidden>End</button>
+        </div>
+      </div>
+      <div class="stage reveal">
+        <div class="demo-card">
+          <h3>Your phone <span class="mono">only you can touch it</span></h3>
+          <div class="phone-mock">
+            <div class="phone-signal bad" id="phone-signal">✈ No Service</div>
+            <div class="phone-row"><span>Airplane Mode</span><button class="switch" id="tg-airplane" role="switch" aria-checked="true" aria-label="Airplane Mode"></button></div>
+            <div class="phone-row"><span>Data Roaming</span><button class="switch" id="tg-roaming" role="switch" aria-checked="false" aria-label="Data Roaming"></button></div>
+            <div class="phone-hint">Click the switches — the agent cannot.</div>
+          </div>
+        </div>
+        <div class="demo-card">
+          <h3>Agent's world — carrier CRM <span class="mono" id="crm-state">line L-1001</span></h3>
+          <dl class="kv">
+            <dt>Line</dt><dd class="set">L-1001 · active</dd>
+            <dt>Plan</dt><dd class="set">Global Flex 5 GB</dd>
+            <dt>Intl. roaming</dt><dd id="crm-roaming">off</dd>
+          </dl>
+          <div class="world-state mono">
+            <span class="cond" id="cond-phone">✗ phone.signal == true</span>
+            <span class="cond" id="cond-crm">✗ crm.line.roaming == true</span>
+          </div>
+        </div>
+        <div class="transcript" data-transcript="dualcontrol"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span class="mono">Speechify AI · Voice Agents API</span> — capability showcase. Demo data only; nothing here touches real customer systems.
+  </div>
+  <div class="footer-mark" aria-hidden="true">Speechify<span class="ai">AI</span></div>
+</footer>
+
+<div id="accent-splash" aria-hidden="true"></div>
+<div id="toasts"></div>
+
+<script src="/config.js?b=16"></script>
+<script type="module" src="/app.js?b=16"></script>
+</body>
+</html>
