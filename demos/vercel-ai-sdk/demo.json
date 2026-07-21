@@ -1,0 +1,6 @@
+{
+  "order": 140,
+  "title": "Vercel AI SDK",
+  "stack": "TypeScript (Vercel AI SDK)",
+  "blurb": "Speechify TTS through the Vercel AI SDK's unified `generateSpeech` interface via the official `@speechify/vercel` provider — one-line swap from OpenAI/ElevenLabs, plus word-level speech marks from `providerMetadata`."
+}
