@@ -71,30 +71,36 @@ should gate those endpoints with [Cloudflare Turnstile](https://developers.cloud
 Without it, anyone can hammer `/api/clone`, `/api/speak`, etc. and drain the
 production key that lives in the deployment env.
 
-The infrastructure ships once in this repo:
+The shared client helper ships once:
 
-- **[`site/api/turnstile/`](./site/api/turnstile)** — two Edge functions
-  (`GET /api/turnstile/config`, `POST /api/turnstile/verify`) that live in
-  the `site` service and are served from the root of `demos.speechify.ai`.
-  Every demo can call them — no per-demo wiring, no code duplication.
 - **[`site/public/turnstile.js`](./site/public/turnstile.js)** — a
-  ~100-line vanilla-JS client helper, served at `/turnstile.js` on
-  `demos.speechify.ai`. Any demo can drop in a `<script src="/turnstile.js">`
-  and get widget rendering + token retrieval for free.
+  ~100-line vanilla-JS helper served at `/turnstile.js` on
+  `demos.speechify.ai`. Any demo drops in `<script src="/turnstile.js">` and
+  gets widget rendering + token retrieval for free. The Cloudflare Turnstile
+  site key is hardcoded there (public by design — the widget embeds it in
+  every rendered `<div class="cf-turnstile">`).
+
+The server-side verify is per-demo — each demo's own API route calls
+Cloudflare's `siteverify` directly. No cross-service Vercel gymnastics, one
+straightforward pattern for every framework. See
+[`demos/next-voice-cloning-app/app/lib/turnstile.ts`](./demos/next-voice-cloning-app/app/lib/turnstile.ts)
+for the reference implementation — 40 lines, copy verbatim.
 
 ### Env vars (set once on the Vercel project)
 
-Both must be set for Turnstile to actually gate anything. Missing either one
-disables the whole system — locally, on forks, and on any environment where
-the operator hasn't set them. Demos keep working, they just aren't gated.
+Only one env var to configure. When it's missing, the shared verify helper
+fail-opens and demos keep working ungated — the intended behaviour on forks
+and local dev.
 
-- `TURNSTILE_SITE_KEY` — public site key from the Cloudflare Turnstile
-  dashboard. Safe to expose to the browser; the config endpoint hands it out
-  when both keys are set. Never commit it — the missing-var behaviour is what
-  keeps fork deploys and local dev working.
-- `TURNSTILE_SECRET_KEY` — server secret from the same dashboard. Only ever
-  touched by `services/turnstile/api/verify.js`. Do not add to any
-  `.env.example`. Do not log. Do not embed in client code.
+- `TURNSTILE_SECRET_KEY` — server secret from the Cloudflare Turnstile
+  dashboard. Only touched by each demo's own `verifyTurnstile()` helper.
+  Do not add to any `.env.example`. Do not log. Do not embed in client code.
+
+The site key isn't an env var — it's committed to `site/public/turnstile.js`.
+Turnstile site keys are public in the Cloudflare threat model (they identify
+which widget you own, not what someone can do with it), so a widget-domain
+allowlist on the Cloudflare dashboard side is what actually gates abuse — not
+key secrecy.
 
 ### Client-side integration (in the demo's browser page)
 
@@ -137,20 +143,15 @@ demo works everywhere.
 
 ### Server-side integration (in the demo's API route)
 
-Verify the token BEFORE doing anything that spends a credit — a network call,
-a synthesis job, a voice clone. One extra fetch to the local verify endpoint,
-Edge-runtime fast:
+Copy [`demos/next-voice-cloning-app/app/lib/turnstile.ts`](./demos/next-voice-cloning-app/app/lib/turnstile.ts)
+verbatim (or reimplement the ~15 lines in your framework's server language).
+It calls Cloudflare's `siteverify` directly with `TURNSTILE_SECRET_KEY` and
+returns a boolean. Use it before doing anything that spends a credit — a
+synthesis job, a voice clone, a real API call:
 
 ```ts
 export async function POST(req: Request) {
-  const token = req.headers.get("x-turnstile-token");
-  const verifyRes = await fetch(new URL("/api/turnstile/verify", req.url), {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ token }),
-  });
-  const { verified } = await verifyRes.json();
-  if (!verified) {
+  if (!(await verifyTurnstile(req))) {
     return new Response("Forbidden", { status: 403 });
   }
 
@@ -158,27 +159,23 @@ export async function POST(req: Request) {
 }
 ```
 
-`new URL('/api/turnstile/verify', req.url)` builds an absolute URL from the
-incoming request's origin, so this works in prod (`demos.speechify.ai`),
-preview URLs, and local `vercel dev` without any env-var wrangling.
-
-When Turnstile isn't configured, the verify endpoint responds
-`{ verified: true, disabled: true }` — the demo keeps working. If you want to
-telemetry the disabled state (e.g. warn in logs on a real prod deploy), read
-the `disabled` field.
+When `TURNSTILE_SECRET_KEY` isn't set on the deployment, `verifyTurnstile`
+returns `true` — the demo keeps working, just ungated. That's the fail-open
+contract that keeps forks and local dev alive without extra config.
 
 ### How the fail-open contract keeps forks and local dev working
 
-Neither key set → `/api/turnstile/config` returns `{ enabled: false }` → the
-client helper skips widget rendering → `getToken()` returns `null` → the demo
-sends its request without a token → the server calls `/api/turnstile/verify`,
-which sees no `TURNSTILE_SECRET_KEY` and responds `verified: true` → the demo
-proceeds.
+Server has no `TURNSTILE_SECRET_KEY` → `verifyTurnstile()` short-circuits to
+`true` → demo proceeds without checking the token → widget still renders
+client-side (site key is baked into `/turnstile.js`), user solves it, token
+gets ignored server-side.
 
-Both keys set → widget renders → user solves the challenge → token attached to
-the fetch → server verifies against Cloudflare siteverify → gated.
+Server has `TURNSTILE_SECRET_KEY` → widget renders → user solves →
+`verifyTurnstile()` posts to Cloudflare siteverify → gated.
 
-There is no intermediate state where a demo half-works. Set both keys or none.
+The one visible artifact of the unconfigured state: the widget still shows on
+the page even without the secret. Users can solve it, it just doesn't matter.
+Acceptable trade-off for zero-config forks.
 
 ### Reference integration
 

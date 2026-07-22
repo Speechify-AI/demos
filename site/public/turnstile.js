@@ -1,5 +1,11 @@
 // Shared Turnstile client helper for hosted demos.
 //
+// Site keys are public by Cloudflare Turnstile design (they're embedded in
+// every widget's HTML), so the key is hardcoded here rather than fetched at
+// runtime — the deployment doesn't need a separate config endpoint to hand
+// it out. The corresponding TURNSTILE_SECRET_KEY lives only in the Vercel
+// project env and is used server-side by each demo's own route handler.
+//
 // Usage from any demo's HTML:
 //   <div id="turnstile"></div>
 //   <script src="/turnstile.js"></script>
@@ -14,28 +20,14 @@
 //   const headers = token ? { 'x-turnstile-token': token } : {};
 //   const r = await fetch('/api/whatever', { method: 'POST', headers, body });
 //   window.__ts.reset();
-//
-// When the deployment doesn't have Turnstile env vars set (local dev, forks),
-// render() returns { enabled: false, getToken: () => null } and callers just
-// send an empty token — the verify endpoint fail-opens to match.
 
 (function () {
   const NS = (window.SpeechifyTurnstile = window.SpeechifyTurnstile || {});
-
-  let configPromise = null;
-  NS.config = function config() {
-    if (!configPromise) {
-      configPromise = fetch("/api/turnstile/config", { credentials: "omit" })
-        .then((r) => (r.ok ? r.json() : { enabled: false }))
-        .catch(() => ({ enabled: false }));
-    }
-    return configPromise;
-  };
+  const SITE_KEY = "0x4AAAAAAD7QYbrMFju3EnWY";
 
   NS.render = async function render(target, options) {
     options = options || {};
-    const cfg = await NS.config();
-    if (!cfg.enabled) {
+    if (!SITE_KEY) {
       return {
         enabled: false,
         getToken: function () {
@@ -53,7 +45,7 @@
 
     let currentToken = null;
     const widgetId = window.turnstile.render(el, {
-      sitekey: cfg.siteKey,
+      sitekey: SITE_KEY,
       callback: function (token) {
         currentToken = token;
         if (options.onToken) options.onToken(token);
@@ -86,16 +78,6 @@
         window.turnstile.reset(widgetId);
       },
     };
-  };
-
-  NS.verify = async function verify(token) {
-    const r = await fetch("/api/turnstile/verify", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ token }),
-    });
-    if (!r.ok) return { verified: false };
-    return await r.json();
   };
 
   function sleep(ms) {
