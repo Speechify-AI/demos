@@ -1,0 +1,6 @@
+{
+  "order": 12,
+  "title": "Multilingual voiceover",
+  "stack": "Next.js + simba-3.0",
+  "blurb": "Generate the same line in six languages with a locale-matched simba-3.0 voice. The API key stays server-side."
+}

@@ -10,6 +10,7 @@ Demos with a **Live** link run in your browser at [demos.speechify.ai](https://d
 | Folder | Stack | Live | What it does |
 | --- | --- | --- | --- |
 | [`demos/next-voice-cloning-app/`](./demos/next-voice-cloning-app) | Next.js | [Open](https://demos.speechify.ai/next-voice-cloning-app) | Upload a sample, clone the voice, synthesize with the clone. The API key stays server-side in route handlers. |
+| [`demos/multilingual-voiceover/`](./demos/multilingual-voiceover) | Next.js + simba-3.0 | [Open](https://demos.speechify.ai/multilingual-voiceover) | Generate the same line in six languages with a locale-matched simba-3.0 voice. The API key stays server-side. |
 | [`demos/captions-speech-marks/`](./demos/captions-speech-marks) | TypeScript (native) |  | Synthesizes audio and builds a WebVTT caption file from the speech marks the API returns in the same response. Karaoke-highlight HTML demo included. |
 | [`demos/voice-cloning-narration/`](./demos/voice-cloning-narration) | TypeScript (native) |  | Clones a voice from a 10-30 sec WAV sample, synthesizes with the new voice, deletes the clone. End-to-end lifecycle. |
 | [`demos/audiobook-pipeline/`](./demos/audiobook-pipeline) | Python (SDK) |  | Chunks long-form text on sentence boundaries, synthesizes each chunk via the Speechify Python SDK, concatenates the MP3s with ffmpeg. |
