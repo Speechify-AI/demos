@@ -126,7 +126,7 @@ export default function Home() {
         <select id="lang" value={code} onChange={(e) => setCode(e.target.value)}>
           {LANGUAGES.map((l) => (
             <option key={l.code} value={l.code}>
-              {l.label} — {l.voiceName}
+              {l.label} ({l.voiceName})
             </option>
           ))}
         </select>
