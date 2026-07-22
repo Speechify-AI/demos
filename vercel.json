@@ -9,20 +9,37 @@
     "next-voice-cloning-app": {
       "root": "demos/next-voice-cloning-app/",
       "framework": "nextjs"
+    },
+    "ai-sdk-speechify-speech": {
+      "root": "demos/ai-sdk-speechify-speech/",
+      "framework": "nextjs"
     }
   },
   "rewrites": [
     {
+      "source": "/ai-sdk-speechify-speech/:path*",
+      "destination": {
+        "service": "ai-sdk-speechify-speech"
+      }
+    },
+    {
       "source": "/next-voice-cloning-app/:path*",
-      "destination": { "service": "next-voice-cloning-app" }
+      "destination": {
+        "service": "next-voice-cloning-app"
+      }
     },
     {
       "source": "/",
-      "destination": { "service": "site", "path": "/index.html" }
+      "destination": {
+        "service": "site",
+        "path": "/index.html"
+      }
     },
     {
       "source": "/:path*",
-      "destination": { "service": "site" }
+      "destination": {
+        "service": "site"
+      }
     }
   ]
 }

@@ -7,4 +7,5 @@
 # service + rewrite in vercel.json.
 packages:
   - "site"
+  - "demos/ai-sdk-speechify-speech"
   - "demos/next-voice-cloning-app"
