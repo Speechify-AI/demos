@@ -12,6 +12,31 @@ importers:
         specifier: ^2.3.0
         version: 2.10.5
 
+  demos/multilingual-voiceover:
+    dependencies:
+      next:
+        specifier: ^16.2.10
+        version: 16.2.10(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      react:
+        specifier: ^19.2.0
+        version: 19.2.7
+      react-dom:
+        specifier: ^19.2.0
+        version: 19.2.7(react@19.2.7)
+    devDependencies:
+      '@types/node':
+        specifier: ^22.0.0
+        version: 22.20.1
+      '@types/react':
+        specifier: ^19.2.0
+        version: 19.2.17
+      '@types/react-dom':
+        specifier: ^19.2.0
+        version: 19.2.3(@types/react@19.2.17)
+      typescript:
+        specifier: ^5.6.0
+        version: 5.9.3
+
   demos/next-voice-cloning-app:
     dependencies:
       '@speechify/api':

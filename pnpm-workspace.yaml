@@ -8,3 +8,4 @@
 packages:
   - "site"
   - "demos/next-voice-cloning-app"
+  - "demos/multilingual-voiceover"
