@@ -1,0 +1,6 @@
+{
+  "order": 11,
+  "title": "AI SDK speech generation",
+  "stack": "Next.js + AI SDK",
+  "blurb": "A custom Speechify speech model for the AI SDK's generateSpeech, wired into a Next.js page. The API key stays server-side."
+}
