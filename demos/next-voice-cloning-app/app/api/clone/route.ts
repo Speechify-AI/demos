@@ -1,11 +1,16 @@
 import { NextResponse } from "next/server";
 import { SpeechifyClient, SpeechifyError } from "@speechify/api";
+import { verifyTurnstile } from "../../lib/turnstile";
 
 export const runtime = "nodejs";
 
 const client = new SpeechifyClient({ token: process.env.SPEECHIFY_API_KEY });
 
 export async function POST(req: Request) {
+  if (!(await verifyTurnstile(req))) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const form = await req.formData();
   const sample = form.get("sample");
   const fullName = form.get("fullName");

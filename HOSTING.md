@@ -183,5 +183,15 @@ There is no intermediate state where a demo half-works. Set both keys or none.
 
 ### Reference integration
 
-_(No demo integrates Turnstile yet. Once one does, link it here as the
-canonical example.)_
+[`demos/next-voice-cloning-app`](./demos/next-voice-cloning-app) is the
+canonical example. It gates all three of its API routes (`clone`, `speak`,
+`voice`) and shows the Next.js-idiomatic client integration:
+
+- Client: [`app/layout.tsx`](./demos/next-voice-cloning-app/app/layout.tsx)
+  loads `/turnstile.js` via `next/script` with `strategy="beforeInteractive"`;
+  [`app/page.tsx`](./demos/next-voice-cloning-app/app/page.tsx) renders the
+  widget in the form and attaches the token to every gated `fetch`.
+- Server: a shared
+  [`app/lib/turnstile.ts`](./demos/next-voice-cloning-app/app/lib/turnstile.ts)
+  helper does the verify call and is imported by each route. Copy the file
+  into a new demo verbatim — the fail-open contract makes it portable.
