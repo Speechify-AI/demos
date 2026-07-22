@@ -73,11 +73,10 @@ production key that lives in the deployment env.
 
 The infrastructure ships once in this repo:
 
-- **[`services/turnstile/`](./services/turnstile)** — a shared Vercel service
-  with two Edge endpoints (`GET /api/turnstile/config`,
-  `POST /api/turnstile/verify`), routed at the project level via
-  [`vercel.json`](./vercel.json). Every demo can call them — no per-demo
-  wiring, no code duplication.
+- **[`site/api/turnstile/`](./site/api/turnstile)** — two Edge functions
+  (`GET /api/turnstile/config`, `POST /api/turnstile/verify`) that live in
+  the `site` service and are served from the root of `demos.speechify.ai`.
+  Every demo can call them — no per-demo wiring, no code duplication.
 - **[`site/public/turnstile.js`](./site/public/turnstile.js)** — a
   ~100-line vanilla-JS client helper, served at `/turnstile.js` on
   `demos.speechify.ai`. Any demo can drop in a `<script src="/turnstile.js">`

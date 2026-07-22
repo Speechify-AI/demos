@@ -7,5 +7,4 @@
 # service + rewrite in vercel.json.
 packages:
   - "site"
-  - "services/turnstile"
   - "demos/next-voice-cloning-app"

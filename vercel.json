@@ -9,16 +9,9 @@
     "next-voice-cloning-app": {
       "root": "demos/next-voice-cloning-app/",
       "framework": "nextjs"
-    },
-    "turnstile": {
-      "root": "services/turnstile/"
     }
   },
   "rewrites": [
-    {
-      "source": "/api/turnstile/:path*",
-      "destination": { "service": "turnstile", "path": "/api/:path*" }
-    },
     {
       "source": "/next-voice-cloning-app/:path*",
       "destination": { "service": "next-voice-cloning-app" }
