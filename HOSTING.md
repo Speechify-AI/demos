@@ -63,3 +63,125 @@ Demos live under `demos/<slug>/`, but are served at `/<slug>` (not
 3. Mount the app under its `/<slug>` prefix (e.g. Next.js `basePath`).
 4. Run `pnpm generate`. The demo is now hosted (its `vercel.json` rewrite is the
    hosted signal) and its card gets a live link automatically — no flag to set.
+
+## Add Turnstile abuse protection to a hosted demo
+
+Any demo with a browser-facing endpoint that spends real Speechify API credits
+should gate those endpoints with [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/).
+Without it, anyone can hammer `/api/clone`, `/api/speak`, etc. and drain the
+production key that lives in the deployment env.
+
+The infrastructure ships once in this repo:
+
+- **[`services/turnstile/`](./services/turnstile)** — a shared Vercel service
+  with two Edge endpoints (`GET /api/turnstile/config`,
+  `POST /api/turnstile/verify`), routed at the project level via
+  [`vercel.json`](./vercel.json). Every demo can call them — no per-demo
+  wiring, no code duplication.
+- **[`site/public/turnstile.js`](./site/public/turnstile.js)** — a
+  ~100-line vanilla-JS client helper, served at `/turnstile.js` on
+  `demos.speechify.ai`. Any demo can drop in a `<script src="/turnstile.js">`
+  and get widget rendering + token retrieval for free.
+
+### Env vars (set once on the Vercel project)
+
+Both must be set for Turnstile to actually gate anything. Missing either one
+disables the whole system — locally, on forks, and on any environment where
+the operator hasn't set them. Demos keep working, they just aren't gated.
+
+- `TURNSTILE_SITE_KEY` — public site key from the Cloudflare Turnstile
+  dashboard. Safe to expose to the browser; the config endpoint hands it out
+  when both keys are set. Never commit it — the missing-var behaviour is what
+  keeps fork deploys and local dev working.
+- `TURNSTILE_SECRET_KEY` — server secret from the same dashboard. Only ever
+  touched by `services/turnstile/api/verify.js`. Do not add to any
+  `.env.example`. Do not log. Do not embed in client code.
+
+### Client-side integration (in the demo's browser page)
+
+Drop the widget container, load the helper, render on `DOMContentLoaded`:
+
+```html
+<div id="turnstile-container"></div>
+
+<script src="/turnstile.js"></script>
+<script>
+  window.addEventListener("DOMContentLoaded", async () => {
+    window.__turnstile = await SpeechifyTurnstile.render("#turnstile-container");
+  });
+</script>
+```
+
+Attach the token to any request that hits a gated server route, and reset the
+widget after use (Turnstile tokens are single-use):
+
+```js
+async function submit(payload) {
+  const token = await window.__turnstile.getToken();
+  const headers = { "content-type": "application/json" };
+  if (token) headers["x-turnstile-token"] = token;
+
+  const r = await fetch("/my-demo/api/whatever", {
+    method: "POST",
+    headers,
+    body: JSON.stringify(payload),
+  });
+
+  window.__turnstile.reset();
+  return r.json();
+}
+```
+
+When Turnstile is disabled, `getToken()` resolves to `null` and the request
+goes through unauthenticated — the server side matches this behaviour, so the
+demo works everywhere.
+
+### Server-side integration (in the demo's API route)
+
+Verify the token BEFORE doing anything that spends a credit — a network call,
+a synthesis job, a voice clone. One extra fetch to the local verify endpoint,
+Edge-runtime fast:
+
+```ts
+export async function POST(req: Request) {
+  const token = req.headers.get("x-turnstile-token");
+  const verifyRes = await fetch(new URL("/api/turnstile/verify", req.url), {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ token }),
+  });
+  const { verified } = await verifyRes.json();
+  if (!verified) {
+    return new Response("Forbidden", { status: 403 });
+  }
+
+  // ...proceed with the real work
+}
+```
+
+`new URL('/api/turnstile/verify', req.url)` builds an absolute URL from the
+incoming request's origin, so this works in prod (`demos.speechify.ai`),
+preview URLs, and local `vercel dev` without any env-var wrangling.
+
+When Turnstile isn't configured, the verify endpoint responds
+`{ verified: true, disabled: true }` — the demo keeps working. If you want to
+telemetry the disabled state (e.g. warn in logs on a real prod deploy), read
+the `disabled` field.
+
+### How the fail-open contract keeps forks and local dev working
+
+Neither key set → `/api/turnstile/config` returns `{ enabled: false }` → the
+client helper skips widget rendering → `getToken()` returns `null` → the demo
+sends its request without a token → the server calls `/api/turnstile/verify`,
+which sees no `TURNSTILE_SECRET_KEY` and responds `verified: true` → the demo
+proceeds.
+
+Both keys set → widget renders → user solves the challenge → token attached to
+the fetch → server verifies against Cloudflare siteverify → gated.
+
+There is no intermediate state where a demo half-works. Set both keys or none.
+
+### Reference integration
+
+_(No demo integrates Turnstile yet. Once one does, link it here as the
+canonical example.)_
