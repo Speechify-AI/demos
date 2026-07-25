@@ -1,0 +1,6 @@
+{
+  "order": 150,
+  "title": "Vision Agents bot (official plugin)",
+  "stack": "Python (Vision Agents)",
+  "blurb": "Real-time voice assistant using GetStream Vision Agents' official vision-agents-plugins-speechify package for TTS, with Deepgram STT and a Gemini LLM."
+}

@@ -1,0 +1,5 @@
+python-dotenv>=1.0.1
+vision-agents[speechify]>=0.6.8
+vision-agents-plugins-getstream>=0.6.8
+vision-agents-plugins-deepgram>=0.6.8
+vision-agents-plugins-gemini>=0.6.8
