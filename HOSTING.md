@@ -64,21 +64,6 @@ Demos live under `demos/<slug>/`, but are served at `/<slug>` (not
 4. Run `pnpm generate`. The demo is now hosted (its `vercel.json` rewrite is the
    hosted signal) and its card gets a live link automatically — no flag to set.
 
-## Adding a shared service
-
-Occasionally something isn't a demo at all — shared infra every demo's
-frontend or backend depends on, like `services/turnstile-config`. Same
-mechanics as a demo, different folder root, and it must NOT get a `demo.json`
-(that's what keeps it out of the landing page and README table):
-
-1. Add `services/<name>` to `pnpm-workspace.yaml`.
-2. Add a `services` entry in `vercel.json` with `"root": "services/<name>/"`
-   and a `rewrites` rule for whatever public path it should answer on.
-3. Give it a real framework (`"framework": "nextjs"` here) — a functions-only
-   service with no framework hint silently produces no deploy output on
-   Vercel Services. This bit us twice before landing on
-   `services/turnstile-config` as a real Next.js app.
-
 ## Add Turnstile abuse protection to a hosted demo
 
 Any demo with a browser-facing endpoint that spends real Speechify API credits
@@ -89,42 +74,37 @@ production key that lives in the deployment env.
 The shared client helper ships once:
 
 - **[`site/public/turnstile.js`](./site/public/turnstile.js)** — a
-  vanilla-JS helper served at `/turnstile.js` on `demos.speechify.ai`. Any
-  demo drops in `<script src="/turnstile.js">` and gets widget rendering +
-  token retrieval for free. Before rendering, it reconciles against
-  **[`services/turnstile-config`](./services/turnstile-config)**
-  (`GET /api/turnstile/config`) to check whether the deployment actually has
-  `TURNSTILE_SECRET_KEY` set; if not, it skips rendering a widget nothing
-  server-side would ever check. That endpoint is a small standalone Next.js
-  service (own `vercel.json` entry + `pnpm-workspace.yaml` line) — a
-  functions-only service with no framework hint doesn't get built by Vercel
-  Services, which is why this exists as a real Next.js app rather than a
-  bare `api/*.js` folder.
+  ~100-line vanilla-JS helper served at `/turnstile.js` on
+  `demos.speechify.ai`. Any demo drops in `<script src="/turnstile.js">` and
+  gets widget rendering + token retrieval for free. The Cloudflare Turnstile
+  site key is hardcoded there (public by design — the widget embeds it in
+  every rendered `<div class="cf-turnstile">`).
 
-The server-side verify stays per-demo — each demo's own API route calls
-Cloudflare's `siteverify` directly, unrelated to the config endpoint above.
-No cross-service Vercel round-trip on the credit-spending path, one
+The server-side verify is per-demo — each demo's own API route calls
+Cloudflare's `siteverify` directly. No cross-service Vercel gymnastics, one
 straightforward pattern for every framework. See
 [`demos/next-voice-cloning-app/app/lib/turnstile.ts`](./demos/next-voice-cloning-app/app/lib/turnstile.ts)
 for the reference implementation — 40 lines, copy verbatim.
 
+A shared `/api/turnstile/config` reconciliation endpoint has been attempted
+three times now (`01f834b`, folded into `site` in `aa39090`, dropped in
+`2e90f8e` — all because a functions-only or no-framework-hint service
+produces no deploy output on Vercel Services; a fourth attempt with a real
+`"framework": "nextjs"` service still broke routing for both existing demos
+on preview and was reverted). Don't retry this without a way to verify the
+actual deployed behavior first, not just a local `pnpm build`.
+
 ### Env vars (set once on the Vercel project)
 
+Only one env var to configure. When it's missing, the shared verify helper
+fail-opens and demos keep working ungated — the intended behaviour on forks
+and local dev.
+
 - `TURNSTILE_SECRET_KEY` — server secret from the Cloudflare Turnstile
-  dashboard. Read by each demo's own `verifyTurnstile()` helper (the actual
-  gate) and, for presence only, by `services/turnstile-config` (so the
-  client-side `enabled` check can never drift from what the server enforces).
+  dashboard. Only touched by each demo's own `verifyTurnstile()` helper.
   Do not add to any `.env.example`. Do not log. Do not embed in client code.
-- `TURNSTILE_SITE_KEY` — optional. Only read by `services/turnstile-config`,
-  to let ops rotate the site key via env without redeploying
-  `site/public/turnstile.js`. Omit it and the hardcoded key in that file is
-  used instead.
 
-Missing `TURNSTILE_SECRET_KEY` → the config endpoint reports `enabled: false`
-→ the client skips the widget → the shared verify helper fail-opens anyway →
-demos keep working ungated. That's the intended behaviour on forks and local
-dev, now consistent between what the client shows and what the server checks.
-
+The site key isn't an env var — it's committed to `site/public/turnstile.js`.
 Turnstile site keys are public in the Cloudflare threat model (they identify
 which widget you own, not what someone can do with it), so a widget-domain
 allowlist on the Cloudflare dashboard side is what actually gates abuse — not
@@ -202,15 +182,17 @@ contract that keeps forks and local dev alive without extra config.
 
 ### How the fail-open contract keeps forks and local dev working
 
-Server has no `TURNSTILE_SECRET_KEY` → `services/turnstile-config` reports
-`enabled: false` → the client skips rendering the widget entirely →
-`getToken()` resolves to `null` → the request goes out tokenless →
-`verifyTurnstile()` sees no secret configured and short-circuits to `true`
-anyway → demo proceeds ungated. Both sides agree, so there's no in-between
-state where the widget renders but nothing checks it.
+Server has no `TURNSTILE_SECRET_KEY` → `verifyTurnstile()` short-circuits to
+`true` → demo proceeds without checking the token → widget still renders
+client-side (site key is baked into `/turnstile.js`), user solves it, token
+gets ignored server-side.
 
-Server has `TURNSTILE_SECRET_KEY` → `enabled: true` → widget renders → user
-solves → `verifyTurnstile()` posts to Cloudflare siteverify → gated.
+Server has `TURNSTILE_SECRET_KEY` → widget renders → user solves →
+`verifyTurnstile()` posts to Cloudflare siteverify → gated.
+
+The one visible artifact of the unconfigured state: the widget still shows on
+the page even without the secret. Users can solve it, it just doesn't matter.
+Acceptable trade-off for zero-config forks.
 
 ### Reference integration
 

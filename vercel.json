@@ -13,10 +13,6 @@
     "ai-sdk-speechify-speech": {
       "root": "demos/ai-sdk-speechify-speech/",
       "framework": "nextjs"
-    },
-    "turnstile-config": {
-      "root": "services/turnstile-config/",
-      "framework": "nextjs"
     }
   },
   "rewrites": [
@@ -30,13 +26,6 @@
       "source": "/next-voice-cloning-app/:path*",
       "destination": {
         "service": "next-voice-cloning-app"
-      }
-    },
-    {
-      "source": "/api/turnstile/config",
-      "destination": {
-        "service": "turnstile-config",
-        "path": "/api/config"
       }
     },
     {

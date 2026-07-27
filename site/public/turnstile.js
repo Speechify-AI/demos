@@ -1,13 +1,16 @@
 // Shared Turnstile client helper for hosted demos.
 //
-// Every demo reconciles against the shared /api/turnstile/config endpoint
-// (services/turnstile-config, mounted at that path in the root vercel.json)
-// before rendering: it tells the client whether the deployment actually has
-// TURNSTILE_SECRET_KEY configured, so forks and local dev can skip rendering
-// a widget nothing server-side will ever check. Site keys are public by
-// Cloudflare Turnstile design (embedded in every rendered widget), so a
-// hardcoded key here is still a safe fallback if that endpoint is ever
-// unreachable — fail open to "enabled", not to "skip the widget".
+// Site keys are public by Cloudflare Turnstile design (they're embedded in
+// every widget's HTML), so the key is hardcoded here rather than fetched at
+// runtime — the deployment doesn't need a separate config endpoint to hand
+// it out. The corresponding TURNSTILE_SECRET_KEY lives only in the Vercel
+// project env and is used server-side by each demo's own route handler.
+//
+// A shared /api/turnstile/config endpoint has been attempted twice before
+// (see HOSTING.md) and failed to deploy correctly on Vercel Services both
+// times. Don't reintroduce one without a way to actually verify the deploy
+// first — the third attempt broke routing for the two already-working demos
+// on preview and was reverted.
 //
 // Usage from any demo's HTML:
 //   <div id="turnstile"></div>
@@ -34,20 +37,9 @@
   const NS = (window.SpeechifyTurnstile = window.SpeechifyTurnstile || {});
   const SITE_KEY = "0x4AAAAAAD7QYbrMFju3EnWY";
 
-  let configPromise = null;
-  NS.config = function config() {
-    if (!configPromise) {
-      configPromise = fetch("/api/turnstile/config", { credentials: "omit" })
-        .then((r) => (r.ok ? r.json() : { enabled: true, siteKey: SITE_KEY }))
-        .catch(() => ({ enabled: true, siteKey: SITE_KEY }));
-    }
-    return configPromise;
-  };
-
   NS.render = async function render(target, options) {
     options = options || {};
-    const cfg = await NS.config();
-    if (!cfg.enabled) {
+    if (!SITE_KEY) {
       return {
         enabled: false,
         getToken: function () {
@@ -56,7 +48,6 @@
         reset: function () {},
       };
     }
-    const siteKey = cfg.siteKey || SITE_KEY;
 
     await loadTurnstileScript();
     while (!window.turnstile) await sleep(20);
@@ -66,7 +57,7 @@
 
     let currentToken = null;
     const widgetId = window.turnstile.render(el, {
-      sitekey: siteKey,
+      sitekey: SITE_KEY,
       execution: "execute",
       callback: function (token) {
         currentToken = token;
