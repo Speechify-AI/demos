@@ -1,11 +1,13 @@
-# Only the web-hostable demos participate in the Turborepo/pnpm workspace and the
-# Vercel Services build. The other folders (Python pipelines, LiveKit/Pipecat
-# agent workers, Go shims, TS CLIs) stay as standalone clone-and-run demos and are
-# intentionally NOT listed here — they are not deployed to Vercel.
+# Only the web-hostable demos, plus shared infra services (services/*), participate
+# in the Turborepo/pnpm workspace and the Vercel Services build. The other folders
+# (Python pipelines, LiveKit/Pipecat agent workers, Go shims, TS CLIs) stay as
+# standalone clone-and-run demos and are intentionally NOT listed here — they are
+# not deployed to Vercel.
 #
 # To add a new hostable demo to the site: add its folder here AND add a matching
-# service + rewrite in vercel.json.
+# service + rewrite in vercel.json. Same for a new shared service under services/.
 packages:
   - "site"
   - "demos/ai-sdk-speechify-speech"
   - "demos/next-voice-cloning-app"
+  - "services/turnstile-config"
