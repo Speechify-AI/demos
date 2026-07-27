@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { generateSpeech } from "ai";
 import { speechify } from "../../lib/speechify-provider";
 import { verifyTurnstile } from "../../lib/turnstile";
+import { rateLimit } from "../../lib/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -10,9 +11,21 @@ export const runtime = "nodejs";
 // 400 anyway.
 const MAX_TEXT_LENGTH = 2000;
 
+// Turnstile proves a human solved a challenge once; it doesn't cap how many
+// paid requests that same caller sends afterward. Bound it per-IP so passing
+// Turnstile isn't a license to spend the demo's key at will.
+const RATE_LIMIT = { max: 5, windowMs: 60_000 };
+
 export async function POST(req: Request) {
   if (!(await verifyTurnstile(req))) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  if (!rateLimit(req, RATE_LIMIT)) {
+    return NextResponse.json(
+      { error: "Too many requests. Wait a minute and try again." },
+      { status: 429 },
+    );
   }
 
   const { text, voiceId } = await req.json();
