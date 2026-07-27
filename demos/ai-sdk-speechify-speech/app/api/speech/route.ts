@@ -5,6 +5,11 @@ import { verifyTurnstile } from "../../lib/turnstile";
 
 export const runtime = "nodejs";
 
+// Matches the server-side cap on GetSpeechRequest.input: requests over this
+// get rejected here instead of spending a call on a request Speechify would
+// 400 anyway.
+const MAX_TEXT_LENGTH = 2000;
+
 export async function POST(req: Request) {
   if (!(await verifyTurnstile(req))) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -15,6 +20,13 @@ export async function POST(req: Request) {
   if (typeof text !== "string" || typeof voiceId !== "string") {
     return NextResponse.json(
       { error: "text and voiceId are required" },
+      { status: 400 },
+    );
+  }
+
+  if (text.length > MAX_TEXT_LENGTH) {
+    return NextResponse.json(
+      { error: `text must be ${MAX_TEXT_LENGTH} characters or fewer` },
       { status: 400 },
     );
   }
