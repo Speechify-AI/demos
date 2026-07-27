@@ -31,16 +31,25 @@ export async function POST(req: Request) {
     );
   }
 
-  const result = await generateSpeech({
-    model: speechify.speech("simba-3.2"),
-    text,
-    voice: voiceId,
-  });
+  try {
+    const result = await generateSpeech({
+      model: speechify.speech("simba-3.2"),
+      text,
+      voice: voiceId,
+    });
 
-  return NextResponse.json({
-    audio: result.audio.base64,
-    mediaType: result.audio.mediaType,
-    warnings: result.warnings,
-    providerMetadata: result.providerMetadata,
-  });
+    return NextResponse.json({
+      audio: result.audio.base64,
+      mediaType: result.audio.mediaType,
+      warnings: result.warnings,
+      providerMetadata: result.providerMetadata,
+    });
+  } catch (err) {
+    // doGenerate() throws a plain Error on any non-2xx from Speechify (bad
+    // voice/model, rate limit, upstream 5xx). Uncaught, that crashes the
+    // route with a bodyless 500 and the caller never learns why.
+    console.error("generateSpeech() failed:", err);
+    const message = err instanceof Error ? err.message : "Speech generation failed.";
+    return NextResponse.json({ error: message }, { status: 502 });
+  }
 }
