@@ -120,10 +120,25 @@ Drop the widget container, load the helper, render on `DOMContentLoaded`:
 <script src="/turnstile.js"></script>
 <script>
   window.addEventListener("DOMContentLoaded", async () => {
-    window.__turnstile = await SpeechifyTurnstile.render("#turnstile-container");
+    window.__turnstile = await SpeechifyTurnstile.render("#turnstile-container", {
+      onToken: () => enableSubmit(),    // token in hand — allow submits
+      onExpired: () => disableSubmit(), // re-solving; onToken re-enables
+      onError: () => enableSubmit(),    // widget can't verify: fail open
+    });
+    if (!window.__turnstile.enabled) enableSubmit(); // no site key: fail open
   });
 </script>
 ```
+
+**Gate the submit buttons on these callbacks.** Every button that triggers a
+gated route starts *disabled* and only enables when one of two things is
+true: `onToken` has fired (a token is in hand), or the client is genuinely
+fail-open (no site key baked in, the Cloudflare script couldn't load, or the
+widget reported an error — in those cases the request goes out tokenless and
+the server remains the authority: it 403s tokenless requests whenever
+`TURNSTILE_SECRET_KEY` is set). Without this, a fast user can submit before
+the first solve lands and eat a 403 — or, worse, the demo *looks* ungated
+because the request slips through a fail-open window.
 
 Attach the token to any request that hits a gated server route, and reset the
 widget after use (Turnstile tokens are single-use):
@@ -144,6 +159,13 @@ async function submit(payload) {
   return r.json();
 }
 ```
+
+After calling `reset()`, disable the submit buttons again until the next
+`onToken` fires — tokens are single-use, and the re-solve is fast but not
+instantaneous. Token expiry (~5 min idle) is handled inside the helper: the
+`expired-callback` re-runs the widget itself, so a page left open re-arms on
+its own; the page just disables its buttons via `onExpired` and re-enables on
+the next `onToken`.
 
 `reset()` renders with `execution: "execute"` and calls `turnstile.execute()`
 itself, both on the first render and again inside `reset()` — it does not
@@ -203,7 +225,10 @@ canonical example. It gates all three of its API routes (`clone`, `speak`,
 - Client: [`app/layout.tsx`](./demos/next-voice-cloning-app/app/layout.tsx)
   loads `/turnstile.js` via `next/script` with `strategy="beforeInteractive"`;
   [`app/page.tsx`](./demos/next-voice-cloning-app/app/page.tsx) renders the
-  widget in the form and attaches the token to every gated `fetch`.
+  widget in the form, attaches the token to every gated `fetch`, and keeps
+  the gated buttons disabled until the widget has a token (or is genuinely
+  fail-open) via a three-state `waiting`/`ready`/`open` machine driven by the
+  `onToken`/`onExpired`/`onError` callbacks.
 - Server: a shared
   [`app/lib/turnstile.ts`](./demos/next-voice-cloning-app/app/lib/turnstile.ts)
   helper does the verify call and is imported by each route. Copy the file

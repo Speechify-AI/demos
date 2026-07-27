@@ -10,6 +10,13 @@ type TurnstileHandle = {
   reset: () => void;
 };
 
+// "waiting": no token yet — gated buttons stay disabled.
+// "ready":   token in hand — submits go out with it attached.
+// "open":    genuinely ungated client-side (no site key, script blocked,
+//            widget error) — buttons enabled, requests go tokenless and the
+//            server stays the authority (403s them whenever it's enforcing).
+type TurnstileState = "waiting" | "ready" | "open";
+
 declare global {
   interface Window {
     SpeechifyTurnstile?: {
@@ -34,6 +41,7 @@ export default function Home() {
   const [tone, setTone] = useState<"info" | "error">("info");
   const [busy, setBusy] = useState(false);
   const [turnstile, setTurnstile] = useState<TurnstileHandle | null>(null);
+  const [tsState, setTsState] = useState<TurnstileState>("waiting");
 
   useEffect(() => {
     let cancelled = false;
@@ -42,8 +50,21 @@ export default function Home() {
         await new Promise((r) => setTimeout(r, 30));
       }
       if (cancelled) return;
-      const t = await window.SpeechifyTurnstile!.render("#turnstile-container");
-      if (!cancelled) setTurnstile(t);
+      try {
+        const t = await window.SpeechifyTurnstile!.render(
+          "#turnstile-container",
+          {
+            onToken: () => setTsState("ready"),
+            onExpired: () => setTsState("waiting"),
+            onError: () => setTsState("open"),
+          },
+        );
+        if (cancelled) return;
+        setTurnstile(t);
+        if (!t.enabled) setTsState("open");
+      } catch {
+        if (!cancelled) setTsState("open");
+      }
     }
     void init();
     return () => {
@@ -59,10 +80,16 @@ export default function Home() {
   async function turnstileHeaders(
     base: Record<string, string> = {},
   ): Promise<Record<string, string>> {
-    if (!turnstile) return base;
+    if (!turnstile?.enabled || tsState === "open") return base;
     const token = await turnstile.getToken();
     if (!token) return base;
     return { ...base, "x-turnstile-token": token };
+  }
+
+  function consumeToken() {
+    turnstile?.reset();
+    // The token was single-use; stay disabled until the re-solve lands.
+    setTsState((s) => (s === "open" ? s : "waiting"));
   }
 
   async function clone() {
@@ -83,7 +110,7 @@ export default function Home() {
       headers,
       body,
     });
-    turnstile?.reset();
+    consumeToken();
     setBusy(false);
     if (!res.ok) {
       const { error } = await res
@@ -109,7 +136,7 @@ export default function Home() {
       headers,
       body: JSON.stringify({ text, voiceId }),
     });
-    turnstile?.reset();
+    consumeToken();
     setBusy(false);
     if (!res.ok) {
       say("Synthesis failed.", "error");
@@ -150,8 +177,8 @@ export default function Home() {
           onChange={(e) => setEmail(e.target.value)}
         />
         <div id="turnstile-container" />
-        <button onClick={clone} disabled={busy}>
-          Clone voice
+        <button onClick={clone} disabled={busy || tsState === "waiting"}>
+          {tsState === "waiting" ? "Verifying you're human…" : "Clone voice"}
         </button>
       </section>
 
@@ -164,8 +191,13 @@ export default function Home() {
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
-        <button onClick={speak} disabled={busy || !voiceId}>
-          Synthesize with cloned voice
+        <button
+          onClick={speak}
+          disabled={busy || !voiceId || tsState === "waiting"}
+        >
+          {tsState === "waiting" && voiceId
+            ? "Verifying you're human…"
+            : "Synthesize with cloned voice"}
         </button>
         {audioUrl && <audio controls src={audioUrl} />}
       </section>

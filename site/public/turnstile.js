@@ -17,15 +17,23 @@
 //   <script src="/turnstile.js"></script>
 //   <script>
 //     window.addEventListener('load', async () => {
-//       window.__ts = await SpeechifyTurnstile.render('#turnstile');
+//       window.__ts = await SpeechifyTurnstile.render('#turnstile', {
+//         onToken: () => enableSubmit(),    // token in hand — allow submits
+//         onExpired: () => disableSubmit(), // re-solving; onToken re-enables
+//         onError: () => enableSubmit(),    // widget can't verify: fail open
+//       });                                 // client-side, server still 403s
+//       if (!window.__ts.enabled) enableSubmit(); // no site key: fail open
 //     });
 //   </script>
+//
+// Keep gated submit buttons disabled until onToken fires (or a fail-open
+// case above applies) — don't let a request race the first solve.
 //
 // When submitting a gated request:
 //   const token = await window.__ts.getToken();
 //   const headers = token ? { 'x-turnstile-token': token } : {};
 //   const r = await fetch('/api/whatever', { method: 'POST', headers, body });
-//   window.__ts.reset();
+//   window.__ts.reset(); // token is single-use; disable submits until onToken
 //
 // reset() forces the widget to solve again immediately (explicit
 // execution: "execute" + .execute() call) instead of hoping Cloudflare's
@@ -70,6 +78,11 @@
       "expired-callback": function () {
         currentToken = null;
         if (options.onExpired) options.onExpired();
+        // Tokens expire after ~5 minutes and execution: "execute" never
+        // re-fires on its own — re-solve now so pages that gate their
+        // submit buttons on onToken re-enable without a reload.
+        window.turnstile.reset(widgetId);
+        window.turnstile.execute(widgetId);
       },
       ...(options.turnstile || {}),
     });
