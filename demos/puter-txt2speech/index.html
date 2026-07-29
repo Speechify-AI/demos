@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Speechify TTS in Puter</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 40rem;
+      margin: 3rem auto;
+      padding: 0 1rem;
+      line-height: 1.5;
+    }
+    h1 { font-size: 1.4rem; }
+    textarea {
+      width: 100%;
+      min-height: 6rem;
+      font: inherit;
+      padding: 0.5rem;
+      box-sizing: border-box;
+    }
+    .row { display: flex; gap: 1rem; margin: 1rem 0; flex-wrap: wrap; }
+    label { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.9rem; }
+    select, button { font: inherit; padding: 0.4rem 0.8rem; }
+    button { cursor: pointer; }
+    button:disabled { cursor: wait; opacity: 0.6; }
+    #status { min-height: 1.5rem; font-size: 0.9rem; opacity: 0.8; }
+    .note { font-size: 0.85rem; opacity: 0.7; }
+  </style>
+</head>
+<body>
+  <h1>Speechify TTS in Puter</h1>
+  <p>
+    Speaks with a Speechify Simba 3.2 voice through
+    <code>puter.ai.txt2speech()</code> — no API key, no backend. Puter asks you
+    to sign in on the first call; usage bills to your Puter account.
+  </p>
+
+  <textarea id="text" maxlength="3000">Hello from Speechify Simba 3.2, running inside Puter. No API key, no backend, just a script tag.</textarea>
+
+  <div class="row">
+    <label>
+      Voice
+      <select id="voice">
+        <option value="geffen_32" selected>geffen_32 (default)</option>
+        <option value="dominic_32">dominic_32</option>
+        <option value="harper_32">harper_32</option>
+        <option value="hugh_32">hugh_32</option>
+        <option value="imogen_32">imogen_32</option>
+      </select>
+    </label>
+    <label>
+      Test mode
+      <select id="testmode">
+        <option value="" selected>off — real synthesis</option>
+        <option value="1">on — free sample audio</option>
+      </select>
+    </label>
+    <button id="speak">Speak</button>
+  </div>
+
+  <p id="status"></p>
+  <p class="note">
+    Requires a Puter build that includes the Speechify TTS driver (merged
+    upstream July 2026). An unknown-provider error means this Puter instance
+    predates it.
+  </p>
+
+  <script src="https://js.puter.com/v2/"></script>
+  <script>
+    const button = document.getElementById('speak');
+    const status = document.getElementById('status');
+
+    button.addEventListener('click', async () => {
+      const text = document.getElementById('text').value.trim();
+      if (!text) { status.textContent = 'Type something first.'; return; }
+
+      const options = {
+        provider: 'speechify',
+        model: 'simba-3.2',
+        voice: document.getElementById('voice').value,
+      };
+      if (document.getElementById('testmode').value) options.test_mode = true;
+
+      button.disabled = true;
+      status.textContent = 'Synthesizing…';
+      try {
+        const audio = await puter.ai.txt2speech(text, options);
+        status.textContent = 'Playing.';
+        // Must run inside this click handler's task for autoplay policies.
+        await audio.play();
+        audio.addEventListener('ended', () => { status.textContent = 'Done.'; });
+      } catch (err) {
+        status.textContent = 'Error: ' + (err?.message ?? JSON.stringify(err));
+      } finally {
+        button.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
