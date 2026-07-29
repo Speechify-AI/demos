@@ -86,6 +86,14 @@ straightforward pattern for every framework. See
 [`demos/next-voice-cloning-app/app/lib/turnstile.ts`](./demos/next-voice-cloning-app/app/lib/turnstile.ts)
 for the reference implementation — 40 lines, copy verbatim.
 
+A shared `/api/turnstile/config` reconciliation endpoint has been attempted
+three times now (`01f834b`, folded into `site` in `aa39090`, dropped in
+`2e90f8e` — all because a functions-only or no-framework-hint service
+produces no deploy output on Vercel Services; a fourth attempt with a real
+`"framework": "nextjs"` service still broke routing for both existing demos
+on preview and was reverted). Don't retry this without a way to verify the
+actual deployed behavior first, not just a local `pnpm build`.
+
 ### Env vars (set once on the Vercel project)
 
 Only one env var to configure. When it's missing, the shared verify helper
@@ -136,6 +144,15 @@ async function submit(payload) {
   return r.json();
 }
 ```
+
+`reset()` renders with `execution: "execute"` and calls `turnstile.execute()`
+itself, both on the first render and again inside `reset()` — it does not
+wait on Cloudflare's default post-reset auto-refire. Earlier versions relied
+on that implicit behaviour, which meant the *second* action on a page (clone
+then speak, generate again) could `getToken()`-timeout to `null`, the server
+would see a missing token and 403, and only a full page reload reliably got a
+fresh solve. If you copy this pattern into a new demo, keep the explicit
+`execute()` calls — don't drop back to relying on automatic re-verification.
 
 When Turnstile is disabled, `getToken()` resolves to `null` and the request
 goes through unauthenticated — the server side matches this behaviour, so the
