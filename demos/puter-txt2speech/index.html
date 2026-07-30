@@ -34,8 +34,9 @@
   <h1>Speechify TTS in Puter</h1>
   <p>
     Speaks with a Speechify Simba 3.2 voice through
-    <code>puter.ai.txt2speech()</code> — no API key, no backend. Puter asks you
-    to sign in on the first call; usage bills to your Puter account.
+    <code>puter.ai.txt2speech()</code>. The Speechify API key lives in your
+    Puter instance's server config — this page ships no credentials. Puter
+    asks you to sign in on the first call.
   </p>
 
   <textarea id="text" maxlength="3000">Hello from Speechify Simba 3.2, running inside Puter. No API key, no backend, just a script tag.</textarea>
@@ -63,11 +64,11 @@
 
   <p id="status"></p>
   <p class="note">
-    Requires a Puter build that includes the Speechify TTS driver (merged
-    upstream July 2026). An unknown-provider error means this Puter instance
-    predates it — or, on a self-hosted instance, that no Speechify API key is
-    configured in its TTS driver config (the provider isn't registered
-    without one).
+    Requires a Puter instance with the Speechify TTS driver and a Speechify
+    API key in its TTS driver config — the provider isn't registered without
+    one, and an unknown-provider error means it's missing (or the build
+    predates the driver). Target your instance by opening this page with
+    <code>?puter.api_origin=&lt;your instance's API origin&gt;</code>.
   </p>
 
   <script src="https://js.puter.com/v2/"></script>
