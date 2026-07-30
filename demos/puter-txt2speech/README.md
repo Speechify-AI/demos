@@ -24,7 +24,7 @@ Any static file server works (or just open `index.html` directly). Click **Speak
 - A [Puter account](https://puter.com) (free tier is fine; the first call prompts sign-in)
 - A Puter deployment that includes the Speechify TTS driver, merged upstream in July 2026 ([HeyPuter/puter#3453](https://github.com/HeyPuter/puter/pull/3453)). An unknown-provider error means the instance predates it.
 
-No `SPEECHIFY_API_KEY` needed — that's the point of this one. Puter's backend holds the credentials and meters usage per Puter user.
+No `SPEECHIFY_API_KEY` needed to run this page — that's the point of this one. The key still exists, it just lives server-side with whoever operates the Puter instance: hosted puter.com uses Puter's own key and meters usage to the signed-in Puter user. If you self-host Puter, you must configure your own Speechify API key ([platform.speechify.ai/api-keys](https://platform.speechify.ai/api-keys)) as the `speechify` provider entry (`apiKey`) in the TTS driver config — without it the instance never registers the provider, and this page shows the same unknown-provider error as an old build.
 
 ## Where the code came from
 

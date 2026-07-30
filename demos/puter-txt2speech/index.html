@@ -65,7 +65,9 @@
   <p class="note">
     Requires a Puter build that includes the Speechify TTS driver (merged
     upstream July 2026). An unknown-provider error means this Puter instance
-    predates it.
+    predates it — or, on a self-hosted instance, that no Speechify API key is
+    configured in its TTS driver config (the provider isn't registered
+    without one).
   </p>
 
   <script src="https://js.puter.com/v2/"></script>
