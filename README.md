@@ -10,6 +10,8 @@ Demos with a **Live** link run in your browser at [demos.speechify.ai](https://d
 | Folder | Stack | Live | What it does |
 | --- | --- | --- | --- |
 | [`demos/next-voice-cloning-app/`](./demos/next-voice-cloning-app) | Next.js | [Open](https://demos.speechify.ai/next-voice-cloning-app) | Upload a sample, clone the voice, synthesize with the clone. The API key stays server-side in route handlers. |
+| [`demos/ai-sdk-speechify-speech/`](./demos/ai-sdk-speechify-speech) | Next.js + AI SDK | [Open](https://demos.speechify.ai/ai-sdk-speechify-speech) | A custom Speechify speech model for the AI SDK's generateSpeech, wired into a Next.js page. The API key stays server-side. |
+| [`demos/multilingual-voiceover/`](./demos/multilingual-voiceover) | Next.js + simba-3.0 | [Open](https://demos.speechify.ai/multilingual-voiceover) | Generate the same line in six languages with a locale-matched simba-3.0 voice. The API key stays server-side. |
 | [`demos/captions-speech-marks/`](./demos/captions-speech-marks) | TypeScript (native) |  | Synthesizes audio and builds a WebVTT caption file from the speech marks the API returns in the same response. Karaoke-highlight HTML demo included. |
 | [`demos/voice-cloning-narration/`](./demos/voice-cloning-narration) | TypeScript (native) |  | Clones a voice from a 10-30 sec WAV sample, synthesizes with the new voice, deletes the clone. End-to-end lifecycle. |
 | [`demos/audiobook-pipeline/`](./demos/audiobook-pipeline) | Python (SDK) |  | Chunks long-form text on sentence boundaries, synthesizes each chunk via the Speechify Python SDK, concatenates the MP3s with ffmpeg. |
@@ -24,6 +26,7 @@ Demos with a **Live** link run in your browser at [demos.speechify.ai](https://d
 | [`demos/mastra-agent-speechify/`](./demos/mastra-agent-speechify) | TypeScript (Mastra) |  | Text-in, speech-out Mastra Agent using an OpenAI LLM for replies and Speechify's simba-3.2 model for TTS via `@mastra/voice-speechify`. |
 | [`demos/voice-agent-showcase/`](./demos/voice-agent-showcase) | Cloudflare Workers |  | One page, ten live Voice Agents API demos: calendar booking, policy-bound support, a page copilot, form intake, US outbound calls with a 5-minute cap, a voice gallery, mid-call language handoff, cross-call memory, a grounded knowledge base, and dual-control troubleshooting. |
 | [`demos/vercel-ai-sdk/`](./demos/vercel-ai-sdk) | TypeScript (Vercel AI SDK) |  | Speechify TTS through the Vercel AI SDK's unified `generateSpeech` interface via the official `@speechify/vercel` provider — one-line swap from OpenAI/ElevenLabs, plus word-level speech marks from `providerMetadata`. |
+| [`demos/puter-txt2speech/`](./demos/puter-txt2speech) | HTML (puter.js) |  | Speaks with a Simba 3.2 voice via the Speechify provider in Puter's puter.ai.txt2speech() — one static page, your key configured once on the Puter instance. |
 <!-- DEMOS:END -->
 
 ## Get an API key
