@@ -1,0 +1,25 @@
+{
+  "name": "agent-events-inspector",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Debug view for Speechify Voice Agent conversations and their realtime event stream",
+  "scripts": {
+    "dev": "next dev -p 8774",
+    "build": "next build",
+    "start": "next start -p 8774",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "^16.2.10",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "typescript": "^5.6.0"
+  }
+}

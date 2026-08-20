@@ -1,0 +1,6 @@
+{
+  "order": 225,
+  "title": "Agent events inspector",
+  "stack": "Next.js",
+  "blurb": "A debug timeline for Voice Agent calls: replay a sample realtime event stream, or inspect a live conversation by id. The workspace key stays server-side."
+}
