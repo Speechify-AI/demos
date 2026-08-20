@@ -17,9 +17,17 @@
     "multilingual-voiceover": {
       "root": "demos/multilingual-voiceover/",
       "framework": "nextjs"
+    },
+    "live-captions": {
+      "root": "demos/live-captions/",
+      "framework": "nextjs"
     }
   },
   "rewrites": [
+    {
+      "source": "/live-captions/:path*",
+      "destination": { "service": "live-captions" }
+    },
     {
       "source": "/ai-sdk-speechify-speech/:path*",
       "destination": {

@@ -1,0 +1,151 @@
+:root {
+  color-scheme: light dark;
+  --fg: #111;
+  --bg: #fff;
+  --muted: #666;
+  --border: #ddd;
+  --surface: #f6f6f6;
+  --accent: #111;
+  --accent-fg: #fff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fg: #f2f2f2;
+    --bg: #0c0c0c;
+    --muted: #999;
+    --border: #2a2a2a;
+    --surface: #161616;
+    --accent: #f2f2f2;
+    --accent-fg: #0c0c0c;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 2rem 1rem;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+}
+
+main {
+  max-width: 40rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+h1 {
+  font-size: 1.6rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.lede {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.step {
+  border: 1px solid var(--border);
+  border-radius: 0.6rem;
+  padding: 1.1rem;
+  background: var(--surface);
+}
+
+.step h2 {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  margin: 0 0 0.75rem;
+}
+
+textarea {
+  font: inherit;
+  color: inherit;
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 0.4rem;
+  background: var(--bg);
+  resize: vertical;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  border-radius: 0.4rem;
+  background: var(--fg);
+  color: var(--bg);
+  border: 0;
+  font-weight: 500;
+  margin-top: 0.9rem;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.captions {
+  border: 1px solid var(--border);
+  border-radius: 0.6rem;
+  padding: 1.5rem 1.25rem;
+  background: var(--surface);
+}
+
+.caption-line {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 300;
+  line-height: 1.7;
+  letter-spacing: -0.01em;
+  color: var(--muted);
+}
+
+.caption-line .word {
+  transition:
+    background-color 80ms ease-out,
+    color 80ms ease-out;
+  padding: 0.05em 0.15em;
+  border-radius: 5px;
+}
+
+.caption-line .word.active {
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+.status {
+  font-size: 0.85rem;
+  color: var(--muted);
+  min-height: 1.2rem;
+}
+
+.status[data-tone="error"] {
+  color: #c0392b;
+}
+
+audio {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85em;
+  background: var(--surface);
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+}
