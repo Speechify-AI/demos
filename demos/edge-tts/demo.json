@@ -1,0 +1,6 @@
+{
+  "order": 240,
+  "title": "One-file serverless edge TTS",
+  "stack": "Next.js",
+  "blurb": "A single serverless edge function streams Speechify TTS audio to the browser — no SDK, key held server-side. Ideal for widgets and light integrations."
+}
