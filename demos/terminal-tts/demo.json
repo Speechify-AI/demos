@@ -1,0 +1,6 @@
+{
+  "order": 205,
+  "title": "TTS from your terminal",
+  "stack": "Next.js",
+  "blurb": "A terminal-styled playground: type a `speechify say` command, hit enter, and hear the Speechify API read it back. Ships with a real dependency-free CLI."
+}

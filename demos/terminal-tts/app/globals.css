@@ -1,0 +1,187 @@
+:root {
+  color-scheme: light dark;
+  --fg: #111;
+  --bg: #fff;
+  --muted: #666;
+  --border: #ddd;
+  --surface: #f6f6f6;
+  --accent: #2563eb;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fg: #f2f2f2;
+    --bg: #0c0c0c;
+    --muted: #999;
+    --border: #2a2a2a;
+    --surface: #161616;
+    --accent: #7aa2ff;
+  }
+}
+
+/* The terminal itself is always dark, regardless of the page theme. */
+:root {
+  --term-bg: #0b0e14;
+  --term-fg: #cbd5e1;
+  --term-dim: #7d8590;
+  --term-prompt: #4ade80;
+  --term-ok: #4ade80;
+  --term-err: #f87171;
+  --term-input: #e2e8f0;
+  --term-bar: #161b22;
+  --term-border: #21262d;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 2rem 1rem;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+}
+
+main {
+  max-width: 46rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.masthead h1 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin: 0 0 0.4rem;
+}
+
+.masthead p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.terminal {
+  border: 1px solid var(--term-border);
+  border-radius: 0.6rem;
+  overflow: hidden;
+  background: var(--term-bg);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  cursor: text;
+}
+
+.titlebar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.8rem;
+  background: var(--term-bar);
+  border-bottom: 1px solid var(--term-border);
+}
+
+.dot {
+  width: 0.72rem;
+  height: 0.72rem;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot.red {
+  background: #ff5f56;
+}
+.dot.yellow {
+  background: #ffbd2e;
+}
+.dot.green {
+  background: #27c93f;
+}
+
+.titletext {
+  margin-left: 0.5rem;
+  color: var(--term-dim);
+  font-size: 0.78rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.screen {
+  padding: 1rem;
+  height: 26rem;
+  overflow-y: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--term-fg);
+}
+
+.line {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.line.input {
+  color: var(--term-input);
+}
+.line.ok {
+  color: var(--term-ok);
+}
+.line.error {
+  color: var(--term-err);
+}
+.line.output {
+  color: var(--term-fg);
+}
+
+.prompt-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.prompt {
+  color: var(--term-prompt);
+  flex: 0 0 auto;
+  font-family: inherit;
+}
+
+.cmd {
+  flex: 1 1 auto;
+  background: transparent;
+  border: 0;
+  outline: none;
+  color: var(--term-input);
+  font-family: inherit;
+  font-size: inherit;
+  padding: 0;
+  caret-color: var(--term-prompt);
+}
+
+.cmd::placeholder {
+  color: var(--term-dim);
+}
+
+.widget {
+  min-height: 1rem;
+}
+
+.player {
+  width: 100%;
+}
+
+.foot {
+  color: var(--muted);
+  font-size: 0.85rem;
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+}
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85em;
+  background: var(--surface);
+  padding: 0.1rem 0.3rem;
+  border-radius: 0.25rem;
+}
