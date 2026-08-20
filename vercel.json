@@ -9,12 +9,20 @@
     "next-voice-cloning-app": {
       "root": "demos/next-voice-cloning-app/",
       "framework": "nextjs"
+    },
+    "react-tts-component": {
+      "root": "demos/react-tts-component/",
+      "framework": "nextjs"
     }
   },
   "rewrites": [
     {
       "source": "/next-voice-cloning-app/:path*",
       "destination": { "service": "next-voice-cloning-app" }
+    },
+    {
+      "source": "/react-tts-component/:path*",
+      "destination": { "service": "react-tts-component" }
     },
     {
       "source": "/",

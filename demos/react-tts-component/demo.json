@@ -1,0 +1,6 @@
+{
+  "order": 200,
+  "title": "Voice in a React app",
+  "stack": "Next.js",
+  "blurb": "A drop-in <100-line React component that speaks any text. Type, hit play, hear it — the API key stays server-side in a route handler."
+}
