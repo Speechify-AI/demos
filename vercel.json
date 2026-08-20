@@ -9,12 +9,20 @@
     "next-voice-cloning-app": {
       "root": "demos/next-voice-cloning-app/",
       "framework": "nextjs"
+    },
+    "clone-voice-10s": {
+      "root": "demos/clone-voice-10s/",
+      "framework": "nextjs"
     }
   },
   "rewrites": [
     {
       "source": "/next-voice-cloning-app/:path*",
       "destination": { "service": "next-voice-cloning-app" }
+    },
+    {
+      "source": "/clone-voice-10s/:path*",
+      "destination": { "service": "clone-voice-10s" }
     },
     {
       "source": "/",

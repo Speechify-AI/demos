@@ -24,6 +24,7 @@ Demos with a **Live** link run in your browser at [demos.speechify.ai](https://d
 | [`demos/mastra-agent-speechify/`](./demos/mastra-agent-speechify) | TypeScript (Mastra) |  | Text-in, speech-out Mastra Agent using an OpenAI LLM for replies and Speechify's simba-3.2 model for TTS via `@mastra/voice-speechify`. |
 | [`demos/voice-agent-showcase/`](./demos/voice-agent-showcase) | Cloudflare Workers |  | One page, ten live Voice Agents API demos: calendar booking, policy-bound support, a page copilot, form intake, US outbound calls with a 5-minute cap, a voice gallery, mid-call language handoff, cross-call memory, a grounded knowledge base, and dual-control troubleshooting. |
 | [`demos/vercel-ai-sdk/`](./demos/vercel-ai-sdk) | TypeScript (Vercel AI SDK) |  | Speechify TTS through the Vercel AI SDK's unified `generateSpeech` interface via the official `@speechify/vercel` provider — one-line swap from OpenAI/ElevenLabs, plus word-level speech marks from `providerMetadata`. |
+| [`demos/clone-voice-10s/`](./demos/clone-voice-10s) | Next.js | [Open](https://demos.speechify.ai/clone-voice-10s) | Clone a voice from a ~10 second sample with explicit consent, synthesize with the clone, then auto-delete it. The API key stays server-side. |
 <!-- DEMOS:END -->
 
 ## Get an API key
