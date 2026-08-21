@@ -48,6 +48,7 @@ export default function Home() {
   return (
     <main>
       <header>
+        <p className="eyebrow">Speechify · Voice Agents API</p>
         <h1>Voice agent events inspector</h1>
         <p className="lead">
           A debug timeline for a voice-agent call. Replay a sample realtime event stream, or point
@@ -151,7 +152,10 @@ function SampleReplay() {
         <span>{fmt(playhead)} / {fmt(total)}</span>
       </div>
       <div className="controls">
-        <button onClick={() => (playhead >= total ? restart() : setPlaying((v) => !v))}>
+        <button
+          className="btn btn-primary"
+          onClick={() => (playhead >= total ? restart() : setPlaying((v) => !v))}
+        >
           {playing ? "▮▮ Pause" : playhead >= total ? "↻ Replay" : "▶ Play"}
         </button>
         <label>
@@ -227,11 +231,12 @@ function LiveInspect({ turnstileRef }: { turnstileRef: React.RefObject<Turnstile
     <section className="panel">
       <div className="live-input">
         <input
+          type="text"
           value={id}
           placeholder="conv_… (leave blank to list recent conversations)"
           onChange={(e) => setId(e.target.value)}
         />
-        <button onClick={load} disabled={busy}>
+        <button className="btn btn-primary" onClick={load} disabled={busy}>
           {busy ? "Loading…" : "Fetch"}
         </button>
       </div>
