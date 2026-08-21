@@ -158,7 +158,8 @@ export default function Home() {
 
   return (
     <main>
-      <h1>Clone a voice from 10 seconds</h1>
+      <p className="eyebrow">SpeechifyAI · Voice cloning</p>
+      <h1>Clone a voice from 10 seconds.</h1>
       <p className="lead">
         Zero-shot cloning from a short sample, used immediately to synthesize —
         then the clone is deleted straight after. Cloning only runs once you
@@ -214,7 +215,7 @@ export default function Home() {
           <span>I have the speaker&apos;s consent to clone this voice.</span>
         </label>
         <p className="hint">
-          Speechify verifies consent on cloning. Read{" "}
+          SpeechifyAI verifies consent on cloning. Read{" "}
           <a
             href="https://speechify.ai/voice-cloning/consent-and-safety"
             target="_blank"
@@ -236,7 +237,7 @@ export default function Home() {
           onChange={(e) => setText(e.target.value)}
         />
         <div id="turnstile-container" />
-        <button onClick={run} disabled={busy || !consent}>
+        <button className="btn btn-primary" onClick={run} disabled={busy || !consent}>
           Clone, speak, then delete
         </button>
         {audioUrl && <audio controls src={audioUrl} />}
