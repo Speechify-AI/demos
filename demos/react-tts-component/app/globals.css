@@ -1,121 +1,190 @@
+/* Speechify brand base — mirrors demos.speechify.ai/site (speechify.ai/brand).
+ * ABC Diatype is licensed and NOT committed; it is loaded cross-origin from
+ * speechify.ai/fonts (served with Access-Control-Allow-Origin: *). Monochrome
+ * palette, thin display type, pill ink buttons, sentence-case voice.
+ * Paste this block at the TOP of the demo's app/globals.css, then make the
+ * demo-specific rules below it reference these tokens (no hardcoded colours). */
+
+@font-face { font-family: "ABCDiatype"; src: url("https://speechify.ai/fonts/ABCDiatype-Thin.woff2") format("woff2"); font-weight: 100; font-style: normal; font-display: swap; }
+@font-face { font-family: "ABCDiatype"; src: url("https://speechify.ai/fonts/ABCDiatype-Light.woff2") format("woff2"); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: "ABCDiatype"; src: url("https://speechify.ai/fonts/ABCDiatype-Regular.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "ABCDiatype"; src: url("https://speechify.ai/fonts/ABCDiatype-Medium.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "ABCDiatype"; src: url("https://speechify.ai/fonts/ABCDiatype-Bold.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
+
 :root {
-  color-scheme: light dark;
-  --fg: #111;
-  --bg: #fff;
-  --muted: #666;
-  --border: #ddd;
-  --surface: #f6f6f6;
-  --accent: #111;
-  --accent-fg: #fff;
+  --font-sans: "ABCDiatype", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, "Cascadia Code", monospace;
+
+  --surface-page: #ffffff;
+  --surface-card: #ffffff;
+  --surface-subtle: #f5f5f5;
+  --surface-raised: #fafafa;
+  --text-primary: #0a0a0a;
+  --text-secondary: #525252;
+  --text-tertiary: #666666;
+  --border-subtle: #e5e5e5;
+  --border-strong: #d1d1d4;
+  --action: #0a0a0a;
+  --action-hover: #2a2a2e;
+  --action-foreground: #fafafa;
+  --focus-ring: rgba(10, 10, 10, 0.22);
+  --success: #00c270;
+  --danger: #b42318;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 9999px;
 }
 
+/* Interactive apps: keep a monochrome dark mapping so night viewers aren't
+ * blinded. Still monochrome, still on-brand (inverted ink/paper). */
 @media (prefers-color-scheme: dark) {
   :root {
-    --fg: #f2f2f2;
-    --bg: #0c0c0c;
-    --muted: #999;
-    --border: #2a2a2a;
-    --surface: #161616;
-    --accent: #f2f2f2;
-    --accent-fg: #0c0c0c;
+    --surface-page: #0a0a0a;
+    --surface-card: #101010;
+    --surface-subtle: #161616;
+    --surface-raised: #141414;
+    --text-primary: #fafafa;
+    --text-secondary: #b3b3b3;
+    --text-tertiary: #8a8a8a;
+    --border-subtle: #262626;
+    --border-strong: #3a3a3a;
+    --action: #fafafa;
+    --action-hover: #e5e5e5;
+    --action-foreground: #0a0a0a;
+    --focus-ring: rgba(250, 250, 250, 0.28);
   }
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
-  padding: 2rem 1rem;
-  background: var(--bg);
-  color: var(--fg);
-  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
-  line-height: 1.5;
+  padding: 4rem 1.5rem;
+  background: var(--surface-page);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-weight: 400;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 main {
-  max-width: 34rem;
+  max-width: 44rem;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.75rem;
 }
 
+/* Thin display headings, tight tracking, sentence case (author copy in sentence case). */
 h1 {
-  font-size: 1.6rem;
-  font-weight: 500;
+  font-weight: 100;
+  font-size: clamp(2.25rem, 6vw, 3.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
   margin: 0 0 0.5rem;
 }
+h2 { font-weight: 300; letter-spacing: -0.01em; margin: 0 0 0.5rem; }
 
-.lead {
-  color: var(--muted);
-  margin: 0;
-}
-
-code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  background: var(--surface);
-  padding: 0.1em 0.35em;
-  border-radius: 4px;
-  font-size: 0.9em;
-}
-
-.step {
-  border: 1px solid var(--border);
-  border-radius: 0.6rem;
-  padding: 1.1rem;
-  background: var(--surface);
-}
-
-.step h2 {
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--muted);
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--text-tertiary);
+  text-transform: none;
   margin: 0 0 0.75rem;
 }
 
-textarea,
-select {
+.lead {
+  max-width: 62ch;
+  color: var(--text-secondary);
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  margin: 0;
+}
+
+a { color: var(--text-primary); text-underline-offset: 2px; }
+
+code, kbd, samp { font-family: var(--font-mono); }
+code {
+  background: var(--surface-subtle);
+  border: 1px solid var(--border-subtle);
+  padding: 0.08em 0.38em;
+  border-radius: 5px;
+  font-size: 0.88em;
+}
+
+.card, .step {
+  background: var(--surface-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+}
+
+label { display: block; font-size: 0.9rem; color: var(--text-secondary); margin: 0 0 0.5rem; }
+
+input[type="text"], input[type="email"], textarea, select {
   width: 100%;
   font: inherit;
-  color: var(--fg);
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 0.4rem;
-  padding: 0.6rem 0.7rem;
-  resize: vertical;
+  color: var(--text-primary);
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 0.65rem 0.8rem;
+}
+textarea { resize: vertical; }
+
+input:focus-visible, textarea:focus-visible, select:focus-visible, button:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 1px;
+}
+
+/* Pill buttons — medium weight only, never 600. */
+.btn, button.btn {
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border-radius: var(--radius-pill);
+  padding: 0.65rem 1.5rem;
+  border: 1px solid transparent;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.btn-primary { background: var(--action); color: var(--action-foreground); }
+.btn-primary:hover:not(:disabled) { background: var(--action-hover); }
+.btn-outline { background: transparent; color: var(--text-primary); border-color: var(--border-strong); }
+.btn-outline:hover:not(:disabled) { background: var(--action); color: var(--action-foreground); border-color: var(--action); }
+.btn:disabled { opacity: 0.55; cursor: default; }
+
+footer {
+  color: var(--text-tertiary);
+  font-size: 0.9rem;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 1.25rem;
+}
+footer a { color: inherit; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+}
+
+/* ---- react-tts-component specifics ---- */
+.step h2 {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-tertiary);
+  font-weight: 500;
+  margin: 0 0 0.75rem;
 }
 
 .play {
   display: flex;
   justify-content: center;
-}
-
-.sv-btn {
-  font: inherit;
-  font-weight: 500;
-  cursor: pointer;
-  color: var(--accent-fg);
-  background: var(--accent);
-  border: none;
-  border-radius: 999px;
-  padding: 0.7rem 2rem;
-}
-
-.sv-btn:disabled {
-  opacity: 0.6;
-  cursor: default;
-}
-
-footer {
-  color: var(--muted);
-  font-size: 0.9rem;
-  border-top: 1px solid var(--border);
-  padding-top: 1rem;
-}
-
-footer a {
-  color: inherit;
 }

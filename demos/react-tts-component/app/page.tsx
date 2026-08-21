@@ -6,6 +6,11 @@ import { SpeechifyVoice } from "../components/SpeechifyVoice";
 // Curated simba-3.2 voices. Browse the full catalog at platform.speechify.ai.
 const VOICES = ["geffen_32", "harper_32", "dominic_32", "beatrice_32", "wyatt_32"];
 
+// This app is mounted under a basePath (see next.config.ts), so the route
+// handler lives at `${basePath}/api/speak`. Client fetches are not basePath-aware,
+// so the demo passes the prefixed endpoint to the (root-relative) component.
+const BASE_PATH = "/react-tts-component";
+
 type TurnstileHandle = {
   getToken: (opts?: { timeout?: number }) => Promise<string | null>;
   reset: () => void;
@@ -49,10 +54,12 @@ export default function Home() {
   return (
     <main>
       <header>
-        <h1>Voice in a React app</h1>
+        <p className="eyebrow">SpeechifyAI · React TTS</p>
+        <h1>Voice in a React app.</h1>
         <p className="lead">
-          One component, <code>&lt;SpeechifyVoice&gt;</code>, turns any text into speech. The API
-          key stays on the server — the button just calls your own route handler.
+          One component, <code>&lt;SpeechifyVoice&gt;</code>, turns any text into speech with
+          SpeechifyAI. The API key stays on the server — the button just calls your own route
+          handler.
         </p>
       </header>
 
@@ -75,7 +82,12 @@ export default function Home() {
       <div id="turnstile-container" />
 
       <div className="play">
-        <SpeechifyVoice text={text} voiceId={voiceId} getToken={getToken} />
+        <SpeechifyVoice
+          text={text}
+          voiceId={voiceId}
+          getToken={getToken}
+          endpoint={`${BASE_PATH}/api/speak`}
+        />
       </div>
 
       <footer>

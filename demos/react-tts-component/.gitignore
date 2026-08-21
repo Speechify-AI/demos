@@ -3,3 +3,7 @@ node_modules/
 .env
 next-env.d.ts
 *.tsbuildinfo
+test-results/
+playwright-report/
+/.playwright/
+.last-run.json

@@ -29,7 +29,7 @@ export function SpeechifyVoice({
   text,
   endpoint = "/api/speak",
   voiceId = "geffen_32",
-  label = "▶ Play",
+  label = "Play",
   getToken,
 }: Props) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -63,11 +63,11 @@ export function SpeechifyVoice({
 
   return (
     <>
-      <button onClick={speak} disabled={state === "loading"} className="sv-btn">
+      <button onClick={speak} disabled={state === "loading"} className="btn btn-primary">
         {state === "loading"
           ? "Synthesizing…"
           : state === "playing"
-            ? "▮▮ Playing"
+            ? "Playing"
             : state === "error"
               ? "Retry"
               : label}
