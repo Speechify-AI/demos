@@ -213,8 +213,11 @@ export default function Home() {
 
   return (
     <main>
-      <h1>Nail IVR pronunciation with SSML</h1>
-      <p>
+      <div>
+        <p className="eyebrow">SpeechifyAI · SSML API</p>
+        <h1>Nail IVR pronunciation with SSML.</h1>
+      </div>
+      <p className="lead">
         A phone system reads names, account numbers, and product terms out loud
         — and plain text-to-speech mangles all three. This playground pairs a{" "}
         <strong>plain</strong> and an <strong>SSML</strong> version of four
@@ -302,7 +305,12 @@ export default function Home() {
         )}
 
         <div id="turnstile-container" />
-        <button onClick={synthesize} disabled={busy || tsState === "waiting"}>
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={synthesize}
+          disabled={busy || tsState === "waiting"}
+        >
           {busy
             ? "Synthesizing…"
             : tsState === "waiting"
