@@ -95,8 +95,11 @@ export default function Home() {
 
   return (
     <main>
-      <h1>One-file serverless edge TTS</h1>
-      <p className="lede">
+      <div>
+        <p className="eyebrow">SpeechifyAI · Edge TTS</p>
+        <h1>One-file serverless edge TTS.</h1>
+      </div>
+      <p className="lead">
         Type text, hit play. The audio streams out of a single edge function at{" "}
         <code>app/api/stream/route.ts</code> — no SDK, key held server-side.
       </p>
@@ -110,7 +113,12 @@ export default function Home() {
           onChange={(e) => setText(e.target.value)}
         />
         <div id="turnstile-container" />
-        <button onClick={play} disabled={busy}>
+        <button
+          className="btn btn-primary"
+          onClick={play}
+          disabled={busy}
+          style={{ marginTop: "0.9rem" }}
+        >
           {busy ? "Streaming…" : "Play"}
         </button>
         {audioUrl && <audio controls autoPlay src={audioUrl} />}
