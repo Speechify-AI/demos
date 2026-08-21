@@ -1,0 +1,28 @@
+{
+  "name": "live-captions",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Live word-by-word captions synced to Speechify TTS playback with speech marks",
+  "scripts": {
+    "dev": "next dev -p 8771",
+    "build": "next build",
+    "start": "next start -p 8771",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "e2e": "playwright test"
+  },
+  "dependencies": {
+    "@speechify/api": "^3.0.1",
+    "next": "^16.2.10",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@playwright/test": "^1.50.0",
+    "typescript": "^5.6.0"
+  }
+}
