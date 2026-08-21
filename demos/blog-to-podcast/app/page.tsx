@@ -235,11 +235,12 @@ export default function Home() {
 
   return (
     <main>
-      <h1>Turn a blog post into a podcast episode</h1>
-      <p className="lede">
-        Paste a long-form article. Speechify chunks it on sentence boundaries and
-        narrates each chunk with the TTS API, then it plays back-to-back as one
-        continuous episode.
+      <p className="eyebrow">SpeechifyAI · TTS API</p>
+      <h1>Turn a blog post into a podcast episode.</h1>
+      <p className="lead">
+        Paste a long-form article. SpeechifyAI chunks it on sentence boundaries
+        and narrates each chunk with the TTS API, then it plays back-to-back as
+        one continuous episode.
       </p>
 
       <section className="step">
@@ -299,6 +300,7 @@ export default function Home() {
 
         <div id="turnstile-container" />
         <button
+          className="btn btn-primary"
           onClick={generate}
           disabled={busy || over || tsState === "waiting"}
         >
@@ -314,10 +316,10 @@ export default function Home() {
         <section className="step">
           <h2>Step 3 — the episode</h2>
           <div className="player">
-            <button className="playbtn" onClick={togglePlay}>
+            <button className="btn btn-primary" onClick={togglePlay}>
               {playing ? "Pause" : current >= 0 ? "Resume" : "Play episode"}
             </button>
-            <button className="ghost" onClick={download}>
+            <button className="btn btn-outline" onClick={download}>
               Download episode
             </button>
           </div>
