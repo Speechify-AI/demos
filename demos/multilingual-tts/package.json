@@ -1,0 +1,27 @@
+{
+  "name": "multilingual-tts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Read text in any of 30+ languages with the Speechify TTS API, one native voice per language",
+  "scripts": {
+    "dev": "next dev -p 8781",
+    "build": "next build",
+    "start": "next start -p 8781",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "e2e": "playwright test"
+  },
+  "dependencies": {
+    "next": "^16.2.10",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.50.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "typescript": "^5.6.0"
+  }
+}

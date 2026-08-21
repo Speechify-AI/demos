@@ -17,6 +17,10 @@
     "multilingual-voiceover": {
       "root": "demos/multilingual-voiceover/",
       "framework": "nextjs"
+    },
+    "multilingual-tts": {
+      "root": "demos/multilingual-tts/",
+      "framework": "nextjs"
     }
   },
   "rewrites": [
@@ -35,6 +39,10 @@
     {
       "source": "/multilingual-voiceover/:path*",
       "destination": { "service": "multilingual-voiceover" }
+    },
+    {
+      "source": "/multilingual-tts/:path*",
+      "destination": { "service": "multilingual-tts" }
     },
     {
       "source": "/",
