@@ -1,10 +1,16 @@
 import { verifyTurnstile } from "../../lib/turnstile";
 
-// The whole demo is this one file: a serverless EDGE function that streams
-// Speechify TTS audio straight back to the browser. No SDK (it is Node-only),
-// no buffering — the upstream MP3 body is piped through as it arrives, so the
-// client can start playing before synthesis finishes.
-export const runtime = "edge";
+// The whole demo is this one file: a serverless function that streams Speechify
+// TTS audio straight back to the browser. No SDK, no buffering — the upstream
+// MP3 body is piped through as it arrives, so the client can start playing
+// before synthesis finishes.
+//
+// Runtime note: this deploys under demos.speechify.ai, which is one Vercel
+// project composed of many Services, and Services don't support the Edge
+// runtime. So it runs as a Node serverless function — which also streams the
+// response body. The exact same one file runs on `export const runtime = "edge"`
+// in a standalone project; flip the line below if you deploy it on its own.
+export const runtime = "nodejs";
 
 const SPEECHIFY_STREAM_URL = "https://api.speechify.ai/v1/audio/stream";
 

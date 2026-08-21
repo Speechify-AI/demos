@@ -1,22 +1,26 @@
-# One-file serverless edge TTS (Next.js)
+# One-file serverless streaming TTS (Next.js)
 
-A [Next.js](https://nextjs.org) demo whose whole backend is a **single serverless edge function** that streams Speechify text-to-speech audio straight to the browser. No SDK, no buffering, key held server-side. This is the shape you want for a TTS widget, a light integration, or a copy-paste starting point.
+A [Next.js](https://nextjs.org) demo whose whole backend is a **single serverless function** that streams Speechify text-to-speech audio straight to the browser. No SDK, no buffering, key held server-side. This is the shape you want for a TTS widget, a light integration, or a copy-paste starting point.
 
 Pairs with the upcoming speechify.ai post "One-file serverless TTS on an edge function".
 
+> **Runtime note.** This is hosted under `demos.speechify.ai`, which is one Vercel project composed of many [Services](https://vercel.com/docs/services), and Services don't support the Edge runtime. So it ships as a **Node serverless function** — which streams the response body just the same. The exact same one file runs on the Edge runtime in a standalone project: flip `runtime` to `"edge"`.
+
 ## What you get
 
-- A minimal page: textarea + **Play** button. It POSTs your text to the edge route and plays the streamed audio.
-- One edge route, `app/api/stream/route.ts`, that is the entire backend. It runs on the edge runtime and pipes the upstream MP3 body straight through.
+- A minimal page: textarea + **Play** button. It POSTs your text to the route and plays the streamed audio.
+- One route, `app/api/stream/route.ts`, that is the entire backend. It pipes the upstream MP3 body straight through as it arrives.
 
 ## The one file
 
-The `@speechify/api` SDK is Node-only, so the edge route calls the REST API directly with `fetch` and streams the response body back unchanged:
+The `@speechify/api` SDK is Node-only, so the route calls the REST API directly with `fetch` and streams the response body back unchanged:
 
 ```ts
 import { verifyTurnstile } from "../../lib/turnstile";
 
-export const runtime = "edge";
+// "nodejs" here because Vercel Services don't support Edge. Same file runs on
+// the Edge runtime in a standalone project — just set this to "edge".
+export const runtime = "nodejs";
 
 const SPEECHIFY_STREAM_URL = "https://api.speechify.ai/v1/audio/stream";
 
@@ -72,11 +76,11 @@ Open `http://localhost:8768`, type some text, and click **Play**.
 
 ## How the key stays server-side
 
-`SPEECHIFY_API_KEY` is only ever read inside the edge function via `process.env`, which the browser cannot see. The client talks to the same-origin `/api/stream` route and receives audio bytes — never the key.
+`SPEECHIFY_API_KEY` is only ever read inside the function via `process.env`, which the browser cannot see. The client talks to the same-origin `/api/stream` route and receives audio bytes — never the key.
 
-## Why edge
+## Why streaming
 
-Edge functions start fast, run close to the user, and stream by default. Piping the upstream body straight to the client means the browser can start playing before synthesis finishes, with almost no server code in between.
+Piping the upstream body straight to the client means the browser can start playing before synthesis finishes, with almost no server code in between. On the Edge runtime (standalone project) you also get fast cold starts and execution close to the user; under Services it runs on Node, and the streaming behaviour is identical.
 
 ## Prerequisites
 
