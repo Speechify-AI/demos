@@ -27,6 +27,7 @@ Demos with a **Live** link run in your browser at [demos.speechify.ai](https://d
 | [`demos/voice-agent-showcase/`](./demos/voice-agent-showcase) | Cloudflare Workers |  | One page, ten live Voice Agents API demos: calendar booking, policy-bound support, a page copilot, form intake, US outbound calls with a 5-minute cap, a voice gallery, mid-call language handoff, cross-call memory, a grounded knowledge base, and dual-control troubleshooting. |
 | [`demos/vercel-ai-sdk/`](./demos/vercel-ai-sdk) | TypeScript (Vercel AI SDK) |  | Speechify TTS through the Vercel AI SDK's unified `generateSpeech` interface via the official `@speechify/vercel` provider — one-line swap from OpenAI/ElevenLabs, plus word-level speech marks from `providerMetadata`. |
 | [`demos/puter-txt2speech/`](./demos/puter-txt2speech) | HTML (puter.js) |  | Speaks with a Simba 3.2 voice via the Speechify provider in Puter's puter.ai.txt2speech() — one static page, your key configured once on the Puter instance. |
+| [`demos/blog-to-podcast/`](./demos/blog-to-podcast) | Next.js | [Open](https://demos.speechify.ai/blog-to-podcast) | Paste a long-form article and turn it into a podcast episode — chunked on sentence boundaries and narrated with the Speechify TTS API, key held server-side. |
 <!-- DEMOS:END -->
 
 ## Get an API key
