@@ -17,6 +17,10 @@
     "multilingual-voiceover": {
       "root": "demos/multilingual-voiceover/",
       "framework": "nextjs"
+    },
+    "streaming-tts-karaoke": {
+      "root": "demos/streaming-tts-karaoke/",
+      "framework": "nextjs"
     }
   },
   "rewrites": [
@@ -35,6 +39,10 @@
     {
       "source": "/multilingual-voiceover/:path*",
       "destination": { "service": "multilingual-voiceover" }
+    },
+    {
+      "source": "/streaming-tts-karaoke/:path*",
+      "destination": { "service": "streaming-tts-karaoke" }
     },
     {
       "source": "/",
