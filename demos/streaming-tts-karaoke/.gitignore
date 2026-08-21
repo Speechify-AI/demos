@@ -1,0 +1,11 @@
+node_modules/
+.next/
+.env
+next-env.d.ts
+*.tsbuildinfo
+
+# Playwright
+test-results/
+playwright-report/
+/.playwright/
+.last-run.json
