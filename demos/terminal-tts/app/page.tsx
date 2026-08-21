@@ -263,11 +263,12 @@ export default function Home() {
   return (
     <main>
       <header className="masthead">
-        <h1>TTS from your terminal</h1>
-        <p>
-          A terminal-styled playground for the Speechify API. Type a command and
-          press enter — the browser posts it to a server route that holds the API
-          key and returns audio.
+        <p className="eyebrow">SpeechifyAI · TTS API</p>
+        <h1>TTS from your terminal.</h1>
+        <p className="lead">
+          A terminal-styled playground for the SpeechifyAI API. Type a command
+          and press enter — the browser posts it to a server route that holds the
+          API key and returns audio.
         </p>
       </header>
 
@@ -317,11 +318,11 @@ export default function Home() {
         <audio ref={audioRef} controls src={audioUrl} className="player" />
       )}
 
-      <footer className="foot">
+      <footer>
         <p>
           Prefer a real shell? This folder ships <code>cli/say.mjs</code>, a
-          dependency-free Node CLI that calls the same Speechify endpoint. See the
-          README.
+          dependency-free Node CLI that calls the same SpeechifyAI endpoint. See
+          the README.
         </p>
       </footer>
     </main>
