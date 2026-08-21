@@ -167,11 +167,12 @@ export default function Home() {
 
   return (
     <main>
-      <h1>Live captions, driven by speech marks</h1>
-      <p className="lede">
+      <p className="eyebrow">SpeechifyAI · Speech marks</p>
+      <h1>Live captions, driven by speech marks.</h1>
+      <p className="lead">
         Synthesize any text and each word lights up the instant the voice speaks
-        it — powered entirely by the <code>speech_marks</code> the Speechify API
-        returns alongside the audio. No forced alignment, no manual timing.
+        it — powered entirely by the <code>speech_marks</code> the SpeechifyAI
+        API returns alongside the audio. No forced alignment, no manual timing.
       </p>
 
       <section className="step">
@@ -183,7 +184,7 @@ export default function Home() {
           onChange={(e) => setText(e.target.value)}
         />
         <div id="turnstile-container" />
-        <button onClick={synthesize} disabled={busy}>
+        <button className="btn btn-primary" onClick={synthesize} disabled={busy}>
           Synthesize
         </button>
       </section>
