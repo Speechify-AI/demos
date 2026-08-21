@@ -63,8 +63,8 @@ def chunk_text(text: str, max_chars: int = MAX_CHARS) -> list[str]:
 def synthesize_chunks(
     chunks: list[str],
     out_dir: Path,
-    voice_id: str = "george",
-    model: str = "simba-english",
+    voice_id: str = "geffen_32",
+    model: str = "simba-3.2",
     max_retries: int = 3,
 ) -> list[Path]:
     """Synthesize each chunk sequentially with exponential-backoff retries."""
