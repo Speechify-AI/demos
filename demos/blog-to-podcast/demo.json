@@ -1,0 +1,6 @@
+{
+  "order": 30,
+  "title": "Blog post to podcast",
+  "stack": "TypeScript (SDK)",
+  "blurb": "Point it at any blog post URL, get a podcast-style MP3 out: fetches the article, extracts the text, chunks on sentence boundaries, synthesizes each chunk via the Speechify API, and stitches the parts together with ffmpeg."
+}
