@@ -1,0 +1,21 @@
+{
+  "name": "discord-bot-speechify",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A Discord bot that speaks with the Speechify API",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@speechify/api": "^3.0.1",
+    "discord.js": "^14.15.0",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}
