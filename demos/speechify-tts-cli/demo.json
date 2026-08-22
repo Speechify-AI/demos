@@ -1,0 +1,6 @@
+{
+  "order": 100,
+  "title": "Text-to-speech CLI",
+  "stack": "TypeScript (CLI)",
+  "blurb": "Generate speech from your terminal: pipe text or a file in, get an MP3 out, with the Speechify API. Voice, model, and format flags included."
+}
