@@ -1,0 +1,6 @@
+{
+  "order": 220,
+  "title": "Turn a webpage into an audiobook",
+  "stack": "Next.js",
+  "blurb": "Paste a URL, get narrated audio. The server fetches the article, extracts the text, chunks it on sentence boundaries, and synthesizes each part with the Speechify TTS API."
+}
