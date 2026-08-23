@@ -1,0 +1,6 @@
+{
+  "order": 90,
+  "title": "TTS from the terminal",
+  "stack": "TypeScript (CLI)",
+  "blurb": "A ~70-line CLI that turns text into an MP3 with the Speechify API — run it straight from your shell."
+}

@@ -19,6 +19,7 @@ Demos with a **Live** link run in your browser at [demos.speechify.ai](https://d
 | [`demos/livekit-voice-agent-python/`](./demos/livekit-voice-agent-python) | Python (LiveKit) |  | Legacy Speechify-owned LiveKit TTS demo, with Deepgram STT and an OpenAI LLM in a LiveKit AgentSession. Prefer the official LiveKit plugin demo for new work. |
 | [`demos/livekit-voice-agent-node/`](./demos/livekit-voice-agent-node) | TypeScript (LiveKit) |  | Legacy Speechify-owned LiveKit TTS demo, with Deepgram STT and an OpenAI LLM in a LiveKit AgentSession. |
 | [`demos/ssml-emotion-tts/`](./demos/ssml-emotion-tts) | TypeScript (SDK) |  | Drives emotion, pauses, prosody, emphasis, and pronunciation with SSML in a single POST /v1/audio/speech request. |
+| [`demos/cli-tts/`](./demos/cli-tts) | TypeScript (CLI) |  | A ~70-line CLI that turns text into an MP3 with the Speechify API — run it straight from your shell. |
 | [`demos/web-audio-streaming/`](./demos/web-audio-streaming) | TypeScript (browser) |  | Streams Speechify PCM into the browser Web Audio API for low-latency playback, behind a zero-dep proxy that keeps the key server-side. |
 | [`demos/deepgram-voice-agent-shim/`](./demos/deepgram-voice-agent-shim) | Go shim + Node |  | Points Deepgram Voice Agent at the tts-shims OpenAI-compatible proxy so it speaks with a Speechify voice, key held server-side. |
 | [`demos/vapi-custom-voice/`](./demos/vapi-custom-voice) | Go shim |  | Points Vapi custom voice at the tts-shims Vapi-compatible proxy so it speaks with Speechify raw PCM, key held server-side. |
