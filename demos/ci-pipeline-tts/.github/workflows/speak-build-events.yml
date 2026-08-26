@@ -1,0 +1,38 @@
+name: Speak build events
+
+# Speak after any workflow in your repo finishes. Swap `pipeline` for the name
+# of the workflow you want to announce (or omit `workflow_run` and use `push`
+# to speak on every commit).
+on:
+  workflow_run:
+    workflows: ["pipeline"]
+    types: [completed]
+
+jobs:
+  speak:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install
+        working-directory: demos/ci-pipeline-tts
+        run: npm install
+
+      - name: Speak the build result
+        working-directory: demos/ci-pipeline-tts
+        env:
+          SPEECHIFY_API_KEY: ${{ secrets.SPEECHIFY_API_KEY }}
+          # Optional: hear it in Discord as an audio clip.
+          # DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          npm start -- \
+            --workflow "${{ github.event.workflow_run.name }}" \
+            --repo "${{ github.repository }}" \
+            --branch "${{ github.event.workflow_run.head_branch }}" \
+            --sha "${{ github.event.workflow_run.head_sha }}" \
+            --actor "${{ github.event.workflow_run.actor.login }}" \
+            --status "${{ github.event.workflow_run.conclusion }}"

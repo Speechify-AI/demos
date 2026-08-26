@@ -25,8 +25,10 @@ Demos with a **Live** link run in your browser at [demos.speechify.ai](https://d
 | [`demos/pipecat-agent-speechify/`](./demos/pipecat-agent-speechify) | Python (Pipecat) |  | Real-time voice pipeline using Pipecat with Deepgram STT, Anthropic Claude, and Speechify TTS through SpeechifyTTSService. |
 | [`demos/mastra-agent-speechify/`](./demos/mastra-agent-speechify) | TypeScript (Mastra) |  | Text-in, speech-out Mastra Agent using an OpenAI LLM for replies and Speechify's simba-3.2 model for TTS via `@mastra/voice-speechify`. |
 | [`demos/voice-agent-showcase/`](./demos/voice-agent-showcase) | Cloudflare Workers |  | One page, ten live Voice Agents API demos: calendar booking, policy-bound support, a page copilot, form intake, US outbound calls with a 5-minute cap, a voice gallery, mid-call language handoff, cross-call memory, a grounded knowledge base, and dual-control troubleshooting. |
+| [`demos/ci-pipeline-tts/`](./demos/ci-pipeline-tts) | TypeScript (SDK) |  | Wire the Speechify TTS API into a CI pipeline so build, test, and deploy events are spoken aloud or dropped into a channel as audio. |
 | [`demos/vercel-ai-sdk/`](./demos/vercel-ai-sdk) | TypeScript (Vercel AI SDK) |  | Speechify TTS through the Vercel AI SDK's unified `generateSpeech` interface via the official `@speechify/vercel` provider — one-line swap from OpenAI/ElevenLabs, plus word-level speech marks from `providerMetadata`. |
 | [`demos/puter-txt2speech/`](./demos/puter-txt2speech) | HTML (puter.js) |  | Speaks with a Simba 3.2 voice via the Speechify provider in Puter's puter.ai.txt2speech() — one static page, your key configured once on the Puter instance. |
+| [`demos/webpage-audiobook/`](./demos/webpage-audiobook) | Next.js | [Open](https://demos.speechify.ai/webpage-audiobook) | Paste a URL, get narrated audio. The server fetches the article, extracts the text, chunks it on sentence boundaries, and synthesizes each part with the Speechify TTS API. |
 <!-- DEMOS:END -->
 
 ## Get an API key
