@@ -40,5 +40,6 @@ Prerequisites: Node 20+, a Speechify API key from
 Uses `discord.js` v14 for the client and command registration, and the
 Speechify `@speechify/api` client — the same `client.audio.speech()` call used
 across the [demos repo](../). The bot reads the configured `voice_id` (default
-`george`) and `model` (default `simba-english`) from `.env` if you want a
-different voice.
+`geffen_32`) and `model` (default `simba-3.2`) from `.env` if you want a
+different voice — the defaults are the docs' canonical English pairing; the
+retired `simba-english` / `simba-multilingual` models are not supported.

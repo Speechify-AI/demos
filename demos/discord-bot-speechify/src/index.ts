@@ -8,9 +8,14 @@ import {
   type Interaction,
 } from "discord.js";
 import { SpeechifyClient, SpeechifyError } from "@speechify/api";
-
-const VOICE = process.env.VOICE_ID ?? "george";
-const MODEL = process.env.MODEL_ID ?? "simba-english";
+import { buildSpeechRequest, SpeechValidationError } from "./lib/speech.js";
+import {
+  speakTextFrom,
+  previewLine,
+  failureMessage,
+  REPLY_NO_TEXT,
+  UPLOAD_FILENAME,
+} from "./lib/interaction.js";
 
 function requireEnv(name: string): string {
   const value = process.env[name];
@@ -38,31 +43,41 @@ async function registerCommands() {
 }
 
 async function onInteraction(interaction: Interaction) {
-  if (!interaction.isChatInputCommand() || interaction.commandName !== "speak") return;
-  const text = interaction.options.getString("text", true).trim();
+  const text = speakTextFrom(interaction as never);
+  if (text === null) return;
+
   if (!text) {
-    await interaction.reply("Give me some text to speak.");
+    await (interaction as { reply: (msg: string) => Promise<unknown> }).reply(REPLY_NO_TEXT);
     return;
   }
 
-  await interaction.deferReply();
+  await (interaction as { deferReply: () => Promise<unknown> }).deferReply();
 
   try {
-    const response = await speechify.audio.speech({
-      input: text,
-      voice_id: VOICE,
-      audio_format: "mp3",
-      model: MODEL as "simba-english" | "simba-multilingual" | "simba-3.0" | "simba-3.2",
+    const request = buildSpeechRequest({
+      text,
+      voiceId: process.env.VOICE_ID,
+      model: process.env.MODEL_ID,
     });
+    const response = await speechify.audio.speech(request);
     const audio = Buffer.from(response.audio_data, "base64");
-    await interaction.editReply({
-      content: `🎙 ${text.slice(0, 120)}`,
-      files: [{ attachment: audio as any, name: "speak.mp3" }],
+    await (interaction as unknown as {
+      editReply: (opts: {
+        content?: string;
+        files?: { attachment: Buffer; name: string }[];
+      }) => Promise<unknown>;
+    }).editReply({
+      content: previewLine(text),
+      files: [{ attachment: audio, name: UPLOAD_FILENAME }],
     });
   } catch (err) {
     const message =
-      err instanceof SpeechifyError || err instanceof Error ? err.message : String(err);
-    await interaction.editReply(`I couldn't speak that: ${message}`);
+      err instanceof SpeechifyError || err instanceof SpeechValidationError || err instanceof Error
+        ? err.message
+        : String(err);
+    await (interaction as unknown as {
+      editReply: (opts: { content: string }) => Promise<unknown>;
+    }).editReply({ content: failureMessage(message) });
   }
 }
 
