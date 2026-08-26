@@ -6,15 +6,17 @@
   "description": "Add a Listen button to a documentation page with the Speechify API",
   "scripts": {
     "start": "tsx src/index.ts",
+    "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@speechify/api": "^3.0.1",
+    "@speechify/api": "^4.0.1",
     "dotenv": "^16.4.5"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
     "tsx": "^4.19.0",
-    "typescript": "^5.6.0"
+    "typescript": "^5.6.0",
+    "vitest": "^3.0.0"
   }
 }

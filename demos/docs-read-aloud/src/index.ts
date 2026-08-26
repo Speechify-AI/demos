@@ -4,6 +4,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { SpeechifyClient, SpeechifyError } from "@speechify/api";
+import { buildSpeechRequest, SpeechValidationError } from "./lib/speech.js";
+import { parseSpeakBody, audioHeaders } from "./lib/handler.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR = path.join(__dirname, "..", "public");
@@ -16,12 +18,6 @@ function requireKey(): string {
 }
 
 const client = new SpeechifyClient({ token: requireKey() });
-const VOICE = process.env.VOICE_ID ?? "george";
-const MODEL = (process.env.MODEL_ID ?? "simba-english") as
-  | "simba-english"
-  | "simba-multilingual"
-  | "simba-3.0"
-  | "simba-3.2";
 
 function send(req: http.IncomingMessage, res: http.ServerResponse, status: number, body: string, type = "text/plain; charset=utf-8") {
   res.writeHead(status, { "content-type": type });
@@ -31,34 +27,28 @@ function send(req: http.IncomingMessage, res: http.ServerResponse, status: numbe
 async function handleSpeak(req: http.IncomingMessage, res: http.ServerResponse) {
   let raw = "";
   for await (const chunk of req) raw += chunk;
-  let text: string;
-  try {
-    text = (JSON.parse(raw || "{}").text ?? "").toString().trim();
-  } catch {
-    send(req, res, 400, JSON.stringify({ error: "Bad JSON body" }), "application/json");
-    return;
-  }
-  if (!text) {
-    send(req, res, 400, JSON.stringify({ error: "body.text is required" }), "application/json");
+
+  const parsed = parseSpeakBody(raw);
+  if (!parsed.ok) {
+    send(req, res, parsed.status, JSON.stringify({ error: parsed.message }), "application/json");
     return;
   }
 
   try {
-    const response = await client.audio.speech({
-      input: text,
-      voice_id: VOICE,
-      audio_format: "mp3",
-      model: MODEL,
+    const request = buildSpeechRequest({
+      text: parsed.text,
+      voiceId: process.env.VOICE_ID,
+      model: process.env.MODEL_ID,
     });
+    const response = await client.audio.speech(request);
     const audio = Buffer.from(response.audio_data, "base64");
-    res.writeHead(200, {
-      "content-type": "audio/mpeg",
-      "content-length": audio.length,
-      "cache-control": "no-store",
-    });
+    res.writeHead(200, audioHeaders(audio));
     res.end(audio);
   } catch (err) {
-    const message = err instanceof SpeechifyError || err instanceof Error ? err.message : String(err);
+    const message =
+      err instanceof SpeechifyError || err instanceof SpeechValidationError || err instanceof Error
+        ? err.message
+        : String(err);
     send(req, res, 502, JSON.stringify({ error: message }), "application/json");
   }
 }
