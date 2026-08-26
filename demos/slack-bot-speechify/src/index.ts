@@ -2,9 +2,13 @@ import "dotenv/config";
 import { SocketModeClient } from "@slack/socket-mode";
 import { WebClient } from "@slack/web-api";
 import { SpeechifyClient, SpeechifyError } from "@speechify/api";
-
-const VOICE = process.env.VOICE_ID ?? "george";
-const MODEL = process.env.MODEL_ID ?? "simba-english";
+import { buildSpeechRequest, SpeechValidationError } from "./lib/speech.js";
+import {
+  shouldReadAloud,
+  uploadTitle,
+  failureMessage,
+  UPLOAD_FILENAME,
+} from "./lib/message.js";
 
 function requireEnv(name: string): string {
   const value = process.env[name];
@@ -30,41 +34,43 @@ socket.on("message", async (event) => {
     text?: string;
   };
 
-  if (msg.type !== "message") return;
-  if (msg.subtype || msg.bot_id) return;
+  if (!shouldReadAloud(msg)) return;
   const text = (msg.text ?? "").trim();
-  if (!text || !msg.channel) return;
+  const channel = msg.channel!;
 
-  console.log(`Reading ${text.length} characters aloud in #${msg.channel} ...`);
+  console.log(`Reading ${text.length} characters aloud in #${channel} ...`);
 
   try {
-    const response = await speechify.audio.speech({
-      input: text,
-      voice_id: VOICE,
-      audio_format: "mp3",
-      model: MODEL as "simba-english" | "simba-multilingual" | "simba-3.0" | "simba-3.2",
+    const request = buildSpeechRequest({
+      text,
+      voiceId: process.env.VOICE_ID,
+      model: process.env.MODEL_ID,
     });
+
+    const response = await speechify.audio.speech(request);
 
     const audio = Buffer.from(response.audio_data, "base64");
 
     await web.files.uploadV2({
-      channel_id: msg.channel,
+      channel_id: channel,
       file: audio,
-      filename: "read-aloud.mp3",
-      title: `Read aloud: ${text.slice(0, 80)}`,
+      filename: UPLOAD_FILENAME,
+      title: uploadTitle(text),
     });
 
     console.log(
-      `Posted read-aloud.mp3 (${audio.length.toLocaleString()} bytes, ` +
+      `Posted ${UPLOAD_FILENAME} (${audio.length.toLocaleString()} bytes, ` +
         `${response.billable_characters_count} billable characters).`,
     );
   } catch (err) {
     const message =
-      err instanceof SpeechifyError || err instanceof Error ? err.message : String(err);
+      err instanceof SpeechifyError || err instanceof SpeechValidationError || err instanceof Error
+        ? err.message
+        : String(err);
     console.error(`Failed to read "${text.slice(0, 120)}": ${message}`);
-    if (msg.channel) {
-      await web.chat.postMessage({ channel: msg.channel, text: `I couldn't read that aloud: ${message}` }).catch(() => {});
-    }
+    await web.chat
+      .postMessage({ channel, text: failureMessage(text, message) })
+      .catch(() => {});
   }
 });
 
