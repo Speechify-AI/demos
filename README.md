@@ -28,6 +28,7 @@ Demos with a **Live** link run in your browser at [demos.speechify.ai](https://d
 | [`demos/rss-audio-digest/`](./demos/rss-audio-digest) | TypeScript (SDK) |  | Point it at any RSS feed and it reads today's items into a spoken digest: fetches the feed, concatenates titles and snippets into one script, synthesizes each chunk via the Speechify API, and stitches the parts into a single daily audio file with ffmpeg. |
 | [`demos/vercel-ai-sdk/`](./demos/vercel-ai-sdk) | TypeScript (Vercel AI SDK) |  | Speechify TTS through the Vercel AI SDK's unified `generateSpeech` interface via the official `@speechify/vercel` provider — one-line swap from OpenAI/ElevenLabs, plus word-level speech marks from `providerMetadata`. |
 | [`demos/puter-txt2speech/`](./demos/puter-txt2speech) | HTML (puter.js) |  | Speaks with a Simba 3.2 voice via the Speechify provider in Puter's puter.ai.txt2speech() — one static page, your key configured once on the Puter instance. |
+| [`demos/webpage-audiobook/`](./demos/webpage-audiobook) | Next.js | [Open](https://demos.speechify.ai/webpage-audiobook) | Paste a URL, get narrated audio. The server fetches the article, extracts the text, chunks it on sentence boundaries, and synthesizes each part with the Speechify TTS API. |
 <!-- DEMOS:END -->
 
 ## Get an API key
