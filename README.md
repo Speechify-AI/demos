@@ -28,6 +28,7 @@ Demos with a **Live** link run in your browser at [demos.speechify.ai](https://d
 | [`demos/vercel-ai-sdk/`](./demos/vercel-ai-sdk) | TypeScript (Vercel AI SDK) |  | Speechify TTS through the Vercel AI SDK's unified `generateSpeech` interface via the official `@speechify/vercel` provider — one-line swap from OpenAI/ElevenLabs, plus word-level speech marks from `providerMetadata`. |
 | [`demos/puter-txt2speech/`](./demos/puter-txt2speech) | HTML (puter.js) |  | Speaks with a Simba 3.2 voice via the Speechify provider in Puter's puter.ai.txt2speech() — one static page, your key configured once on the Puter instance. |
 | [`demos/docs-read-aloud/`](./demos/docs-read-aloud) | TypeScript (zero-dep server) |  | A documentation-style page with a Listen button that reads the article aloud. The button POSTs the text to a tiny server route, which synthesizes it with the Speechify API (key stays server-side) and returns the MP3 for the browser to play. Framework-agnostic. |
+| [`demos/webpage-audiobook/`](./demos/webpage-audiobook) | Next.js | [Open](https://demos.speechify.ai/webpage-audiobook) | Paste a URL, get narrated audio. The server fetches the article, extracts the text, chunks it on sentence boundaries, and synthesizes each part with the Speechify TTS API. |
 <!-- DEMOS:END -->
 
 ## Get an API key
