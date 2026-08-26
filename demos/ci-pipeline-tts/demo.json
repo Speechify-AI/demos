@@ -1,0 +1,6 @@
+{
+  "order": 140,
+  "title": "CI pipeline that speaks",
+  "stack": "TypeScript (SDK)",
+  "blurb": "Wire the Speechify TTS API into a CI pipeline so build, test, and deploy events are spoken aloud or dropped into a channel as audio."
+}
