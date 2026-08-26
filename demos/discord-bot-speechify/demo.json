@@ -1,0 +1,6 @@
+{
+  "order": 160,
+  "title": "Discord bot that speaks",
+  "stack": "TypeScript (discord.js)",
+  "blurb": "A Discord slash-command bot: /speak <text> synthesizes the text with the Speechify API and posts the MP3 into the channel. The command registers automatically on first run."
+}
