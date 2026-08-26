@@ -3,64 +3,15 @@ import fs from "node:fs";
 import path from "node:path";
 import Parser from "rss-parser";
 import { SpeechifyClient, SpeechifyError } from "@speechify/api";
+import { buildDigest, chunkText } from "./lib/digest.js";
+import { buildSpeechRequest, SpeechValidationError } from "./lib/speech.js";
 
-const MAX_CHARS = 4_000;
 const parser = new Parser();
 
 function requireKey(): string {
   const token = process.env.SPEECHIFY_API_KEY;
   if (!token) throw new Error("Set SPEECHIFY_API_KEY (copy .env.example to .env).");
   return token;
-}
-
-function isToday(dateStr?: string): boolean {
-  if (!dateStr) return false;
-  const d = new Date(dateStr);
-  if (Number.isNaN(d.getTime())) return false;
-  const now = new Date();
-  return (
-    d.getUTCFullYear() === now.getUTCFullYear() &&
-    d.getUTCMonth() === now.getUTCMonth() &&
-    d.getUTCDate() === now.getUTCDate()
-  );
-}
-
-function buildDigest(feed: Parser.Output<any>, feedTitle: string, opts: { today: boolean; latest: number }): string {
-  let items = feed.items ?? [];
-  if (opts.today) items = items.filter((i) => isToday(i.pubDate));
-  if (opts.latest > 0) items = items.slice(0, opts.latest);
-  if (items.length === 0) {
-    throw new Error(
-      opts.today
-        ? `No items published today in ${feedTitle}.`
-        : `No items found in ${feedTitle}.`,
-    );
-  }
-
-  const parts = [`Your daily digest for ${feedTitle}.`];
-  for (const item of items) {
-    const title = (item.title ?? "").trim();
-    if (title) parts.push(title.replace(/\.$/, "."));
-    const snippet = (item.contentSnippet ?? "").trim().replace(/\s+/g, " ");
-    if (snippet) parts.push(snippet.split(/(?<=[.!?])\s+/).slice(0, 2).join(" "));
-  }
-  return parts.join(" ").replace(/\s{2,}/g, " ").trim();
-}
-
-export function chunkText(text: string, maxLen: number = MAX_CHARS): string[] {
-  const chunks: string[] = [];
-  let buf = "";
-  const paragraphs = text.split(/(?<=[.!?])\s+/);
-  for (const para of paragraphs) {
-    if (buf.length + para.length + 1 <= maxLen) {
-      buf = buf ? `${buf} ${para}` : para;
-    } else {
-      if (buf) chunks.push(buf);
-      buf = para;
-    }
-  }
-  if (buf) chunks.push(buf);
-  return chunks;
 }
 
 async function main() {
@@ -93,7 +44,7 @@ async function main() {
   console.log(`Digest ready (${digest.length.toLocaleString()} characters).`);
 
   const chunks = chunkText(digest);
-  console.log(`Split into ${chunks.length} chunk(s) (cap ${MAX_CHARS.toLocaleString()} chars).`);
+  console.log(`Split into ${chunks.length} chunk(s) (speech endpoint cap 2,000 chars).`);
 
   const slug = new URL(feedUrl).hostname.replace(/^www\./, "") + "-" + Date.now();
   const outDir = path.join("output", slug);
@@ -101,16 +52,12 @@ async function main() {
 
   let total = 0;
   for (let i = 0; i < chunks.length; i++) {
-    const resp = await client.audio.speech({
-      input: chunks[i],
-      voice_id: process.env.VOICE_ID ?? "george",
-      audio_format: "mp3",
-      model: (process.env.MODEL_ID ?? "simba-english") as
-        | "simba-english"
-        | "simba-multilingual"
-        | "simba-3.0"
-        | "simba-3.2",
+    const request = buildSpeechRequest({
+      text: chunks[i],
+      voiceId: process.env.VOICE_ID,
+      model: process.env.MODEL_ID,
     });
+    const resp = await client.audio.speech(request);
     const out = path.join(outDir, `part-${String(i).padStart(3, "0")}.mp3`);
     fs.writeFileSync(out, Buffer.from(resp.audio_data, "base64"));
     total += resp.billable_characters_count ?? chunks[i].length;
@@ -122,6 +69,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err instanceof SpeechValidationError) {
+    console.error(err.message);
+    process.exit(2);
+  }
   if (err instanceof SpeechifyError || err instanceof Error) console.error(err.message);
   else console.error(err);
   process.exit(1);
