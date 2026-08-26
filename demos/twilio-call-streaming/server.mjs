@@ -11,25 +11,21 @@
 
 import http from "node:http";
 import { WebSocketServer } from "ws";
+import { frameBytes, mediaMessage, markMessage } from "./frames.mjs";
+import { twiml } from "./twiml.mjs";
+import {
+  SPEECH_STREAM_URL,
+  buildStreamRequest,
+  StreamValidationError,
+  STREAM_ACCEPT_HEADER,
+} from "./speech.mjs";
 
 const PORT = Number(process.env.PORT || 8790);
-const SPEECH_STREAM_URL = "https://api.speechify.ai/v1/audio/stream";
 const FRAME_BYTES = 160; // 20 ms of 8 kHz mu-law
 
 const DEFAULT_TEXT =
   process.env.TEXT ||
   "Hi! You're hearing a Speechify voice streamed straight into this call over Twilio Media Streams.";
-const VOICE = process.env.VOICE_ID || "geffen_32";
-const MODEL = process.env.MODEL || "simba-3.2";
-
-function twiml(host) {
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<Response>
-  <Connect>
-    <Stream url="wss://${host}/stream" />
-  </Connect>
-</Response>`;
-}
 
 const server = http.createServer((req, res) => {
   if (req.url === "/health") {
@@ -85,25 +81,36 @@ wss.on("connection", (ws) => {
 });
 
 async function playInto(ws, streamSid, text) {
+  let request;
+  try {
+    request = buildStreamRequest({
+      text,
+      voiceId: process.env.VOICE_ID,
+      model: process.env.MODEL,
+    });
+  } catch (err) {
+    if (err instanceof StreamValidationError) {
+      console.error(`[server] ${err.message}`);
+      ws.send(markMessage(streamSid, "error"));
+      return;
+    }
+    throw err;
+  }
+
   const upstream = await fetch(SPEECH_STREAM_URL, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${process.env.SPEECHIFY_API_KEY}`,
       "content-type": "application/json",
-      Accept: "audio/basic",
+      Accept: STREAM_ACCEPT_HEADER,
     },
-    body: JSON.stringify({
-      input: text,
-      voice_id: VOICE,
-      model: MODEL,
-      output_format: "ulaw_8000",
-    }),
+    body: JSON.stringify(request),
   });
 
   if (!upstream.ok || !upstream.body) {
     const detail = await upstream.text().catch(() => "");
     console.error(`[server] Speechify error ${upstream.status}: ${detail}`);
-    ws.send(JSON.stringify({ event: "mark", streamSid, mark: { name: "error" } }));
+    ws.send(markMessage(streamSid, "error"));
     return;
   }
 
@@ -112,34 +119,32 @@ async function playInto(ws, streamSid, text) {
   const reader = upstream.body.getReader();
   let leftover = Buffer.alloc(0);
   let frames = 0;
-  const sendFrame = (buf) => {
-    ws.send(
-      JSON.stringify({
-        event: "media",
-        streamSid,
-        media: { payload: buf.toString("base64") },
-      }),
-    );
-    frames++;
+  const sendFrames = (buf) => {
+    const { frames: ready, leftover: rest } = frameBytes(buf, FRAME_BYTES);
+    leftover = rest;
+    for (const frame of ready) {
+      ws.send(mediaMessage(streamSid, frame));
+      frames++;
+    }
   };
 
   for (;;) {
     const { done, value } = await reader.read();
     if (value) {
       leftover = Buffer.concat([leftover, Buffer.from(value)]);
-      while (leftover.length >= FRAME_BYTES) {
-        sendFrame(leftover.subarray(0, FRAME_BYTES));
-        leftover = leftover.subarray(FRAME_BYTES);
-      }
+      sendFrames(leftover);
     }
     if (done) {
-      if (leftover.length) sendFrame(leftover); // final partial frame
+      if (leftover.length) {
+        ws.send(mediaMessage(streamSid, leftover)); // final partial frame
+        frames++;
+      }
       break;
     }
   }
 
   // Tell the far end playback is done. Twilio echoes marks back on the stream.
-  ws.send(JSON.stringify({ event: "mark", streamSid, mark: { name: "playback-complete" } }));
+  ws.send(markMessage(streamSid, "playback-complete"));
   console.log(`[server] sent ${frames} mu-law frames`);
 }
 

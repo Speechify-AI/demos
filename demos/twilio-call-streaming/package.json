@@ -7,9 +7,13 @@
   "scripts": {
     "start": "node server.mjs",
     "stub": "node stub-twilio.mjs",
-    "e2e": "node e2e.mjs"
+    "e2e": "node e2e.mjs",
+    "test": "vitest run"
   },
   "dependencies": {
     "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "vitest": "^3.0.0"
   }
 }
