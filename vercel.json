@@ -17,6 +17,10 @@
     "multilingual-voiceover": {
       "root": "demos/multilingual-voiceover/",
       "framework": "nextjs"
+    },
+    "webpage-audiobook": {
+      "root": "demos/webpage-audiobook/",
+      "framework": "nextjs"
     }
   },
   "rewrites": [
@@ -35,6 +39,10 @@
     {
       "source": "/multilingual-voiceover/:path*",
       "destination": { "service": "multilingual-voiceover" }
+    },
+    {
+      "source": "/webpage-audiobook/:path*",
+      "destination": { "service": "webpage-audiobook" }
     },
     {
       "source": "/",
