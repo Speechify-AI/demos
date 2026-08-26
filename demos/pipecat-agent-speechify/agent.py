@@ -52,8 +52,8 @@ async def run_bot(transport: BaseTransport, runner_args: RunnerArguments):
         api_key=require_env("SPEECHIFY_API_KEY"),
         base_url=os.environ.get("SPEECHIFY_BASE_URL", DEFAULT_SPEECHIFY_BASE_URL),
         settings=SpeechifyTTSService.Settings(
-            voice=os.environ.get("SPEECHIFY_VOICE_ID", "jack"),
-            model=os.environ.get("SPEECHIFY_MODEL", "simba-english"),
+            voice=os.environ.get("SPEECHIFY_VOICE_ID", "geffen_32"),
+            model=os.environ.get("SPEECHIFY_MODEL", "simba-3.2"),
             loudness_normalization=True,
             text_normalization=True,
         ),
