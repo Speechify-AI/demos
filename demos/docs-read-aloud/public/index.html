@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Acme Docs — Getting started</title>
+    <style>
+      body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; max-width: 46rem; margin: 0 auto; padding: 2rem 1.5rem; color: #1a1a1a; line-height: 1.6; }
+      h1 { font-size: 1.8rem; }
+      h2 { font-size: 1.3rem; margin-top: 2rem; }
+      code { background: #f4f4f5; padding: 0.1rem 0.35rem; border-radius: 4px; font-size: 0.9em; }
+      pre { background: #f4f4f5; padding: 1rem; border-radius: 8px; overflow-x: auto; }
+      .listen { display: inline-flex; align-items: center; gap: 0.5rem; background: #111; color: #fff; border: 0; border-radius: 8px; padding: 0.6rem 1rem; font-size: 0.95rem; cursor: pointer; }
+      .listen[disabled] { opacity: 0.6; cursor: progress; }
+      .status { margin-left: 0.75rem; font-size: 0.85rem; color: #666; }
+    </style>
+  </head>
+  <body>
+    <main id="article">
+      <h1>Getting started with Acme</h1>
+
+      <p><button class="listen" id="listen" type="button">▶ Read this page aloud</button><span class="status" id="status"></span></p>
+
+      <p>Welcome to Acme. This guide walks you through your first integration. We keep it short — most teams are up and running in under ten minutes.</p>
+
+      <h2>Install</h2>
+      <p>Add the package to your project, configure an environment variable with your API key, and you are ready to go.</p>
+      <pre><code>npm install @acme/sdk
+# export ACME_API_KEY=sk_live_...</code></pre>
+
+      <h2>Make your first call</h2>
+      <p>Create a client, call the method, and handle the result. Everything is synchronous unless you opt into streaming.</p>
+      <pre><code>const client = new Acme({ key: process.env.ACME_API_KEY });
+const result = await client.things.create({ name: "first-thing" });
+console.log(result.id);</code></pre>
+    </main>
+
+    <script>
+      const listen = document.getElementById("listen");
+      const status = document.getElementById("status");
+
+      // Grab the article's text as-is. A docs site could strip code blocks
+      // or headings first; this keeps the demo transparent about the input.
+      const text = document.getElementById("article").innerText.trim();
+
+      let audioEl = null;
+      listen.addEventListener("click", async () => {
+        listen.disabled = true;
+        status.textContent = "Synthesizing…";
+        try {
+          const res = await fetch("/api/speak", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ text }),
+          });
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.error || "Request failed");
+          }
+          const blob = await res.blob();
+          const url = URL.createObjectURL(blob);
+          audioEl = new Audio(url);
+          status.textContent = "Playing…";
+          audioEl.play();
+        } catch (err) {
+          status.textContent = "Error: " + err.message;
+        } finally {
+          listen.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>
