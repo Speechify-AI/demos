@@ -58,11 +58,14 @@ const PRESETS: Preset[] = [
   {
     id: "number",
     label: "Account number",
-    teaches: "<break>",
-    hint: "Pauses between the groups give callers time to write the number down as it's read.",
+    teaches: "<sub alias=\"...\">",
+    hint: "Plain may read it as a quantity. <sub> spells the digits out so callers can write them down, with a pause between the groups.",
     plain: "Your account number is 4029 5567. Please have it ready.",
     ssml: `<speak>
-  Your account number is 4029 <break time="500ms"/> 5567.
+  Your account number is
+  <sub alias="four zero two nine">4029</sub>
+  <break time="500ms"/>
+  <sub alias="five five six seven">5567</sub>.
   <break time="300ms"/>
   Please have it ready.
 </speak>`,

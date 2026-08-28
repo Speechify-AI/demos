@@ -8,7 +8,7 @@ Pairs with the blog post "Nailing pronunciation in an IVR with SSML". It's the p
 
 - A one-page UI with four IVR presets, each pairing plain text with the SSML you'd actually ship:
   - **Caller name** — a tricky name via `<sub alias="…">` so it isn't guessed.
-  - **Account number** — `<break>` pauses between the groups so callers can write the number down.
+  - **Account number** — `<sub alias="…">` spells the digits out so callers can write them down, with a `<break>` between the groups.
   - **Product / brand term** — `<sub alias="…">` for how a run-together brand should sound.
   - **Menu line** — `<prosody rate="slow">` and `<break>` so callers have time to choose.
 - A **Plain / SSML** toggle: hear the raw line, then the corrected one.
