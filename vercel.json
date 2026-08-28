@@ -21,6 +21,10 @@
     "ivr-ssml": {
       "root": "demos/ivr-ssml/",
       "framework": "nextjs"
+    },
+    "webpage-audiobook": {
+      "root": "demos/webpage-audiobook/",
+      "framework": "nextjs"
     }
   },
   "rewrites": [
@@ -43,6 +47,10 @@
     {
       "source": "/ivr-ssml/:path*",
       "destination": { "service": "ivr-ssml" }
+    },
+    {
+      "source": "/webpage-audiobook/:path*",
+      "destination": { "service": "webpage-audiobook" }
     },
     {
       "source": "/",

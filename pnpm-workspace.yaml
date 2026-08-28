@@ -11,3 +11,4 @@ packages:
   - "demos/next-voice-cloning-app"
   - "demos/multilingual-voiceover"
   - "demos/ivr-ssml"
+  - "demos/webpage-audiobook"

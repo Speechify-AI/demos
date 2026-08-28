@@ -474,7 +474,7 @@
       </a>
       <a class="line-row" href="#outbound">
         <span class="line-no mono">Line 05</span><strong>Outbound</strong>
-        <span class="line-desc">rings your actual phone (US only) — capped at 5:00</span>
+        <span class="line-desc">rings your actual phone (US only) — 5:00 agent cap</span>
         <span class="line-arrow">→</span>
       </a>
       <a class="line-row" href="#voices">
@@ -512,7 +512,7 @@
       <span><b>Drives</b> the UI</span><span>·</span>
       <span><b>Captures</b> leads</span><span>·</span>
       <span><b>Dials</b> real phones</span><span>·</span>
-      <span><b>Hangs up</b> at 5:00 sharp</span><span>·</span>
+      <span><b>Caps</b> its own calls at 5:00</span><span>·</span>
       <span><b>Switches</b> language and voice mid-call</span><span>·</span>
       <span><b>Remembers</b> returning callers</span><span>·</span>
       <span><b>Cites</b> its knowledge library</span><span>·</span>
@@ -684,7 +684,7 @@
       <div class="section-copy reveal">
         <div class="kicker mono">Line 05 · Outbound calling</div>
         <h2>It calls your real phone</h2>
-        <p>Type your US number and the concierge agent dials you within seconds — a real phone call, not a browser session. US numbers only for now. Demo calls hard-stop at five minutes; the agent wraps up politely before the line drops. Reminder calls, lead callbacks, delivery confirmations — this is how they run at scale.</p>
+        <p>Type your US number and the concierge agent dials you within seconds — a real phone call, not a browser session. US numbers only for now. Demo calls stop at five minutes — that is the agent's own <span class="mono">max_call_duration_seconds</span>, enforced platform-side, not a timer we wrote. The agent wraps up politely before the line drops. Reminder calls, lead callbacks, delivery confirmations — this is how they run at scale.</p>
         <div class="say">
           <span>What can Speechify agents actually do?</span>
           <span>How would this handle our reminder calls?</span>
@@ -702,7 +702,7 @@
           <p class="out-error" id="out-error"></p>
           <div style="display:flex; align-items:baseline; gap:1rem; margin-top:1rem">
             <div class="countdown" id="countdown">5:00</div>
-            <div class="out-note">hard cap — the call auto-disconnects at zero</div>
+            <div class="out-note">agent cap · <span class="mono">max_call_duration_seconds = 300</span></div>
           </div>
           <p class="out-note">US numbers only (+1). One demo call at a time; a few calls per hour per visitor.</p>
         </div>
@@ -891,7 +891,7 @@
 <div id="accent-splash" aria-hidden="true"></div>
 <div id="toasts"></div>
 
-<script src="/config.js?b=16"></script>
-<script type="module" src="/app.js?b=16"></script>
+<script src="/config.js?b=17"></script>
+<script type="module" src="/app.js?b=17"></script>
 </body>
 </html>
