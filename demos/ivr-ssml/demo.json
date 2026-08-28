@@ -1,0 +1,6 @@
+{
+  "order": 210,
+  "title": "IVR pronunciation with SSML",
+  "stack": "Next.js",
+  "blurb": "A phone-system playground for getting names, account numbers, and product terms right with SSML. Hear plain vs SSML side by side; the API key stays server-side."
+}

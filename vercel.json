@@ -18,6 +18,10 @@
       "root": "demos/multilingual-voiceover/",
       "framework": "nextjs"
     },
+    "ivr-ssml": {
+      "root": "demos/ivr-ssml/",
+      "framework": "nextjs"
+    },
     "webpage-audiobook": {
       "root": "demos/webpage-audiobook/",
       "framework": "nextjs"
@@ -39,6 +43,10 @@
     {
       "source": "/multilingual-voiceover/:path*",
       "destination": { "service": "multilingual-voiceover" }
+    },
+    {
+      "source": "/ivr-ssml/:path*",
+      "destination": { "service": "ivr-ssml" }
     },
     {
       "source": "/webpage-audiobook/:path*",
