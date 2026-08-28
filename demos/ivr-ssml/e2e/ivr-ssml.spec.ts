@@ -34,10 +34,10 @@ test("synthesizes an SSML IVR line against the real API", async ({ page }) => {
   await expect(page.locator("#turnstile-container")).toBeAttached();
 
   // Default state is the "Caller name" preset in SSML mode — prove it's real
-  // SSML by checking the editable markup carries a <phoneme> tag.
+  // SSML by checking the editable markup carries a <sub> tag.
   const ssml = page.locator("#ssml");
   await expect(ssml).toBeVisible();
-  await expect(ssml).toHaveValue(/<phoneme/);
+  await expect(ssml).toHaveValue(/<sub/);
 
   // Primary action becomes clickable once Turnstile settles (fails open here).
   const synth = page.locator("button.btn-primary");

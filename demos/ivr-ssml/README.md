@@ -7,12 +7,12 @@ Pairs with the blog post "Nailing pronunciation in an IVR with SSML". It's the p
 ## What you get
 
 - A one-page UI with four IVR presets, each pairing plain text with the SSML you'd actually ship:
-  - **Caller name** — a tricky name via `<phoneme alphabet="ipa" ph="…">` so it isn't guessed.
-  - **Account number** — digits read one at a time with `<say-as interpret-as="digits">` and `<break>` pauses.
-  - **Product / brand term** — `<sub alias="…">` for how a brand should sound, plus `<emphasis>` on the plan name.
+  - **Caller name** — a tricky name via `<sub alias="…">` so it isn't guessed.
+  - **Account number** — `<break>` pauses between the groups so callers can write the number down.
+  - **Product / brand term** — `<sub alias="…">` for how a run-together brand should sound.
   - **Menu line** — `<prosody rate="slow">` and `<break>` so callers have time to choose.
 - A **Plain / SSML** toggle: hear the raw line, then the corrected one.
-- An editable SSML textarea — change the phonemes, pauses, or aliases and re-synthesize.
+- An editable SSML textarea — change the aliases, pauses, or rate and re-synthesize.
 - One server route, `POST /api/speak`, holding the Speechify key server-side. It sends your string (plain text or SSML) to `client.audio.speech` with `simba-3.2` / `geffen_32` and returns base64 MP3.
 
 ## Run it yourself

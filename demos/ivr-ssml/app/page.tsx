@@ -48,24 +48,21 @@ const PRESETS: Preset[] = [
   {
     id: "name",
     label: "Caller name",
-    teaches: "<phoneme alphabet=\"ipa\">",
-    hint: "Plain guesses the vowels in “Siobhan”. The IPA phoneme spells it out: shiv-AWN.",
+    teaches: "<sub alias=\"...\">",
+    hint: "Plain guesses the vowels in “Siobhan”. <sub> swaps in how it should actually be said: shiv-AWN.",
     plain: "Thanks, Siobhan. Connecting you to an agent now.",
     ssml: `<speak>
-  Thanks, <phoneme alphabet="ipa" ph="ʃɪˈvɔːn">Siobhan</phoneme>. Connecting you to an agent now.
+  Thanks, <sub alias="shiv-AWN">Siobhan</sub>. Connecting you to an agent now.
 </speak>`,
   },
   {
     id: "number",
     label: "Account number",
-    teaches: "<say-as interpret-as=\"digits\"> + <break>",
-    hint: "Plain reads “four thousand twenty-nine…”. Digits mode reads each numeral, with pauses to write it down.",
+    teaches: "<break>",
+    hint: "Pauses between the groups give callers time to write the number down as it's read.",
     plain: "Your account number is 4029 5567. Please have it ready.",
     ssml: `<speak>
-  Your account number is
-  <say-as interpret-as="digits">4029</say-as>
-  <break time="500ms"/>
-  <say-as interpret-as="digits">5567</say-as>.
+  Your account number is 4029 <break time="500ms"/> 5567.
   <break time="300ms"/>
   Please have it ready.
 </speak>`,
@@ -73,12 +70,12 @@ const PRESETS: Preset[] = [
   {
     id: "brand",
     label: "Product / brand term",
-    teaches: "<sub alias=\"...\"> + <emphasis>",
-    hint: "Plain mangles the run-together brand. <sub> swaps in how it should be said; <emphasis> lands the plan name.",
-    plain: "Welcome to AcmeCloudPro. Your PremierPlus plan is active.",
+    teaches: "<sub alias=\"...\">",
+    hint: "Plain mangles the run-together brand. <sub> swaps in how it should be said: Acme Cloud Pro.",
+    plain: "Welcome to AcmeCloudPro. Your Premier Plus plan is active.",
     ssml: `<speak>
   Welcome to <sub alias="Acme Cloud Pro">AcmeCloudPro</sub>.
-  Your <emphasis level="strong">Premier Plus</emphasis> plan is active.
+  Your Premier Plus plan is active.
 </speak>`,
   },
   {
@@ -90,11 +87,11 @@ const PRESETS: Preset[] = [
       "For billing, press one. For technical support, press two. To repeat this menu, press nine.",
     ssml: `<speak>
   <prosody rate="slow">
-    For billing, press <emphasis>one</emphasis>.
+    For billing, press one.
     <break time="600ms"/>
-    For technical support, press <emphasis>two</emphasis>.
+    For technical support, press two.
     <break time="600ms"/>
-    To repeat this menu, press <emphasis>nine</emphasis>.
+    To repeat this menu, press nine.
   </prosody>
 </speak>`,
   },
@@ -330,11 +327,9 @@ export default function Home() {
       </section>
 
       <p className="foot">
-        SSML supported here: <code>&lt;phoneme&gt;</code>,{" "}
-        <code>&lt;say-as interpret-as=&quot;digits&quot;&gt;</code>,{" "}
-        <code>&lt;sub&gt;</code>, <code>&lt;emphasis&gt;</code>,{" "}
-        <code>&lt;prosody&gt;</code>, and <code>&lt;break&gt;</code>. Wrap
-        everything in <code>&lt;speak&gt;…&lt;/speak&gt;</code>.
+        SSML supported here: <code>&lt;sub&gt;</code>, <code>&lt;prosody&gt;</code>,{" "}
+        and <code>&lt;break&gt;</code>. Wrap everything in{" "}
+        <code>&lt;speak&gt;…&lt;/speak&gt;</code>.
       </p>
     </main>
   );
