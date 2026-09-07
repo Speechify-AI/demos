@@ -45,5 +45,5 @@ This is the TypeScript native (no-SDK) recipe from the [Speechify Cookbook](http
 ## Prerequisites
 
 - Node 20 or newer
-- A `SPEECHIFY_API_KEY` from [console.speechify.ai/api-keys](https://console.speechify.ai/api-keys)
+- A `SPEECHIFY_API_KEY` from [platform.speechify.ai/api-keys](https://platform.speechify.ai/api-keys)
 - A Speechify plan that includes voice cloning
