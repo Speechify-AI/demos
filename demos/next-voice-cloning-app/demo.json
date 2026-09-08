@@ -2,5 +2,5 @@
   "order": 10,
   "title": "Voice cloning web app",
   "stack": "Next.js",
-  "blurb": "Upload a sample, clone the voice, synthesize with the clone. The API key stays server-side in route handlers."
+  "blurb": "Upload a sample, record verified consent in the browser, clone the voice, synthesize with the clone. The API key stays server-side in route handlers."
 }
