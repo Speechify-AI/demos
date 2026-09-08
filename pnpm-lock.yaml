@@ -46,8 +46,8 @@ importers:
   demos/ivr-ssml:
     dependencies:
       '@speechify/api':
-        specifier: ^3.0.1
-        version: 3.0.1
+        specifier: ^4.0.1
+        version: 4.0.1
       next:
         specifier: ^16.2.10
         version: 16.2.10(@playwright/test@1.62.1)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
