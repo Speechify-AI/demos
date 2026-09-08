@@ -13,7 +13,7 @@
     "e2e": "playwright test"
   },
   "dependencies": {
-    "@speechify/api": "^3.0.1",
+    "@speechify/api": "^4.0.1",
     "next": "^16.2.10",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
