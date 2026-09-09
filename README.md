@@ -1,4 +1,4 @@
-# Speechify Demos
+# SpeechifyAI Demos
 
 Worked examples that pair with the technical posts on [speechify.ai/blog](https://speechify.ai/blog). Each folder is self-contained: copy the folder, follow its README, run it.
 
