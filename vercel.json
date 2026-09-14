@@ -18,16 +18,20 @@
       "root": "demos/multilingual-voiceover/",
       "framework": "nextjs"
     },
+    "ivr-ssml": {
+      "root": "demos/ivr-ssml/",
+      "framework": "nextjs"
+    },
+    "webpage-audiobook": {
+      "root": "demos/webpage-audiobook/",
+      "framework": "nextjs"
+    },
     "live-captions": {
       "root": "demos/live-captions/",
       "framework": "nextjs"
     }
   },
   "rewrites": [
-    {
-      "source": "/live-captions/:path*",
-      "destination": { "service": "live-captions" }
-    },
     {
       "source": "/ai-sdk-speechify-speech/:path*",
       "destination": {
@@ -43,6 +47,18 @@
     {
       "source": "/multilingual-voiceover/:path*",
       "destination": { "service": "multilingual-voiceover" }
+    },
+    {
+      "source": "/ivr-ssml/:path*",
+      "destination": { "service": "ivr-ssml" }
+    },
+    {
+      "source": "/webpage-audiobook/:path*",
+      "destination": { "service": "webpage-audiobook" }
+    },
+    {
+      "source": "/live-captions/:path*",
+      "destination": { "service": "live-captions" }
     },
     {
       "source": "/",

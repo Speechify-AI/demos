@@ -1,0 +1,6 @@
+{
+  "order": 55,
+  "title": "LiveKit captions (word timestamps)",
+  "stack": "Python (LiveKit)",
+  "blurb": "Read Speechify's word-level timestamps in a LiveKit voice agent by overriding transcription_node, so each spoken word logs its start/end time for synced captions."
+}

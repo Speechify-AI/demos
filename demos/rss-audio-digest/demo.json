@@ -1,0 +1,6 @@
+{
+  "order": 140,
+  "title": "RSS to daily audio digest",
+  "stack": "TypeScript (SDK)",
+  "blurb": "Point it at any RSS feed and it reads today's items into a spoken digest: fetches the feed, concatenates titles and snippets into one script, synthesizes each chunk via the Speechify API, and stitches the parts into a single daily audio file with ffmpeg."
+}
