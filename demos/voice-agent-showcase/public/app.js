@@ -345,7 +345,7 @@ const GUIDES = {
   },
   outbound: {
     title: "Outbound concierge",
-    blurb: "Dials your real phone within seconds and holds a live conversation. Calls hard-stop at five minutes.",
+    blurb: "Dials your real phone within seconds and holds a live conversation. The agent caps its own calls at five minutes via max_call_duration_seconds.",
     how: "Type a US number (+1 …) and press Call me.",
   },
   voices: {
@@ -777,7 +777,9 @@ function beginCountdown(startMs) {
     if (!outbound) return;
     const left = outbound.maxSeconds - (Date.now() - outbound.startedAt) / 1000;
     $("#countdown").textContent = fmt(left);
-    if (left <= 0) endOutbound("auto-disconnected at 5:00");
+    // No client-side hangup: the agent's own max_call_duration_seconds ends the
+    // call server-side. The status poll flips the UI when it does.
+    if (left <= 0) setOutState("cap reached — hanging up");
   }, 500);
 }
 

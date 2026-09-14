@@ -16,7 +16,7 @@ async def main() -> None:
     frames = []
 
     async with http_context.open():
-        tts = speechify.TTS(voice_id="dominic_32", model="simba-3.2", encoding="mp3_24000")
+        tts = speechify.TTS(voice_id="dominic_32", model="simba-3.2")
         async for event in tts.synthesize(
             "Hello from the official LiveKit Speechify plugin. This is a headless smoke test."
         ):

@@ -91,6 +91,16 @@ button:disabled {
   cursor: not-allowed;
 }
 
+.phrase {
+  border: 1px solid var(--border);
+  border-radius: 0.4rem;
+  background: var(--bg);
+  padding: 0.7rem 0.85rem;
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
 .status {
   font-size: 0.85rem;
   color: var(--muted);

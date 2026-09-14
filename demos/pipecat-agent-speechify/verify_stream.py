@@ -20,8 +20,8 @@ def main() -> None:
         raise SystemExit("Set SPEECHIFY_API_KEY, or copy .env.example to .env and fill it in.")
 
     base_url = os.environ.get("SPEECHIFY_BASE_URL", DEFAULT_BASE_URL).rstrip("/")
-    voice_id = os.environ.get("SPEECHIFY_VOICE_ID", "jack")
-    model = os.environ.get("SPEECHIFY_MODEL", "simba-english")
+    voice_id = os.environ.get("SPEECHIFY_VOICE_ID", "geffen_32")
+    model = os.environ.get("SPEECHIFY_MODEL", "simba-3.2")
 
     payload = json.dumps(
         {
