@@ -30,7 +30,7 @@ python verify_stream.py
 A successful run prints the byte count and writes `speechify-stream.wav`:
 
 ```text
-wrote speechify-stream.wav from 24896 bytes of 24 kHz mono PCM
+wrote speechify-stream.wav from 200640 bytes of 24 kHz mono PCM
 ```
 
 If Python cannot verify the Speechify API certificate on your machine, set `SSL_CERT_FILE=/etc/ssl/cert.pem` before running the script.
@@ -64,8 +64,8 @@ tts = SpeechifyTTSService(
     api_key=os.environ["SPEECHIFY_API_KEY"],
     base_url=os.environ.get("SPEECHIFY_BASE_URL", "https://api.speechify.ai/v1"),
     settings=SpeechifyTTSService.Settings(
-        voice=os.environ.get("SPEECHIFY_VOICE_ID", "jack"),
-        model=os.environ.get("SPEECHIFY_MODEL", "simba-english"),
+        voice=os.environ.get("SPEECHIFY_VOICE_ID", "geffen_32"),
+        model=os.environ.get("SPEECHIFY_MODEL", "simba-3.2"),
         loudness_normalization=True,
         text_normalization=True,
     ),

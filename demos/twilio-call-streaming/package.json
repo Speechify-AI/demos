@@ -1,0 +1,19 @@
+{
+  "name": "twilio-call-streaming",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Stream Speechify TTS into a live Twilio phone call over Media Streams (Twilio stubbed for local runs)",
+  "scripts": {
+    "start": "node server.mjs",
+    "stub": "node stub-twilio.mjs",
+    "e2e": "node e2e.mjs",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "vitest": "^3.0.0"
+  }
+}
