@@ -6,12 +6,18 @@ Pairs with the blog post [Building an AI voice cloning web app with Next.js and 
 
 ## What you get
 
-- A one-page UI: upload a sample, enter consent, clone, then type text and hear it back in the cloned voice.
-- Three server routes under `app/api/`, each holding the Speechify key server-side:
-  - `POST /api/clone` — takes a multipart upload plus consent, calls `client.voices.create`, returns the new `voice_id`.
+- A one-page UI: upload a sample, record verified consent in the browser, clone, then type text and hear it back in the cloned voice.
+- Four server routes under `app/api/`, each holding the Speechify key server-side:
+  - `POST /api/consent-challenge` — takes the consenting person's name, calls `client.voices.consentChallenges.create`, returns the `phrase` to read aloud and a single-use `challengeId`.
+  - `POST /api/clone` — takes the sample, the consent recording and the `challengeId`, calls `client.voices.create`, returns the new `voice_id`.
   - `POST /api/speak` — synthesizes text with a `voice_id` via `client.audio.speech`.
   - `DELETE /api/voice?id=…` — removes a cloned voice with `client.voices.delete`.
-- `fixtures/spacewalk.wav` — a public-domain NASA sample so you can run the whole flow without recording anything.
+
+## Verified consent
+
+Speechify cloning requires **verified consent**: you mint a consent challenge, the speaker records themselves reading the returned phrase, and that recording is sent alongside the sample and kept as the consent record. The consent recording **must be the same person** as the voice sample. So this app is bring-your-own-audio — upload the speaker's sample and record them reading the phrase in-browser; there is no canned sample that carries valid consent.
+
+The client pins `Speechify-Version: 2026-09-13`, the API version this flow ships on. The old `consent` field (name + email) is removed — see the [migration guide](https://docs.speechify.ai/build/guides/deprecations/migrating-voice-cloning-consent).
 
 ## Run it yourself
 
@@ -21,7 +27,11 @@ npm install
 npm run dev            # http://localhost:8765
 ```
 
-Open `http://localhost:8765`, pick `fixtures/spacewalk.wav` (or your own 10 to 30 second clip), fill in the consent name and email, and click **Clone voice**. Then type something into the second box and click **Synthesize with cloned voice**.
+Open `http://localhost:8765`, then:
+
+1. Upload a 10–30s voice sample and enter the consenting person's name, and click **Get consent phrase**.
+2. Have the same person read the phrase aloud into your mic — **Record consent**, then **Stop** (allow microphone access). Play it back, then click **Clone voice**.
+3. Type something into the last box and click **Synthesize with cloned voice**.
 
 Voice cloning is gated by your Speechify plan. If it is not included, `POST /api/clone` returns `402` and the UI shows a plan message instead of a `voice_id`.
 
@@ -31,9 +41,10 @@ Every Speechify call happens inside an `app/api/*` route handler, which only eve
 
 ## Where the code came from
 
-The clone lifecycle mirrors the TypeScript SDK recipe in the [Speechify Cookbook](https://github.com/SpeechifyInc/speechify-api-cookbook/tree/main/recipes/audio/typescript/sdk/voice-cloning). This folder wraps that lifecycle in a Next.js UI with the key held server-side, which is how you would ship it in a real app.
+The clone lifecycle mirrors the TypeScript SDK recipe in the [Speechify Cookbook](https://github.com/Speechify-AI/cookbook/tree/main/recipes/audio/typescript/sdk/voice-cloning). This folder wraps that lifecycle in a Next.js UI with the key held server-side, which is how you would ship it in a real app.
 
 ## Prerequisites
 
 - Node 20 or newer
+- A microphone (to record the consent phrase in the browser)
 - A `SPEECHIFY_API_KEY` from [platform.speechify.ai/api-keys](https://platform.speechify.ai/api-keys), on a plan that includes voice cloning

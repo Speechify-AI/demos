@@ -1,0 +1,27 @@
+{
+  "name": "ai-sdk-speechify-speech",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Speech generation with the Vercel AI SDK and a custom Speechify speech model",
+  "scripts": {
+    "dev": "next dev -p 8766",
+    "build": "next build",
+    "start": "next start -p 8766",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ai-sdk/provider": "^4.0.3",
+    "ai": "^7.0.34",
+    "next": "^16.2.10",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "typescript": "^5.6.0"
+  }
+}

@@ -55,4 +55,4 @@ ffmpeg -f concat -safe 0 -i manifest.txt -c copy chapter-01.mp3
 - Python 3.10 or newer
 - [`uv`](https://docs.astral.sh/uv/) (recommended) or `pip`
 - `ffmpeg` for the concat step (`brew install ffmpeg` on macOS, `apt install ffmpeg` on Debian/Ubuntu)
-- A `SPEECHIFY_API_KEY` from [console.speechify.ai/api-keys](https://console.speechify.ai/api-keys)
+- A `SPEECHIFY_API_KEY` from [platform.speechify.ai/api-keys](https://platform.speechify.ai/api-keys)

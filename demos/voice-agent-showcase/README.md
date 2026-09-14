@@ -10,14 +10,14 @@ One page, ten live demos of the [Voice Agents API](https://docs.speechify.ai) �
 | 02 | Support | Policy-bound refunds — the house policy lights up red/green as the agent reasons to the allowed path |
 | 03 | Page copilot | The agent drives the page itself: theme, accent, navigation, guided tours |
 | 04 | Intake | Voice in, structured form data out, field by field |
-| 05 | Outbound | Dials a real US number; hard 5-minute cap enforced three ways |
+| 05 | Outbound | Dials a real US number; the agent caps its own calls at 5 minutes with `max_call_duration_seconds` |
 | 06 | Voice gallery | The voice catalog with playable previews, baked at build time |
 | 07 | Languages | Mid-call handoff between English, Spanish, and Hindi agents via `transfer_to_agent` — each with its own voice |
 | 08 | Memory | Remembers returning callers across calls (`memory.enabled` + `userIdentity`) |
 | 09 | Knowledge | Answers only from a five-document knowledge base, created by the setup script |
 | 10 | Dual control | The agent writes to its own CRM live but must guide your hands through the phone toggles it cannot touch |
 
-The page is a static site served by a Cloudflare Worker. The worker also holds the API key server-side for the outbound, memory-bank, and sweeper endpoints — the key never reaches the browser. Web sections use public agents through the widget SDK, gated by an origin allowlist.
+The page is a static site served by a Cloudflare Worker. The worker also holds the API key server-side for the outbound and memory-bank endpoints — the key never reaches the browser. Web sections use public agents through the widget SDK, gated by an origin allowlist.
 
 ## Run it yourself
 
@@ -52,4 +52,4 @@ Built directly on the Voice Agents API: agents and tools via the REST API ([docs
 - Node 20+ and a Cloudflare account (free tier is fine) for `wrangler dev`/`deploy`.
 - A Speechify AI workspace API key from [platform.speechify.ai](https://platform.speechify.ai/api-keys).
 - Optional, for Line 05 (outbound): an outbound-capable US phone number on your workspace; without it the other nine lines still work.
-- The 5-minute outbound cap uses a Cloudflare cron trigger plus a page countdown; the workspace key must belong to a workspace owner or admin so the force-end call is authorized.
+- Call length is capped per agent with `max_call_duration_seconds` (300s outbound, 600s on the web demos) — enforced platform-side on every dispatch path, so no babysitting code. The plan ceiling is the upper bound; the agent value can only shorten a call.

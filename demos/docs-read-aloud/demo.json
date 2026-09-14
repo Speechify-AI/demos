@@ -1,0 +1,6 @@
+{
+  "order": 170,
+  "title": "Read-aloud for a docs site",
+  "stack": "TypeScript (zero-dep server)",
+  "blurb": "A documentation-style page with a Listen button that reads the article aloud. The button POSTs the text to a tiny server route, which synthesizes it with the Speechify API (key stays server-side) and returns the MP3 for the browser to play. Framework-agnostic."
+}

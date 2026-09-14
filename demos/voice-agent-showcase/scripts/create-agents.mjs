@@ -24,6 +24,12 @@ if (!KEY) {
 // workers.dev origin is appended by scripts/patch-origins.mjs once known.
 const DEV_ORIGINS = ["http://localhost:8787", "http://127.0.0.1:8787"];
 
+// Per-agent call caps (AIS-4998): top-level max_call_duration_seconds, enforced
+// platform-side on every dispatch path — web sessions included. The plan ceiling
+// is the hard upper bound; this can only shorten a call.
+const WEB_CALL_CAP_SECONDS = 600;       // runaway guard for browser demos
+const OUTBOUND_CALL_CAP_SECONDS = 300;  // the 5-minute promise on Line 05
+
 const SPOKEN = [
   "Everything you output is spoken aloud to the caller, word for word.",
   "Never narrate your reasoning or describe what you are doing.",
@@ -334,6 +340,7 @@ const AGENTS = {
   outbound: {
     name: "[Showcase] Outbound Concierge",
     voice: "wyatt_32",
+    maxCallSeconds: OUTBOUND_CALL_CAP_SECONDS,
     is_public: false,
     first_message:
       "Hi! This is Wyatt, the Speechify voice-agents demo — you asked me to call from the showcase page. Is now a good time to chat?",
@@ -355,7 +362,7 @@ const AGENTS = {
 // Outbound conversation flow: concierge phase -> scripted goodbye -> end.
 const OUTBOUND_FLOW = {
   name: "Showcase outbound concierge",
-  notes: "Single-phase demo concierge with scripted close; hard 5-min cap is enforced by the showcase worker.",
+  notes: "Single-phase demo concierge with scripted close; the 5-min cap is the agent own max_call_duration_seconds.",
   nodes: [
     { key: "start", type: "start", name: "Start", config: {}, position: { x: 80, y: 240 }, id: "", version_id: "", created_at: "0001-01-01T00:00:00Z" },
     {
@@ -479,6 +486,7 @@ async function ensureAgent(slot, def) {
     allowed_origins: def.is_public ? DEV_ORIGINS : [],
     ...(def.amd ? { amd: def.amd } : {}),
     ...(def.memory ? { memory: def.memory } : {}),
+    max_call_duration_seconds: def.maxCallSeconds ?? WEB_CALL_CAP_SECONDS,
     // This workspace speaks the grouped wire shape; flat voice_id is ignored.
     tts: { voice_id: def.voice, ...(def.speed ? { speed: def.speed } : {}) },
     turn_handling: { inactivity_timeout_seconds: 10 },
@@ -645,6 +653,7 @@ async function ensureLangAgent(slot, def) {
     language: def.language,
     is_public: def.is_public,
     ...(def.stt ? { stt: def.stt } : {}),
+    max_call_duration_seconds: WEB_CALL_CAP_SECONDS,
     tts: { voice_id: def.voice },
     turn_handling: { inactivity_timeout_seconds: 10 },
   };

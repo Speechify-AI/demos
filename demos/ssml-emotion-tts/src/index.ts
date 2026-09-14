@@ -25,9 +25,9 @@ const ssml = `<speak>
 try {
   const response = await client.audio.speech({
     input: ssml,
-    voice_id: "george",
+    voice_id: "geffen_32",
     audio_format: "mp3",
-    model: "simba-english",
+    model: "simba-3.2",
   });
 
   const outDir = path.resolve("output");
