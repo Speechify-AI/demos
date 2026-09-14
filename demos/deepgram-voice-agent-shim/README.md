@@ -45,10 +45,10 @@ curl -o shim-smoke.mp3 \
   -X POST "http://localhost:8771/v1/audio/speech" \
   -H "Authorization: Bearer placeholder-ignored-by-shim" \
   -H "Content-Type: application/json" \
-  -d '{"model":"tts-1","input":"Deepgram voice agent, now speaking with Speechify.","voice":"alloy","response_format":"mp3"}'
+  -d '{"model":"simba-3.2","input":"Deepgram voice agent, now speaking with Speechify.","voice":"geffen_32","response_format":"mp3"}'
 ```
 
-When `SPEECHIFY_API_KEY` is set in the shim process, the placeholder Bearer token is ignored. The shim uses its own server-side key to call Speechify. The shim aliases OpenAI model and voice names onto Speechify equivalents (`tts-1` maps to `simba-english`, `alloy` and the other OpenAI voice names map to `george`), so the standard OpenAI request Deepgram sends works without changes.
+When `SPEECHIFY_API_KEY` is set in the shim process, the placeholder Bearer token is ignored. The shim uses its own server-side key to call Speechify. It passes any model and voice it does not recognise straight through, so sending a current Speechify model (`simba-3.2`) and a `_32` voice works as-is. The shim also aliases OpenAI names onto Speechify equivalents (`tts-1`, `alloy` and the other OpenAI voice names), but those aliases currently point at Simba 1.6, which Speechify is retiring, so send a current model rather than relying on the OpenAI defaults.
 
 ## Wiring it into Deepgram Voice Agent
 
@@ -78,7 +78,7 @@ In your Deepgram Voice Agent `Settings` message, configure the third-party TTS p
 }
 ```
 
-Two things matter here. First, pick a real Speechify model and voice. The shim maps the OpenAI defaults (`tts-1`, `alloy`) onto `simba-english` + `george`, which is fine but not the best Speechify has. Because the shim passes any name it does not recognise straight through, sending `model: "simba-3.2"` and `voice: "geffen_32"` (a Simba 3.2 voice) gives you the current top-quality output instead. Browse voices with `GET /v1/voices`; any voice whose `models` list includes `simba-3.2` works.
+Two things matter here. First, pick a real Speechify model and voice. The shim's OpenAI defaults (`tts-1`, `alloy`) alias onto Simba 1.6, which Speechify is retiring, so do not rely on them. Because the shim passes any name it does not recognise straight through, sending `model: "simba-3.2"` and `voice: "geffen_32"` (a Simba 3.2 voice) gives you the current top-quality output. Browse voices with `GET /v1/voices`; any voice whose `models` list includes `simba-3.2` works.
 
 Second, the `audio.output` block is required. The `open_ai` speak provider needs uncontainerized 24 kHz `linear16` output. Send `container: "wav"` or a different sample rate and Deepgram rejects the session with `INVALID_SETTINGS` before a single word is spoken.
 

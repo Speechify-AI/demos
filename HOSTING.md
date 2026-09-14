@@ -86,6 +86,14 @@ straightforward pattern for every framework. See
 [`demos/next-voice-cloning-app/app/lib/turnstile.ts`](./demos/next-voice-cloning-app/app/lib/turnstile.ts)
 for the reference implementation — 40 lines, copy verbatim.
 
+A shared `/api/turnstile/config` reconciliation endpoint has been attempted
+three times now (`01f834b`, folded into `site` in `aa39090`, dropped in
+`2e90f8e` — all because a functions-only or no-framework-hint service
+produces no deploy output on Vercel Services; a fourth attempt with a real
+`"framework": "nextjs"` service still broke routing for both existing demos
+on preview and was reverted). Don't retry this without a way to verify the
+actual deployed behavior first, not just a local `pnpm build`.
+
 ### Env vars (set once on the Vercel project)
 
 Only one env var to configure. When it's missing, the shared verify helper
@@ -112,10 +120,25 @@ Drop the widget container, load the helper, render on `DOMContentLoaded`:
 <script src="/turnstile.js"></script>
 <script>
   window.addEventListener("DOMContentLoaded", async () => {
-    window.__turnstile = await SpeechifyTurnstile.render("#turnstile-container");
+    window.__turnstile = await SpeechifyTurnstile.render("#turnstile-container", {
+      onToken: () => enableSubmit(),    // token in hand — allow submits
+      onExpired: () => disableSubmit(), // re-solving; onToken re-enables
+      onError: () => enableSubmit(),    // widget can't verify: fail open
+    });
+    if (!window.__turnstile.enabled) enableSubmit(); // no site key: fail open
   });
 </script>
 ```
+
+**Gate the submit buttons on these callbacks.** Every button that triggers a
+gated route starts *disabled* and only enables when one of two things is
+true: `onToken` has fired (a token is in hand), or the client is genuinely
+fail-open (no site key baked in, the Cloudflare script couldn't load, or the
+widget reported an error — in those cases the request goes out tokenless and
+the server remains the authority: it 403s tokenless requests whenever
+`TURNSTILE_SECRET_KEY` is set). Without this, a fast user can submit before
+the first solve lands and eat a 403 — or, worse, the demo *looks* ungated
+because the request slips through a fail-open window.
 
 Attach the token to any request that hits a gated server route, and reset the
 widget after use (Turnstile tokens are single-use):
@@ -136,6 +159,22 @@ async function submit(payload) {
   return r.json();
 }
 ```
+
+After calling `reset()`, disable the submit buttons again until the next
+`onToken` fires — tokens are single-use, and the re-solve is fast but not
+instantaneous. Token expiry (~5 min idle) is handled inside the helper: the
+`expired-callback` re-runs the widget itself, so a page left open re-arms on
+its own; the page just disables its buttons via `onExpired` and re-enables on
+the next `onToken`.
+
+`reset()` renders with `execution: "execute"` and calls `turnstile.execute()`
+itself, both on the first render and again inside `reset()` — it does not
+wait on Cloudflare's default post-reset auto-refire. Earlier versions relied
+on that implicit behaviour, which meant the *second* action on a page (clone
+then speak, generate again) could `getToken()`-timeout to `null`, the server
+would see a missing token and 403, and only a full page reload reliably got a
+fresh solve. If you copy this pattern into a new demo, keep the explicit
+`execute()` calls — don't drop back to relying on automatic re-verification.
 
 When Turnstile is disabled, `getToken()` resolves to `null` and the request
 goes through unauthenticated — the server side matches this behaviour, so the
@@ -186,7 +225,10 @@ canonical example. It gates all three of its API routes (`clone`, `speak`,
 - Client: [`app/layout.tsx`](./demos/next-voice-cloning-app/app/layout.tsx)
   loads `/turnstile.js` via `next/script` with `strategy="beforeInteractive"`;
   [`app/page.tsx`](./demos/next-voice-cloning-app/app/page.tsx) renders the
-  widget in the form and attaches the token to every gated `fetch`.
+  widget in the form, attaches the token to every gated `fetch`, and keeps
+  the gated buttons disabled until the widget has a token (or is genuinely
+  fail-open) via a three-state `waiting`/`ready`/`open` machine driven by the
+  `onToken`/`onExpired`/`onError` callbacks.
 - Server: a shared
   [`app/lib/turnstile.ts`](./demos/next-voice-cloning-app/app/lib/turnstile.ts)
   helper does the verify call and is imported by each route. Copy the file

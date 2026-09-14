@@ -1,0 +1,6 @@
+{
+  "order": 150,
+  "title": "Slack bot that reads aloud",
+  "stack": "TypeScript (Socket Mode)",
+  "blurb": "A Slack bot that reads every new message in a channel aloud: on each message it synthesizes the text with the Speechify API and posts the MP3 back as a file. Socket Mode means no public tunnel."
+}

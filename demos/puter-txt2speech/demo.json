@@ -1,0 +1,6 @@
+{
+  "order": 150,
+  "title": "Speechify TTS in Puter",
+  "stack": "HTML (puter.js)",
+  "blurb": "Speaks with a Simba 3.2 voice via the Speechify provider in Puter's puter.ai.txt2speech() — one static page, your key configured once on the Puter instance."
+}
