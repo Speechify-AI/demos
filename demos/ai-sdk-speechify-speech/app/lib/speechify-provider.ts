@@ -82,7 +82,7 @@ export function createSpeechify(settings: SpeechifyProviderSettings = {}) {
             type: "unsupported",
             feature: "language",
             details:
-              "Language follows the model: use simba-multilingual for non-English input.",
+              "Language follows the model: use simba-3.0 for non-English input.",
           });
         }
 
