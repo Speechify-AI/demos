@@ -1,0 +1,6 @@
+{
+  "order": 230,
+  "title": "Clone a voice from 10 seconds",
+  "stack": "Next.js",
+  "blurb": "Clone a voice from a ~10 second sample with explicit consent, synthesize with the clone, then auto-delete it. The API key stays server-side."
+}

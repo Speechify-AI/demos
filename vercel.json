@@ -25,6 +25,10 @@
     "webpage-audiobook": {
       "root": "demos/webpage-audiobook/",
       "framework": "nextjs"
+    },
+    "clone-voice-ten-s": {
+      "root": "demos/clone-voice-10s/",
+      "framework": "nextjs"
     }
   },
   "rewrites": [
@@ -51,6 +55,10 @@
     {
       "source": "/webpage-audiobook/:path*",
       "destination": { "service": "webpage-audiobook" }
+    },
+    {
+      "source": "/clone-voice-10s/:path*",
+      "destination": { "service": "clone-voice-ten-s" }
     },
     {
       "source": "/",
