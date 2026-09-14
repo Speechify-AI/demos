@@ -25,6 +25,10 @@
     "webpage-audiobook": {
       "root": "demos/webpage-audiobook/",
       "framework": "nextjs"
+    },
+    "edge-tts": {
+      "root": "demos/edge-tts/",
+      "framework": "nextjs"
     }
   },
   "rewrites": [
@@ -51,6 +55,10 @@
     {
       "source": "/webpage-audiobook/:path*",
       "destination": { "service": "webpage-audiobook" }
+    },
+    {
+      "source": "/edge-tts/:path*",
+      "destination": { "service": "edge-tts" }
     },
     {
       "source": "/",

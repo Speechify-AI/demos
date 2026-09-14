@@ -1,0 +1,6 @@
+{
+  "order": 240,
+  "title": "One-file serverless streaming TTS",
+  "stack": "Next.js",
+  "blurb": "A single serverless function streams Speechify TTS audio to the browser — no SDK, key held server-side. Ideal for widgets and light integrations."
+}
