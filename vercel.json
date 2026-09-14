@@ -25,6 +25,10 @@
     "webpage-audiobook": {
       "root": "demos/webpage-audiobook/",
       "framework": "nextjs"
+    },
+    "multilingual-tts": {
+      "root": "demos/multilingual-tts/",
+      "framework": "nextjs"
     }
   },
   "rewrites": [
@@ -51,6 +55,10 @@
     {
       "source": "/webpage-audiobook/:path*",
       "destination": { "service": "webpage-audiobook" }
+    },
+    {
+      "source": "/multilingual-tts/:path*",
+      "destination": { "service": "multilingual-tts" }
     },
     {
       "source": "/",

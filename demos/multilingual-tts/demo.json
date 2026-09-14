@@ -1,0 +1,6 @@
+{
+  "order": 210,
+  "title": "Text-to-speech in 30+ languages",
+  "stack": "Next.js",
+  "blurb": "Pick a language, hear it in a native voice. One request to the Speechify TTS API with a `language` parameter, six languages wired up and 30+ available."
+}
