@@ -25,6 +25,10 @@
     "webpage-audiobook": {
       "root": "demos/webpage-audiobook/",
       "framework": "nextjs"
+    },
+    "terminal-tts": {
+      "root": "demos/terminal-tts/",
+      "framework": "nextjs"
     }
   },
   "rewrites": [
@@ -51,6 +55,10 @@
     {
       "source": "/webpage-audiobook/:path*",
       "destination": { "service": "webpage-audiobook" }
+    },
+    {
+      "source": "/terminal-tts/:path*",
+      "destination": { "service": "terminal-tts" }
     },
     {
       "source": "/",

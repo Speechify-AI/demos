@@ -12,3 +12,4 @@ packages:
   - "demos/multilingual-voiceover"
   - "demos/ivr-ssml"
   - "demos/webpage-audiobook"
+  - "demos/terminal-tts"
