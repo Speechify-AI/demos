@@ -34,6 +34,7 @@ Demos with a **Live** link run in your browser at [demos.speechify.ai](https://d
 | [`demos/discord-bot-speechify/`](./demos/discord-bot-speechify) | TypeScript (discord.js) |  | A Discord slash-command bot: /speak <text> synthesizes the text with the Speechify API and posts the MP3 into the channel. The command registers automatically on first run. |
 | [`demos/docs-read-aloud/`](./demos/docs-read-aloud) | TypeScript (zero-dep server) |  | A documentation-style page with a Listen button that reads the article aloud. The button POSTs the text to a tiny server route, which synthesizes it with the Speechify API (key stays server-side) and returns the MP3 for the browser to play. Framework-agnostic. |
 | [`demos/ivr-ssml/`](./demos/ivr-ssml) | Next.js | [Open](https://demos.speechify.ai/ivr-ssml) | A phone-system playground for getting names, account numbers, and product terms right with SSML. Hear plain vs SSML side by side; the API key stays server-side. |
+| [`demos/live-captions/`](./demos/live-captions) | Next.js | [Open](https://demos.speechify.ai/live-captions) | Synthesize text and render live, word-by-word captions in sync with playback, driven by the speech marks the API returns. |
 | [`demos/webpage-audiobook/`](./demos/webpage-audiobook) | Next.js | [Open](https://demos.speechify.ai/webpage-audiobook) | Paste a URL, get narrated audio. The server fetches the article, extracts the text, chunks it on sentence boundaries, and synthesizes each part with the Speechify TTS API. |
 <!-- DEMOS:END -->
 

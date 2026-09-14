@@ -1,0 +1,6 @@
+{
+  "order": 215,
+  "title": "Live captions with speech marks",
+  "stack": "Next.js",
+  "blurb": "Synthesize text and render live, word-by-word captions in sync with playback, driven by the speech marks the API returns."
+}
