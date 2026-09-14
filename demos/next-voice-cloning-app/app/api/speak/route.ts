@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     input: text,
     voice_id: voiceId,
     audio_format: "mp3",
-    model: "simba-english",
+    model: "simba-3.0",
   });
 
   return NextResponse.json({ audio: speech.audio_data });

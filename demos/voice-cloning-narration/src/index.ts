@@ -64,7 +64,7 @@ try {
       input: "Hello from a voice cloned with the Speechify API.",
       voice_id: voice.id,
       audio_format: "mp3",
-      model: "simba-english",
+      model: "simba-3.0",
     }),
   });
 
