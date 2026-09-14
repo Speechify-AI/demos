@@ -1,0 +1,6 @@
+{
+  "order": 235,
+  "title": "Blog post to podcast episode",
+  "stack": "Next.js",
+  "blurb": "Paste a long-form article and turn it into a podcast episode — chunked on sentence boundaries and narrated with the Speechify TTS API, key held server-side."
+}
