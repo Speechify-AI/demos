@@ -1,0 +1,6 @@
+{
+  "order": 225,
+  "title": "Streaming TTS karaoke",
+  "stack": "Next.js",
+  "blurb": "Realtime TTS with word timestamps: each word lights up the instant its audio arrives over the stream, then again as it plays. Key held server-side."
+}

@@ -1,0 +1,27 @@
+{
+  "name": "streaming-tts-karaoke",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Realtime streaming TTS with dual word highlighting — words light up as their audio arrives, then again as it plays",
+  "scripts": {
+    "dev": "next dev -p 8775",
+    "build": "next build",
+    "start": "next start -p 8775",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "e2e": "playwright test"
+  },
+  "dependencies": {
+    "next": "^16.2.10",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.50.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "typescript": "^5.6.0"
+  }
+}
