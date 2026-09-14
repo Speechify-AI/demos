@@ -25,6 +25,10 @@
     "webpage-audiobook": {
       "root": "demos/webpage-audiobook/",
       "framework": "nextjs"
+    },
+    "react-tts-component": {
+      "root": "demos/react-tts-component/",
+      "framework": "nextjs"
     }
   },
   "rewrites": [
@@ -51,6 +55,10 @@
     {
       "source": "/webpage-audiobook/:path*",
       "destination": { "service": "webpage-audiobook" }
+    },
+    {
+      "source": "/react-tts-component/:path*",
+      "destination": { "service": "react-tts-component" }
     },
     {
       "source": "/",
