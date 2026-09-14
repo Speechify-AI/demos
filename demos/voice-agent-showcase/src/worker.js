@@ -7,10 +7,10 @@
 //   GET  /api/call-status?id=conv_...            -> status for the countdown UI
 //   POST /api/end-call        {conversation_id}  -> ends the call now
 //
-// The 5-minute cap has three layers:
-//   1. the page counts down and calls /api/end-call at 5:00
-//   2. the cron sweeper (every minute) force-ends anything older than 5:00
-//   3. the agent's flow wraps up on its own around the 4-minute mark
+// Call length is capped by the agent itself: max_call_duration_seconds on the
+// outbound agent (300s), enforced platform-side by the worker watchdog on every
+// dispatch path. The page only mirrors that number as a countdown; the agent's
+// flow still wraps up around the 4-minute mark so the cut is never mid-sentence.
 
 const RATE = {
   perIP: { max: 4, windowMs: 60 * 60 * 1000 },
@@ -253,27 +253,5 @@ export default {
       return json({ error: "not found" }, 404);
     }
     return env.ASSETS.fetch(request);
-  },
-
-  // Cron backstop: end demo calls past the cap even if the tab was closed.
-  async scheduled(_event, env, ctx) {
-    ctx.waitUntil(
-      (async () => {
-        const maxMs = Number(env.MAX_CALL_SECONDS) * 1000;
-        const now = Date.now();
-        const [active, pending] = await Promise.all([
-          listDemoCalls(env, "active"),
-          listDemoCalls(env, "pending"),
-        ]);
-        const overdue = [
-          ...active.filter((c) => c.started_at && now - Date.parse(c.started_at) > maxMs),
-          // pending = dialing/ringing; anything pending for 15+ minutes is stuck
-          ...pending.filter((c) => c.created_at && now - Date.parse(c.created_at) > 15 * 60 * 1000),
-        ];
-        for (const c of overdue) {
-          await endConversation(env, c.id);
-        }
-      })(),
-    );
-  },
+  }
 };
