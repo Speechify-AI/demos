@@ -1,19 +1,20 @@
-import { type JobContext, WorkerOptions, cli, defineAgent, voice } from '@livekit/agents';
+import { type JobContext, ServerOptions, cli, defineAgent, voice } from '@livekit/agents';
 import * as deepgram from '@livekit/agents-plugin-deepgram';
 import * as openai from '@livekit/agents-plugin-openai';
-import * as speechify from '@speechify/livekit-plugin';
 import { config } from 'dotenv';
 import { fileURLToPath } from 'node:url';
+import { SpeechifyTTS } from './speechify_tts.js';
 
 config();
 
 export default defineAgent({
   entry: async (ctx: JobContext) => {
-    // AgentSession uses the bundled Silero VAD by default.
+    // AgentSession uses the bundled Silero VAD by default, and feeds a non-streaming
+    // TTS like SpeechifyTTS one sentence at a time.
     const session = new voice.AgentSession({
       stt: new deepgram.STT({ model: 'nova-3' }),
       llm: new openai.LLM({ model: 'gpt-4.1-mini' }),
-      tts: new speechify.TTS({ voiceId: 'dominic_32', model: 'simba-3.2' }),
+      tts: new SpeechifyTTS({ voiceId: 'dominic_32', model: 'simba-3.2' }),
     });
 
     await session.start({
@@ -25,9 +26,8 @@ export default defineAgent({
       room: ctx.room,
     });
 
-    await ctx.connect();
     session.say("Hi! I'm powered by Speechify text to speech. How can I help?");
   },
 });
 
-cli.runApp(new WorkerOptions({ agent: fileURLToPath(import.meta.url) }));
+cli.runApp(new ServerOptions({ agent: fileURLToPath(import.meta.url) }));
