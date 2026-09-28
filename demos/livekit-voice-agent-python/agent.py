@@ -1,14 +1,13 @@
-import logging
-
 from dotenv import load_dotenv
-from livekit.agents import Agent, AgentSession, JobContext, WorkerOptions, cli
+from livekit.agents import Agent, AgentServer, AgentSession, JobContext, cli
 from livekit.plugins import deepgram, openai, speechify
 
 load_dotenv()
 
-logger = logging.getLogger("speechify-voice-agent")
+server = AgentServer()
 
 
+@server.rtc_session()
 async def entrypoint(ctx: JobContext) -> None:
     # AgentSession uses the bundled Silero VAD by default.
     session = AgentSession(
@@ -27,9 +26,8 @@ async def entrypoint(ctx: JobContext) -> None:
         room=ctx.room,
     )
 
-    await ctx.connect()
     await session.say("Hi! I'm powered by Speechify text to speech. How can I help?")
 
 
 if __name__ == "__main__":
-    cli.run_app(WorkerOptions(entrypoint_fnc=entrypoint))
+    cli.run_app(server)

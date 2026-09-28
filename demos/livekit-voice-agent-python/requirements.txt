@@ -1,3 +1,5 @@
 python-dotenv>=1.0.1
-livekit-agents[deepgram,openai]>=1.6.4
-speechify-livekit>=0.0.3
+livekit-agents[codecs]>=1.8.3
+livekit-plugins-speechify>=1.8.3
+livekit-plugins-deepgram>=1.8.3
+livekit-plugins-openai>=1.8.3

@@ -2,5 +2,5 @@
   "order": 70,
   "title": "LiveKit voice agent",
   "stack": "TypeScript (LiveKit)",
-  "blurb": "Legacy Speechify-owned LiveKit TTS demo, with Deepgram STT and an OpenAI LLM in a LiveKit AgentSession."
+  "blurb": "LiveKit Node voice agent that speaks through Speechify's streaming API via a small fetch-based tts.TTS, with Deepgram STT and an OpenAI LLM in an AgentSession, until the official Node plugin ships."
 }
