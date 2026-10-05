@@ -11,13 +11,11 @@ if (!token) {
 const client = new SpeechifyClient({ token });
 
 const ssml = `<speak>
-  <speechify:style emotion="warm">Welcome to the production incident update.</speechify:style>
+  Welcome to the production incident update.
   <break time="500ms" />
-  <prosody rate="slow" pitch="low">The queue is draining, but keep monitoring error rates for the next ten minutes.</prosody>
+  <prosody rate="slow">The queue is draining, but keep monitoring error rates for the next ten minutes.</prosody>
   <break time="300ms" />
-  <speechify:style emotion="assertive">Do not restart the workers unless the backlog climbs again.</speechify:style>
-  <break time="400ms" />
-  This is <emphasis level="strong">critical</emphasis> for customer playback.
+  Do not restart the workers unless the backlog climbs again.
   <break time="300ms" />
   Status page says <sub alias="all systems operational">ASO</sub> once the final region clears.
 </speak>`;

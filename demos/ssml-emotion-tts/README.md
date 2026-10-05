@@ -1,6 +1,6 @@
-# SSML emotion and timing with Speechify TTS
+# SSML timing and pronunciation with Speechify TTS
 
-Synthesizes audio with the Speechify TypeScript SDK and an SSML document that combines `speechify:style`, `break`, `prosody`, `emphasis`, and `sub` tags in one `POST /v1/audio/speech` request.
+Synthesizes audio with the Speechify TypeScript SDK and an SSML document that combines `break`, `prosody rate`, and `sub` tags in one `POST /v1/audio/speech` request.
 
 ## What you get
 
@@ -19,11 +19,13 @@ npm start             # rewrites output/ssml-emotion.mp3
 
 There is no demo server for this one. `npm start` runs [`src/index.ts`](./src/index.ts), sends the SSML document directly to Speechify with the API key from `SPEECHIFY_API_KEY`, and writes the returned base64 MP3 to `output/ssml-emotion.mp3`.
 
-The SSML document is the whole point: the same request mixes a warm opening, a half-second pause, slower low-pitch instructions, an assertive warning, strong emphasis, and a pronunciation substitution.
+The SSML document is the whole point: the same request mixes a half-second pause, a slower passage, shorter beats between instructions, and a pronunciation substitution.
+
+These are the tags `simba-3.2` and `simba-3.0` apply. Emotion (`speechify:style`), pitch, volume, and emphasis tags are accepted and not applied on current models, so this demo leaves them out. See [which tags each model applies](https://docs.speechify.ai/build/guides/text-to-speech/ssml).
 
 ## Where the code came from
 
-This is the TypeScript SDK recipe from the [Speechify Cookbook](https://github.com/SpeechifyInc/speechify-api-cookbook/tree/main/recipes/audio/typescript/sdk/ssml-emotion). The cookbook is the canonical home for the recipe; this folder is the matching demo that produces the audio the blog post references.
+This is the TypeScript SDK recipe from the [Speechify Cookbook](https://github.com/Speechify-AI/cookbook/tree/main/recipes/audio/typescript/sdk/ssml-emotion). The cookbook is the canonical home for the recipe; this folder is the matching demo that produces the audio the blog post references.
 
 ## Prerequisites
 

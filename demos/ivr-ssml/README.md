@@ -2,7 +2,7 @@
 
 A focused [Next.js](https://nextjs.org) playground for getting names, account numbers, and product terms right in an IVR (phone system) with SSML on the Speechify API. Four realistic IVR lines, each with a **plain** and an **SSML** version so you can hear the difference, edit the markup, and re-synthesize. The API key stays server-side in a route handler and never reaches the browser.
 
-Pairs with the blog post "Nailing pronunciation in an IVR with SSML". It's the practical follow-up to the earlier [Controlling Emotion and Timing in TTS with SSML](https://speechify.ai/blog/controlling-emotion-and-timing-in-tts-with-ssml) — same SSML toolkit, aimed squarely at the pronunciation problems a phone system hits every call.
+Pairs with the blog post "Nailing pronunciation in an IVR with SSML". It's the practical follow-up to the earlier [Controlling Timing and Pronunciation in TTS with SSML](https://speechify.ai/blog/controlling-emotion-and-timing-in-tts-with-ssml): same SSML toolkit, aimed squarely at the pronunciation problems a phone system hits every call.
 
 ## What you get
 
@@ -31,7 +31,7 @@ The Speechify call happens inside `app/api/speak/route.ts`, which only ever runs
 
 ## Where the code came from
 
-The SSML tags mirror the ones in the [SSML emotion TTS](../ssml-emotion-tts) demo and the [Speechify SSML docs](https://docs.speechify.ai). This folder narrows that toolkit to the IVR pronunciation problem and wraps it in a Next.js UI with the key held server-side, which is how you'd ship it in a real app.
+The SSML tags mirror the ones in the [SSML timing and pronunciation](../ssml-emotion-tts) demo and the [Speechify SSML docs](https://docs.speechify.ai/build/guides/text-to-speech/ssml). This folder narrows that toolkit to the IVR pronunciation problem and wraps it in a Next.js UI with the key held server-side, which is how you'd ship it in a real app. Emotion, pitch, volume, and emphasis tags are accepted and not applied on current models, so the presets stick to `sub`, `break`, and `prosody rate`.
 
 ## Prerequisites
 

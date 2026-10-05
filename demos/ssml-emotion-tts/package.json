@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Speechify TTS SSML emotion and timing demo",
+  "description": "Speechify TTS SSML timing and pronunciation demo",
   "scripts": {
     "start": "tsx src/index.ts"
   },
