@@ -77,20 +77,12 @@ export function createSpeechify(settings: SpeechifyProviderSettings = {}) {
             details: "Use an SSML prosody rate in the input text instead.",
           });
         }
-        if (language) {
-          warnings.push({
-            type: "unsupported",
-            feature: "language",
-            details:
-              "Language follows the model: use simba-3.0 for non-English input.",
-          });
-        }
-
         const body = {
           input: text,
           voice_id: voice ?? DEFAULT_VOICE,
           audio_format: audioFormat,
           model: modelId,
+          ...(language ? { language } : {}),
         };
 
         const res = await fetch(`${baseURL}/v1/audio/speech`, {

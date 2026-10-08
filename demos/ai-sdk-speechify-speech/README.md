@@ -8,14 +8,18 @@ server-side in route handlers and never reaches the browser.
 
 Pairs with the blog post [Speech generation in the Vercel AI SDK with Speechify](https://speechify.ai/blog/speech-generation-in-the-vercel-ai-sdk-with-speechify).
 
+For an app of your own, install the Speechify-maintained provider instead of
+copying this file: [`@speechify/ai-sdk-provider`](https://github.com/Speechify-AI/ai-sdk-provider)
+maps every `generateSpeech()` option, `speed` included.
+
 ## What you get
 
 - `app/lib/speechify-provider.ts` — the custom provider. Implements the AI
   SDK's `SpeechModelV4` interface with plain `fetch`: `doGenerate()` posts to
   `/v1/audio/speech`, passes the base64 audio through, surfaces
-  `billable_characters_count` and `speech_marks` via `providerMetadata`, and
-  reports unsupported settings (`speed`, `instructions`, `language`) as
-  warnings instead of failing.
+  `billable_characters_count` and `speech_marks` via `providerMetadata`,
+  passes `language` through, and reports the settings the endpoint has no
+  field for (`speed`, `instructions`) as warnings instead of failing.
 - Two server routes under `app/api/`, each holding the Speechify key
   server-side:
   - `POST /api/speech` — runs `generateSpeech()` with
