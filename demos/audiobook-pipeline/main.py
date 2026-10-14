@@ -1,5 +1,5 @@
-"""Audiobook pipeline: chunk text on sentence boundaries, synthesize each chunk
-via the Speechify Python SDK, write per-chunk MP3s ready for ffmpeg concat.
+"""Audiobook pipeline: chunk text on sentence boundaries, stream each chunk
+from the Speechify Python SDK, write per-chunk MP3s ready for ffmpeg concat.
 
 Run: `python main.py samples/chapter-01.txt`
 Output: `output/<chapter-name>/part-NNN.mp3` for each chunk.
@@ -7,7 +7,6 @@ Output: `output/<chapter-name>/part-NNN.mp3` for each chunk.
 
 from __future__ import annotations
 
-import base64
 import os
 import re
 import sys
@@ -17,6 +16,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 from speechify import Speechify
 
+# /v1/audio/stream takes up to 20,000 spoken characters per request; in plain
+# text every character is spoken. /v1/audio/speech takes 2,000.
 MAX_CHARS = 20_000
 
 
@@ -67,7 +68,7 @@ def synthesize_chunks(
     model: str = "simba-3.2",
     max_retries: int = 3,
 ) -> list[Path]:
-    """Synthesize each chunk sequentially with exponential-backoff retries."""
+    """Stream each chunk to its MP3 sequentially, with exponential-backoff retries."""
     load_dotenv()
     token = os.environ.get("SPEECHIFY_API_KEY")
     if not token:
@@ -78,15 +79,18 @@ def synthesize_chunks(
 
     files: list[Path] = []
     for i, chunk in enumerate(chunks):
+        out = out_dir / f"part-{i:03d}.mp3"
         attempt = 0
         while True:
             try:
-                resp = client.audio.speech(
-                    input=chunk,
-                    voice_id=voice_id,
-                    audio_format="mp3",
-                    model=model,
-                )
+                with out.open("wb") as f:
+                    for audio in client.audio.stream(
+                        input=chunk,
+                        voice_id=voice_id,
+                        model=model,
+                        accept="audio/mpeg",
+                    ):
+                        f.write(audio)
                 break
             except Exception as exc:
                 attempt += 1
@@ -96,8 +100,6 @@ def synthesize_chunks(
                 print(f"chunk {i}: retry {attempt} after {wait}s ({exc})")
                 time.sleep(wait)
 
-        out = out_dir / f"part-{i:03d}.mp3"
-        out.write_bytes(base64.b64decode(resp.audio_data))
         files.append(out)
         print(f"  wrote {out} ({out.stat().st_size:,} bytes)")
 
