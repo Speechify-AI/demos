@@ -1,6 +1,6 @@
 # Automated audiobook pipeline
 
-Splits long-form text on sentence boundaries, synthesizes each chunk via the [Speechify Python SDK](https://github.com/SpeechifyInc/speechify-api-sdk-python), and concatenates the resulting MP3s with `ffmpeg` into a single chapter file.
+Splits long-form text on sentence boundaries, streams each chunk from `/v1/audio/stream` with the [Speechify Python SDK](https://github.com/SpeechifyInc/speechify-api-sdk-python), and concatenates the resulting MP3s with `ffmpeg` into a single chapter file.
 
 ## What you get
 
@@ -30,7 +30,7 @@ python main.py samples/chapter-01.txt
 
 ## What the chunker is doing
 
-Long-form TTS breaks at the per-request character ceiling (20,000 characters on Speechify). Naive character splits cut mid-word and the audio "exhales" weirdly at chunk boundaries. This chunker uses three branches in order of preference:
+Long-form TTS breaks at the per-request character ceiling: 20,000 spoken characters on Speechify's `/v1/audio/stream`, and 2,000 on `/v1/audio/speech`, which returns the whole file in one response. Naive character splits cut mid-word and the audio "exhales" weirdly at chunk boundaries. This chunker uses three branches in order of preference:
 
 1. Paragraph fits in the current buffer alongside whatever's already there. Append.
 2. Paragraph doesn't fit, but is itself under the cap. Flush the buffer, start a new chunk.
